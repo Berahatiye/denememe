@@ -50,8 +50,8 @@
             padding: 0.5rem 0;
             transition: all 0.4s ease-in-out, font-size 0.2s ease-in-out; /* Smooth transitions for properties */
             cursor: pointer;
-            line-height: 1.5;
-            text-align: center; /* Ensure text is centered */
+            line-height: 1.5; /* Ensure good spacing between lines */
+            text-align: center; /* Center the text within each line */
         }
 
         @media (max-width: 480px) {
@@ -111,7 +111,7 @@
             opacity: 1;
         }
 
-        /* Styles for lines immediately following the active line for a subtle fade effect */
+        /* Styles for lines immediately following the active line for a subtle fade effect (Spotify-like) */
         .lyrics-line.active + .lyrics-line {
             font-size: 2.2rem; /* Slightly smaller than active */
             opacity: 0.7;
@@ -652,7 +652,6 @@
                     Lyrics Provided By Worship Leader App
                 </div>
 
-                <!-- Removed the old single-line-display here -->
             </div>
         </div>
     </div>
@@ -762,7 +761,6 @@
         const hymnTitleContainer = document.getElementById('hymn-title-container');
         const lyricsScrollContainer = document.getElementById('lyrics-scroll-container');
         const lyricsProviderContainer = document.getElementById('lyrics-provider-container');
-        // Removed singleLineDisplay and singleLineText
         const welcomeMessage = document.getElementById('welcome-message');
         const hymnContent = document.getElementById('hymn-content');
         const displayOnTvBtn = document.getElementById('display-on-tv-btn');
@@ -847,7 +845,7 @@
             if (currentHymnIndex === -1) return;
             const hymn = hymns[currentHymnIndex];
             hymnTitleElement.textContent = hymn.title;
-            lyricsScrollContainer.innerHTML = '';
+            lyricsScrollContainer.innerHTML = ''; // Clear previous lyrics
             
             welcomeMessage.classList.add('hidden');
             hymnContent.classList.remove('hidden');
@@ -984,27 +982,78 @@
             renderAllHymnsList(filteredHymns);
         }
 
+        // Custom easing function for smooth scrolling (ease-out-quad)
+        function easeOutQuad(t) {
+            return t * (2 - t);
+        }
+
+        // Custom smooth scroll function using requestAnimationFrame
+        function smoothScrollToCenter(element, container, duration) {
+            // If element or container is not found, or in casting mode, do nothing
+            if (!element || !container || isCastingMode) return;
+
+            const elementRect = element.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            
+            // Calculate target scroll position to center the element
+            // container.scrollTop is the current scroll position of the container
+            // elementRect.top is the element's top relative to the viewport
+            // containerRect.top is the container's top relative to the viewport
+            // So, element's top relative to container is elementRect.top - containerRect.top
+            // To center, we want element's top relative to container + half element height - half container height
+            const targetScrollTop = container.scrollTop + (elementRect.top - containerRect.top) - (containerRect.height / 2) + (elementRect.height / 2);
+
+            const startScrollTop = container.scrollTop;
+            const distance = targetScrollTop - startScrollTop;
+            let startTime = null;
+
+            // Prevent scrolling if already at target or very close
+            if (Math.abs(distance) < 1) { // Threshold for stopping
+                container.scrollTop = targetScrollTop; // Snap to target if very close
+                return;
+            }
+
+
+            function animateScroll(currentTime) {
+                if (!startTime) startTime = currentTime;
+                const timeElapsed = currentTime - startTime;
+                const progress = Math.min(timeElapsed / duration, 1);
+                const easedProgress = easeOutQuad(progress);
+
+                container.scrollTop = startScrollTop + (distance * easedProgress);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateScroll);
+                }
+            }
+
+            requestAnimationFrame(animateScroll);
+        }
+
+
         function updateLyrics() {
             if (currentHymnIndex === -1) return;
-            const hymn = hymns[currentHymnIndex];
-            const lines = document.querySelectorAll('.lyrics-line');
+            // Get all current lyric lines displayed in the scroll container
+            const lines = lyricsScrollContainer.querySelectorAll('.lyrics-line');
 
             lines.forEach((line, index) => {
+                // Remove all active and visible-cast classes first from all lines
+                line.classList.remove('active', 'visible-cast'); 
+
                 if (index === currentLineIndex) {
+                    // Add active class to the current line
                     line.classList.add('active');
+                    
                     if (isCastingMode) {
-                        // Add a class to trigger the casting mode visibility animation
+                        // In casting mode, add visible-cast for animation
                         line.classList.add('visible-cast');
                     } else {
-                        // Remove it if not in casting mode
-                        line.classList.remove('visible-cast');
-                        // Scroll into view only when not in casting mode, as CSS handles centering in casting mode
-                        line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // In normal mode, smoothly scroll the active line into view
+                        // Use a custom smooth scroll for 60FPS feel
+                        smoothScrollToCenter(line, lyricsScrollContainer, 400); // 400ms duration
                     }
-                } else {
-                    line.classList.remove('active');
-                    line.classList.remove('visible-cast'); // Ensure non-active lines don't have casting visibility
                 }
+                // CSS handles the fading/sizing of adjacent lines based on .active
             });
         }
 
@@ -1063,7 +1112,7 @@
             displayOnTvBtn.classList.remove('bg-highlight-blue');
             displayOnTvBtn.classList.add('bg-highlight-red');
             
-            // Now that casting mode is active, call updateLyrics to apply casting styles
+            // Apply casting styles and start animation
             updateLyrics(); 
             
             if(!document.fullscreenElement) {
@@ -1075,9 +1124,10 @@
 
         function exitCastingMode() {
             isCastingMode = false;
-            // Remove the visible-cast class from all lines immediately to start fade-out effect
-            document.querySelectorAll('.lyrics-line').forEach(line => line.classList.remove('visible-cast'));
+            // Remove the visible-cast class from all lines immediately to trigger fade-out
+            document.querySelectorAll('.lyrics-line.active').forEach(line => line.classList.remove('visible-cast'));
             
+            // Small delay to allow fade-out animation to start before display changes
             setTimeout(() => {
                 document.body.classList.remove('full-screen', 'casting-mode');
                 displayOnTvBtn.textContent = 'İlahiyi Yansıt';
@@ -1089,7 +1139,8 @@
                 }
                 
                 closeModal('casting-modal');
-                updateLyrics(); // This will re-apply non-casting mode styles and scrolling
+                // Update lyrics to revert to normal view (including scrolling back if needed)
+                updateLyrics(); 
             }, 150); 
         }
 
@@ -1114,7 +1165,6 @@
                         hymnContent.classList.add('hidden');
                     }
                     if (currentHymnIndex !== -1 && !isCastingMode) {
-                         // No singleLineDisplay to hide here. Just update the lyrics to normal view.
                          updateLyrics();
                     }
                 });
