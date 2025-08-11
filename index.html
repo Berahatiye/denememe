@@ -41,14 +41,17 @@
             -webkit-touch-callout: none;
         }
 
+        /* Base style for all lyrics lines */
         .lyrics-line {
-            font-size: 1.75rem;
+            font-size: 1.75rem; /* Default size for inactive lines */
             font-weight: 500;
-            color: #94a3b8;
+            color: #94a3b8; /* Subtle color for inactive lines */
             opacity: 0.35;
             padding: 0.5rem 0;
-            transition: all 0.4s ease-in-out;
+            transition: all 0.4s ease-in-out, font-size 0.2s ease-in-out; /* Smooth transitions for properties */
             cursor: pointer;
+            line-height: 1.5;
+            text-align: center; /* Ensure text is centered */
         }
 
         @media (max-width: 480px) {
@@ -100,11 +103,27 @@
             }
         }
         
+        /* Style for the actively highlighted lyric line in normal mode */
         .lyrics-line.active {
             font-weight: 700;
-            color: #f5f5f7;
+            font-size: 2.5rem; /* Larger font for active line */
+            color: #f5f5f7; /* Bright white */
             opacity: 1;
         }
+
+        /* Styles for lines immediately following the active line for a subtle fade effect */
+        .lyrics-line.active + .lyrics-line {
+            font-size: 2.2rem; /* Slightly smaller than active */
+            opacity: 0.7;
+            color: #cbd5e1; /* Less bright */
+        }
+        .lyrics-line.active + .lyrics-line + .lyrics-line {
+            font-size: 1.9rem; /* Smaller still */
+            opacity: 0.5;
+            color: #94a3b8; /* Fading to subtle */
+        }
+        /* Lines beyond the third following line will revert to default .lyrics-line styles */
+
 
         .lyrics-provider {
             font-size: 0.7rem;
@@ -184,47 +203,63 @@
             background-color: black;
         }
 
+        /* Hide control panel and other elements in full screen casting mode */
         body.full-screen.casting-mode .control-panel,
         body.full-screen.casting-mode #hymn-title-container,
-        body.full-screen.casting-mode #lyrics-scroll-container,
-        body.full-screen.casting-mode #welcome-message,
-        body.full-screen.casting-mode #lyrics-provider-container
-        {
+        body.full-screen.casting-mode #lyrics-provider-container,
+        body.full-screen.casting-mode #welcome-message {
             display: none !important;
         }
 
+        /* Make the lyrics display fill the screen in casting mode */
         body.full-screen.casting-mode #lyrics-display {
             padding: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            align-items: center; /* Center horizontally */
         }
         
-        body.full-screen.casting-mode #single-line-display {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
+        /* Make the lyrics scroll container take up full height and center content in casting mode */
+        body.full-screen.casting-mode #lyrics-scroll-container {
             height: 100vh;
-            padding: 0 2rem;
+            overflow: hidden; /* No scrolling in casting mode */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center active line vertically */
+            align-items: center; /* Center active line horizontally */
+            width: 100%;
+            padding: 0 2rem; /* Padding for the line itself */
         }
-        
-        #single-line-text {
-            font-size: min(15vw, 15vh);
+
+        /* Hide all non-active lines in casting mode */
+        body.full-screen.casting-mode .lyrics-line:not(.active) {
+            display: none;
+        }
+
+        /* Style the active line to fill the screen in casting mode */
+        body.full-screen.casting-mode .lyrics-line.active {
+            font-size: min(15vw, 15vh); /* Dynamic font size for casting mode */
             font-weight: 700;
             color: #fff;
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
             text-align: center;
             line-height: 1.2;
-            padding: 0 2rem;
-            white-space: pre-wrap;
+            padding: 0; /* Remove padding for fullscreen line */
+            white-space: pre-wrap; /* Preserve line breaks */
+            flex-shrink: 0; /* Prevent shrinking */
+            width: 100%;
+            max-width: 90%; /* Max width to prevent line from being too wide */
             
+            /* Animation for casting mode entry */
             opacity: 0;
             transform: scale(0.95);
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out, font-size 0.5s ease-in-out;
         }
-        #single-line-text.visible {
+
+        /* Trigger visible state for casting mode active line */
+        body.full-screen.casting-mode .lyrics-line.active.visible-cast {
             opacity: 1;
             transform: scale(1);
         }
@@ -617,9 +652,7 @@
                     Lyrics Provided By Worship Leader App
                 </div>
 
-                <div id="single-line-display" class="hidden">
-                    <p id="single-line-text"></p>
-                </div>
+                <!-- Removed the old single-line-display here -->
             </div>
         </div>
     </div>
@@ -729,8 +762,7 @@
         const hymnTitleContainer = document.getElementById('hymn-title-container');
         const lyricsScrollContainer = document.getElementById('lyrics-scroll-container');
         const lyricsProviderContainer = document.getElementById('lyrics-provider-container');
-        const singleLineDisplay = document.getElementById('single-line-display');
-        const singleLineText = document.getElementById('single-line-text');
+        // Removed singleLineDisplay and singleLineText
         const welcomeMessage = document.getElementById('welcome-message');
         const hymnContent = document.getElementById('hymn-content');
         const displayOnTvBtn = document.getElementById('display-on-tv-btn');
@@ -955,24 +987,25 @@
         function updateLyrics() {
             if (currentHymnIndex === -1) return;
             const hymn = hymns[currentHymnIndex];
-            
-            if (isCastingMode) {
-                singleLineText.classList.remove('visible');
-                setTimeout(() => {
-                    singleLineText.textContent = hymn.lyrics[currentLineIndex];
-                    singleLineText.classList.add('visible');
-                }, 150);
-            } else {
-                const lines = document.querySelectorAll('.lyrics-line');
-                lines.forEach((line, index) => {
-                    if (index === currentLineIndex) {
-                        line.classList.add('active');
-                        line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const lines = document.querySelectorAll('.lyrics-line');
+
+            lines.forEach((line, index) => {
+                if (index === currentLineIndex) {
+                    line.classList.add('active');
+                    if (isCastingMode) {
+                        // Add a class to trigger the casting mode visibility animation
+                        line.classList.add('visible-cast');
                     } else {
-                        line.classList.remove('active');
+                        // Remove it if not in casting mode
+                        line.classList.remove('visible-cast');
+                        // Scroll into view only when not in casting mode, as CSS handles centering in casting mode
+                        line.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
-                });
-            }
+                } else {
+                    line.classList.remove('active');
+                    line.classList.remove('visible-cast'); // Ensure non-active lines don't have casting visibility
+                }
+            });
         }
 
         function resetLyrics() {
@@ -1030,8 +1063,8 @@
             displayOnTvBtn.classList.remove('bg-highlight-blue');
             displayOnTvBtn.classList.add('bg-highlight-red');
             
-            singleLineDisplay.classList.remove('hidden');
-            updateLyrics();
+            // Now that casting mode is active, call updateLyrics to apply casting styles
+            updateLyrics(); 
             
             if(!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
@@ -1042,7 +1075,8 @@
 
         function exitCastingMode() {
             isCastingMode = false;
-            singleLineText.classList.remove('visible');
+            // Remove the visible-cast class from all lines immediately to start fade-out effect
+            document.querySelectorAll('.lyrics-line').forEach(line => line.classList.remove('visible-cast'));
             
             setTimeout(() => {
                 document.body.classList.remove('full-screen', 'casting-mode');
@@ -1055,9 +1089,8 @@
                 }
                 
                 closeModal('casting-modal');
-                singleLineDisplay.classList.add('hidden');
-                updateLyrics();
-            }, 150);
+                updateLyrics(); // This will re-apply non-casting mode styles and scrolling
+            }, 150); 
         }
 
         function toggleInitialPageFullscreen() {
@@ -1081,7 +1114,7 @@
                         hymnContent.classList.add('hidden');
                     }
                     if (currentHymnIndex !== -1 && !isCastingMode) {
-                         singleLineDisplay.classList.add('hidden');
+                         // No singleLineDisplay to hide here. Just update the lyrics to normal view.
                          updateLyrics();
                     }
                 });
