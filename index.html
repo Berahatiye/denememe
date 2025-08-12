@@ -732,6 +732,7 @@
         let currentLineIndex = 0;
         let isCastingMode = false;
         let userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] }; 
+        let lyricsLineElements = []; // Cache for lyric line DOM elements
 
         // DOM element references
         const searchBar = document.getElementById('search-bar');
@@ -767,6 +768,21 @@
         const clearPlaylistBtn = document.getElementById('clear-playlist-btn');
 
         const loaderOverlay = document.getElementById('loader-overlay');
+
+        /**
+         * Debounce function to limit how often a function can run.
+         * @param {function} func - The function to debounce.
+         * @param {number} delay - The delay in milliseconds.
+         * @returns {function} A new debounced function.
+         */
+        function debounce(func, delay) {
+            let timeout;
+            return function(...args) {
+                const context = this;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
 
         /**
          * Shows the global loading overlay.
@@ -850,6 +866,7 @@
             const hymn = hymns[currentHymnIndex];
             hymnTitleElement.textContent = hymn.title; // Update hymn title
             lyricsScrollContainer.innerHTML = ''; // Clear existing lyrics
+            lyricsLineElements = []; // Reset the cached elements
 
             welcomeMessage.classList.add('hidden'); // Hide welcome message
             hymnContent.classList.remove('hidden'); // Show hymn content
@@ -864,6 +881,7 @@
                     updateLyrics(); // Update active lyric line
                 });
                 lyricsScrollContainer.appendChild(p); // Add line to container
+                lyricsLineElements.push(p); // Cache the element
             });
 
             lyricsProviderContainer.style.display = 'block'; // Show lyrics provider info
@@ -983,9 +1001,7 @@
             openModal('all-hymns-modal');
             modalSearchBar.value = ''; // Clear modal search bar
             renderAllHymnsList(hymns); // Render all hymns initially
-            setTimeout(() => { 
-                hideLoader(); 
-            }, 300); // Hide loader after a brief delay
+            hideLoader(); // Hide loader after rendering the list
         }
 
         /**
@@ -1003,38 +1019,43 @@
         }
 
         /**
+         * Stores the previously active lyric line element.
+         * Used to efficiently remove the 'active' class.
+         */
+        let previouslyActiveLine = null;
+
+        /**
          * Updates the display of lyrics, highlighting the current line.
          * Applies appropriate changes for both normal and casting modes.
          * This function is optimized to avoid unnecessary DOM manipulations.
          */
         function updateLyrics() {
-            if (currentHymnIndex === -1) return;
+            if (currentHymnIndex === -1 || lyricsLineElements.length === 0) return;
             const hymn = hymns[currentHymnIndex];
             
             if (isCastingMode) {
                 // For casting mode, animate the single line display
                 singleLineText.classList.remove('visible'); // Start fade-out/scale-down
-                // Using requestAnimationFrame for smoother updates, though setTimeout works for simple toggles
                 requestAnimationFrame(() => {
                     singleLineText.textContent = hymn.lyrics[currentLineIndex];
                     singleLineText.classList.add('visible'); // Start fade-in/scale-up
                 });
             } else {
-                const lines = document.querySelectorAll('.lyrics-line');
-                lines.forEach((line, index) => {
-                    // Update only necessary classes based on currentLineIndex
-                    if (index === currentLineIndex) {
-                        if (!line.classList.contains('active')) {
-                            line.classList.add('active');
-                            // Ensure smooth scroll using CSS scroll-behavior
-                            line.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }
-                    } else {
-                        if (line.classList.contains('active')) {
-                            line.classList.remove('active');
-                        }
+                // Remove 'active' from the previously active line
+                if (previouslyActiveLine && previouslyActiveLine !== lyricsLineElements[currentLineIndex]) {
+                    previouslyActiveLine.classList.remove('active');
+                }
+
+                // Add 'active' to the current line
+                const currentLineElement = lyricsLineElements[currentLineIndex];
+                if (currentLineElement) {
+                    if (!currentLineElement.classList.contains('active')) {
+                        currentLineElement.classList.add('active');
+                        // Ensure smooth scroll using CSS scroll-behavior
+                        currentLineElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
-                });
+                    previouslyActiveLine = currentLineElement; // Update previously active line
+                }
             }
         }
 
@@ -1043,6 +1064,11 @@
          */
         function resetLyrics() {
             currentLineIndex = 0;
+            // Clear previouslyActiveLine when resetting lyrics for a new hymn
+            if (previouslyActiveLine) {
+                previouslyActiveLine.classList.remove('active');
+                previouslyActiveLine = null;
+            }
             updateLyrics();
         }
 
@@ -1208,6 +1234,16 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // Debounced scroll handler for the go-to-top button
+        const debouncedScrollHandler = debounce(() => {
+            const isScrolledToBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 5);
+            if (isScrolledToBottom && document.documentElement.scrollHeight > window.innerHeight) {
+                goToTopBtn.classList.add('visible');
+            } else {
+                goToTopBtn.classList.remove('visible');
+            }
+        }, 100); // Debounce by 100ms
+
         // Event listener for fullscreen changes
         document.addEventListener('fullscreenchange', () => {
             if (!document.fullscreenElement) {
@@ -1228,15 +1264,7 @@
         });
 
         // Event listener for scroll to show/hide go-to-top button
-        window.addEventListener('scroll', () => {
-            // Check if scrolled to bottom
-            const isScrolledToBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 5);
-            if (isScrolledToBottom && document.documentElement.scrollHeight > window.innerHeight) {
-                goToTopBtn.classList.add('visible');
-            } else {
-                goToTopBtn.classList.remove('visible');
-            }
-        });
+        window.addEventListener('scroll', debouncedScrollHandler); // Use the debounced handler
 
         // Keyboard navigation for lyrics (ArrowRight/ArrowLeft)
         document.addEventListener('keydown', (e) => {
