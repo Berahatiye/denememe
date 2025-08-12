@@ -973,7 +973,7 @@
                 lines.forEach((line, index) => {
                     if (index === currentLineIndex) {
                         line.classList.add('active');
-                        line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        line.scrollIntoView({ behavior: 'instant', block: 'center' }); 
                     } else {
                         line.classList.remove('active');
                     }
