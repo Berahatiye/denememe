@@ -51,8 +51,7 @@
             color: #94a3b8;
             opacity: 0.26;
             padding: 0.5rem 0;
-            /* Re-added and optimized transition for softer effect */
-            transition: color 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            transition: all 0.15s ease-in-out;
             cursor: pointer;
         }
 
@@ -974,8 +973,9 @@
                 lines.forEach((line, index) => {
                     if (index === currentLineIndex) {
                         line.classList.add('active');
-                        // Reverted behavior to 'smooth' for a softer scroll
-                        line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Changed scroll behavior to 'auto' for better performance during selection.
+                        // 'smooth' can cause FPS drops, especially when scrolling down.
+                        line.scrollIntoView({ behavior: 'auto', block: 'center' }); 
                     } else {
                         line.classList.remove('active');
                     }
