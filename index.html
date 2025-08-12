@@ -932,20 +932,22 @@
 
         function openAllHymnsModal(e) {
             e.stopPropagation();
-            
-            if (hymns.length === 0) {
-                modalTitle.textContent = "Veriler Yükleniyor";
-                modalMessage.textContent = "İlahiler yüklenirken lütfen bekleyin...";
-                openModal('casting-modal');
-                return;
-            }
-            showLoader(); 
-            openModal('all-hymns-modal');
-            modalSearchBar.value = '';
-            renderAllHymnsList(hymns);
-            setTimeout(() => { 
-                hideLoader(); 
-            }, 300); 
+            showLoader(); // Show loader immediately when the button is clicked
+
+            // Defer the rest of the modal opening and rendering slightly
+            setTimeout(() => {
+                if (hymns.length === 0) {
+                    modalTitle.textContent = "Veriler Yükleniyor";
+                    modalMessage.textContent = "İlahiler yüklenirken lütfen bekleyin...";
+                    openModal('casting-modal');
+                    hideLoader(); // Hide loader if we show casting modal instead
+                    return;
+                }
+                openModal('all-hymns-modal');
+                modalSearchBar.value = '';
+                renderAllHymnsList(hymns);
+                hideLoader(); // Hide loader after content is rendered
+            }, 50); // Small delay to allow the loader to render visually
         }
 
         function filterHymnsList() {
