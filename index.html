@@ -973,9 +973,7 @@
                 lines.forEach((line, index) => {
                     if (index === currentLineIndex) {
                         line.classList.add('active');
-                        // Changed scroll behavior to 'auto' for better performance during selection.
-                        // 'smooth' can cause FPS drops, especially when scrolling down.
-                        line.scrollIntoView({ behavior: 'auto', block: 'center' }); 
+                        line.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     } else {
                         line.classList.remove('active');
                     }
