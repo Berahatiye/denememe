@@ -51,7 +51,8 @@
             color: #94a3b8;
             opacity: 0.26;
             padding: 0.5rem 0;
-            transition: color 0.3s ease-in-out, opacity 0.3s ease-in-out; /* Restored original transition */
+            /* Re-added and optimized transition for softer effect */
+            transition: color 0.3s ease-in-out, opacity 0.3s ease-in-out;
             cursor: pointer;
         }
 
@@ -888,11 +889,9 @@
                     
                 
                     if (isInPlaylist) {
-                        // Original SVG icon for "remove from playlist"
                         playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#666666"><path d="M200-440v-80h560v80H200Z"/></svg>';
                         playlistButton.classList.add('bg-highlight-red', 'text-primary-bg', 'active:bg-red-600');
                     } else {
-                        // Original SVG icon for "add to playlist"
                         playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#666666"><path d="M520-400h80v-120h120v-80H600v-120h-80v120H400v80h120v120ZM320-240q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/></svg>';
                         playlistButton.classList.add('bg-highlight-blue', 'text-primary-bg', 'active:bg-blue-600');
                     }
@@ -933,21 +932,20 @@
 
         function openAllHymnsModal(e) {
             e.stopPropagation();
-            showLoader(); // Show loader immediately when the button is clicked
-
+            
             if (hymns.length === 0) {
                 modalTitle.textContent = "Veriler Yükleniyor";
                 modalMessage.textContent = "İlahiler yüklenirken lütfen bekleyin...";
                 openModal('casting-modal');
-                hideLoader(); // Hide loader if we show casting modal instead
                 return;
             }
-            
-            // Proceed to open the modal and render the list
+            showLoader(); 
             openModal('all-hymns-modal');
             modalSearchBar.value = '';
             renderAllHymnsList(hymns);
-            hideLoader(); // Hide loader after the list is rendered.
+            setTimeout(() => { 
+                hideLoader(); 
+            }, 300); 
         }
 
         function filterHymnsList() {
@@ -976,7 +974,8 @@
                 lines.forEach((line, index) => {
                     if (index === currentLineIndex) {
                         line.classList.add('active');
-                        line.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Reverted scroll behavior to smooth
+                        // Reverted behavior to 'smooth' for a softer scroll
+                        line.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     } else {
                         line.classList.remove('active');
                     }
@@ -1380,7 +1379,6 @@
                     listItem.appendChild(hymnLink);
 
                     const removeBtn = document.createElement('button');
-                    // Original SVG icon for "remove from playlist" in the playlist modal
                     removeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#666666"><path d="M200-440v-80h560v80H200Z"/></svg>';
                    
                     removeBtn.classList.add('bg-highlight-red', 'text-primary-bg', 'py-2', 'px-3', 'rounded-md', 'text-sm', 'transition-colors', 'active:bg-red-600', 'duration-300', 'flex', 'items-center', 'justify-center');
