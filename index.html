@@ -730,6 +730,7 @@
         let currentLineIndex = 0;
         let isCastingMode = false;
         let userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] }; 
+        let lastActiveLineElement = null; // New: Keep track of the last active line element
 
         // DOM element references
         const searchBar = document.getElementById('search-bar');
@@ -851,6 +852,7 @@
             const hymn = hymns[currentHymnIndex];
             hymnTitleElement.textContent = hymn.title; // Update hymn title
             lyricsScrollContainer.innerHTML = ''; // Clear existing lyrics
+            lastActiveLineElement = null; // Reset last active line
 
             welcomeMessage.classList.add('hidden'); // Hide welcome message
             hymnContent.classList.remove('hidden'); // Show hymn content
@@ -874,17 +876,17 @@
          * Handles real-time search input for hymns.
          */
         function handleSearch() {
-            const query = normalizeText(searchBar.value); // Normalize search query
+            const query = normalizeText(searchBar.value);
         
-            if (hymns.length > 0 && query.length >= 3) { // Only search if query is at least 3 characters
-                clearSearchBtn.style.display = 'flex'; // Show clear button
+            if (hymns.length > 0 && query.length >= 3) {
+                clearSearchBtn.style.display = 'flex';
                 const filteredHymns = hymns.filter(hymn =>
-                    normalizeText(hymn.title).includes(query) // Filter hymns by normalized title
+                    normalizeText(hymn.title).includes(query)
                 );
-                renderSuggestions(filteredHymns); // Render suggestions
+                renderSuggestions(filteredHymns);
             } else {
-                clearSearchBtn.style.display = 'none'; // Hide clear button
-                suggestionsContainer.classList.add('hidden'); // Hide suggestions
+                clearSearchBtn.style.display = 'none';
+                suggestionsContainer.classList.add('hidden');
             }
         }
 
@@ -893,7 +895,7 @@
          */
         function clearSearch() {
             searchBar.value = '';
-            handleSearch(); // Re-run search handler to clear suggestions
+            handleSearch();
         }
 
         /**
@@ -901,7 +903,7 @@
          * @param {Array<Object>} hymnList - The list of hymns to render.
          */
         function renderAllHymnsList(hymnList) {
-            hymnsListContainer.innerHTML = ''; // Clear previous list items
+            hymnsListContainer.innerHTML = '';
             if (hymnList.length === 0) {
                 const noResultsDiv = document.createElement('div');
                 noResultsDiv.textContent = "Eşleşen ilahi bulunamadı.";
@@ -919,13 +921,12 @@
                     
                     listItem.addEventListener('click', () => {
                         const originalIndex = hymns.findIndex(h => h.title === hymn.title);
-                        selectHymn(originalIndex); // Select hymn and close modal
+                        selectHymn(originalIndex);
                     });
 
                     const playlistButton = document.createElement('button');
                     let isInPlaylist = userPlaylist.hymns.includes(hymn.title); 
                     
-                    // Set appropriate icon and styling based on whether hymn is in playlist
                     if (isInPlaylist) {
                         playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#666666"><path d="M200-440v-80h560v80H200Z"/></svg>';
                         playlistButton.classList.add('bg-highlight-red', 'text-primary-bg', 'active:bg-red-600');
@@ -938,24 +939,22 @@
                     playlistButton.classList.add('py-2', 'px-4', 'rounded-md', 'text-sm', 'transition-colors', 'duration-300', 'flex', 'items-center', 'justify-center');
                     
                     playlistButton.onclick = (e) => {
-                        e.stopPropagation(); // Prevent listItem click
+                        e.stopPropagation();
                         const title = hymn.title;
 
-                        // Toggle hymn in playlist
                         if (userPlaylist.hymns.includes(title)) {
                             userPlaylist.hymns = userPlaylist.hymns.filter(t => t !== title);
                             playlistButton.classList.remove('bg-highlight-red', 'active:bg-red-600');
                             playlistButton.classList.add('bg-highlight-blue', 'active:bg-blue-600');
-                            playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#666666"><path d="M520-400h80v-120h120v-80H600v-120h-80v120H400v80h120v120ZM320-240q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/></svg>';
+                            playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#666666"><path d="M200-440v-80h560v80H200Z"/></svg>';
                         } else {
                             userPlaylist.hymns.push(title);
                             playlistButton.classList.remove('bg-highlight-blue', 'active:bg-blue-600');
                             playlistButton.classList.add('bg-highlight-red', 'active:bg-red-600');
-                            playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#666666"><path d="M200-440v-80h560v80H200Z"/></svg>';
+                            playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#666666"><path d="M520-400h80v-120h120v-80H600v-120h-80v120H400v80h120v120ZM320-240q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/></svg>';
                         }
-                        savePlaylist(); // Save updated playlist
+                        savePlaylist();
                         
-                        // If playlist modal is open, re-render it to reflect changes
                         if (playlistModal.classList.contains('visible')) {
                             renderPlaylist();
                         }
@@ -977,16 +976,16 @@
             if (hymns.length === 0) {
                 modalTitle.textContent = "Veriler Yükleniyor";
                 modalMessage.textContent = "İlahiler yüklenirken lütfen bekleyin...";
-                openModal('casting-modal'); // Use casting modal as a generic alert for loading
+                openModal('casting-modal');
                 return;
             }
             showLoader(); 
             openModal('all-hymns-modal');
-            modalSearchBar.value = ''; // Clear modal search bar
-            renderAllHymnsList(hymns); // Render all hymns initially
+            modalSearchBar.value = '';
+            renderAllHymnsList(hymns);
             setTimeout(() => { 
                 hideLoader(); 
-            }, 300); // Hide loader after a brief delay
+            }, 300);
         }
 
         /**
@@ -995,12 +994,12 @@
         function filterHymnsList() {
             const query = normalizeText(modalSearchBar.value);
             
-            if (hymns.length === 0) return; // Do nothing if hymns are not loaded
+            if (hymns.length === 0) return;
 
             const filteredHymns = hymns.filter(hymn =>
                 normalizeText(hymn.title).includes(query)
             );
-            renderAllHymnsList(filteredHymns); // Re-render the list with filtered results
+            renderAllHymnsList(filteredHymns);
         }
 
         /**
@@ -1013,31 +1012,32 @@
             const hymn = hymns[currentHymnIndex];
             
             if (isCastingMode) {
-                // For casting mode, animate the single line display
-                singleLineText.classList.remove('visible'); // Start fade-out/scale-down
-                // Using requestAnimationFrame for smoother updates, though setTimeout works for simple toggles
+                singleLineText.classList.remove('visible');
                 requestAnimationFrame(() => {
                     singleLineText.textContent = hymn.lyrics[currentLineIndex];
-                    singleLineText.classList.add('visible'); // Start fade-in/scale-up
+                    singleLineText.classList.add('visible');
                 });
             } else {
-                const lines = document.querySelectorAll('.lyrics-line');
-                lines.forEach((line, index) => {
-                    // Update only necessary classes based on currentLineIndex
-                    if (index === currentLineIndex) {
-                        if (!line.classList.contains('active')) {
-                            line.classList.add('active');
-                            // Ensure smooth scroll using CSS scroll-behavior
-                            line.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }
-                    } else {
-                        if (line.classList.contains('active')) {
-                            line.classList.remove('active');
-                        }
-                    }
-                });
+                const currentActiveLineElement = lyricsScrollContainer.querySelector(`[data-index="${currentLineIndex}"]`);
+
+                // If there was a previously active line, remove its 'active' class
+                if (lastActiveLineElement && lastActiveLineElement !== currentActiveLineElement) {
+                    lastActiveLineElement.classList.remove('active');
+                }
+
+                // Add 'active' class to the new current line
+                if (currentActiveLineElement && !currentActiveLineLineElement.classList.contains('active')) {
+                    currentActiveLineElement.classList.add('active');
+                    // Use requestAnimationFrame for scrollIntoView to ensure smooth rendering
+                    requestAnimationFrame(() => {
+                        currentActiveLineElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    });
+                }
+                // Update lastActiveLineElement to the current one
+                lastActiveLineElement = currentActiveLineElement;
             }
         }
+
 
         /**
          * Resets the current lyric line to the first line of the selected hymn.
@@ -1055,7 +1055,6 @@
                 currentLineIndex++;
                 updateLyrics();
             }
-            // Re-render modals if open to reflect potential playlist/filter changes
             if (playlistModal.classList.contains('visible')) {
                 renderPlaylist();
             }
@@ -1072,7 +1071,6 @@
                 currentLineIndex--;
                 updateLyrics();
             }
-            // Re-render modals if open to reflect potential playlist/filter changes
             if (playlistModal.classList.contains('visible')) {
                 renderPlaylist();
             }
@@ -1110,10 +1108,9 @@
             displayOnTvBtn.classList.remove('bg-highlight-blue');
             displayOnTvBtn.classList.add('bg-highlight-red');
             
-            singleLineDisplay.classList.remove('hidden'); // Show single line display
-            updateLyrics(); // Update lyrics for single line display
+            singleLineDisplay.classList.remove('hidden');
+            updateLyrics();
             
-            // Request full screen if not already
             if(!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
                     console.error(`Tam ekrana geçiş hatası: ${err.message} (${err.name})`);
@@ -1126,23 +1123,21 @@
          */
         function exitCastingMode() {
             isCastingMode = false;
-            singleLineText.classList.remove('visible'); // Start fade-out for single line
+            singleLineText.classList.remove('visible');
             
-            // A small timeout to allow fade-out animation before hiding elements
             setTimeout(() => {
                 document.body.classList.remove('full-screen', 'casting-mode');
                 displayOnTvBtn.textContent = 'İlahiyi Yansıt';
                 displayOnTvBtn.classList.remove('bg-highlight-red');
                 displayOnTvBtn.classList.add('bg-highlight-blue');
                 
-                // Exit full screen if currently in full screen
                 if (document.fullscreenElement) {
                     document.exitFullscreen();
                 }
                 
-                closeModal('casting-modal'); // Close any casting related modals
-                singleLineDisplay.classList.add('hidden'); // Hide single line display
-                updateLyrics(); // Revert to multi-line lyrics display
+                closeModal('casting-modal');
+                singleLineDisplay.classList.add('hidden');
+                updateLyrics();
             }, 150);
         }
 
@@ -1170,7 +1165,7 @@
                         hymnContent.classList.add('hidden');
                     }
                     if (currentHymnIndex !== -1 && !isCastingMode) {
-                         singleLineDisplay.classList.add('hidden'); // Ensure single line is hidden if not in casting mode
+                         singleLineDisplay.classList.add('hidden');
                          updateLyrics();
                     }
                 });
@@ -1192,10 +1187,8 @@
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
-                // Temporarily disable pointer events during transition to prevent accidental clicks
                 modal.style.pointerEvents = 'none';
                 modal.classList.remove('visible');
-                // Re-enable pointer events after transition completes
                 setTimeout(() => {
                     modal.style.pointerEvents = ''; 
                 }, 300);
@@ -1214,14 +1207,13 @@
             if (!document.fullscreenElement) {
                 initialFullscreenBtn.textContent = 'Ana Ekranı Tam Yap';
                 if (isCastingMode) {
-                    exitCastingMode(); // Exit casting mode if fullscreen is exited externally
+                    exitCastingMode();
                 }
                 if (currentHymnIndex === -1 && !isCastingMode) {
                     welcomeMessage.classList.remove('hidden');
                     hymnContent.classList.add('hidden');
                 }
             } else {
-                // Update initial fullscreen button text if document is in fullscreen
                 if (document.fullscreenElement === document.documentElement) {
                     initialFullscreenBtn.textContent = 'Tam Ekrandan Çık';
                 }
@@ -1230,23 +1222,22 @@
 
         // Event listener for scroll to show/hide go-to-top button
         window.addEventListener('scroll', () => {
-            // Check if scrolled to bottom
             const isScrolledToBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 5);
             if (isScrolledToBottom && document.documentElement.scrollHeight > window.innerHeight) {
                 goToTopBtn.classList.add('visible');
             } else {
                 goToTopBtn.classList.remove('visible');
             }
-        });
+        }, { passive: true }); // Make scroll listener passive for better performance
 
         // Keyboard navigation for lyrics (ArrowRight/ArrowLeft)
         document.addEventListener('keydown', (e) => {
             if (currentHymnIndex !== -1) {
                 if (e.key === "ArrowRight") {
-                    e.preventDefault(); // Prevent default scroll behavior
+                    e.preventDefault();
                     nextLine();
                 } else if (e.key === "ArrowLeft") {
-                    e.preventDefault(); // Prevent default scroll behavior
+                    e.preventDefault();
                     previousLine();
                 }
             }
@@ -1278,26 +1269,22 @@
          * Initializes the application by fetching hymn data and setting up event listeners.
          */
         async function initializeApp() {
-            showLoader(); // Show loader during initialization
+            showLoader();
 
             try {
-                // Fetch hymn data from hymns.json
                 const response = await fetch('hymns.json');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 hymns = await response.json(); 
 
-                // Update hymn count display
                 hymnCountSpan.textContent = hymns.length;
 
-                // Set up event listeners for main controls
                 searchBar.addEventListener('input', handleSearch);
                 clearSearchBtn.addEventListener('click', clearSearch);
                 showAllHymnsBtn.addEventListener('click', openAllHymnsModal);
                 modalSearchBar.addEventListener('input', filterHymnsList);
 
-                // Set up event listeners for playlist controls
                 showPlaylistBtn.addEventListener('click', openPlaylistModal);
                 generateShareLinkBtn.addEventListener('click', openShortenerService);
                 copyPlaylistLinkBtn.addEventListener('click', copyPlaylistLink);
@@ -1308,19 +1295,18 @@
                     savePlaylist();
                 });
 
-                loadPlaylist(); // Load user's playlist from local storage or URL hash
+                loadPlaylist();
 
             } catch (error) {
                 console.error("Hymns verileri yüklenirken bir hata oluştu:", error);
                 modalTitle.textContent = "Hata!";
                 modalMessage.textContent = "İlahi verileri yüklenemedi. Lütfen internet bağlantınızı kontrol edin veya daha sonra tekrar deneyin.";
-                openModal('casting-modal'); // Display error message in a modal
+                openModal('casting-modal');
             } finally {
-                hideLoader(); // Hide loader once initialization is complete (or failed)
+                hideLoader();
             }
         }
 
-        // Initialize the app when the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', initializeApp);
 
         /**
@@ -1328,7 +1314,7 @@
          */
         function savePlaylist() {
             localStorage.setItem('hymnPlaylist', JSON.stringify(userPlaylist));
-            updateUrlWithPlaylist(); // Update the URL hash
+            updateUrlWithPlaylist();
         }
 
         /**
@@ -1356,7 +1342,7 @@
                         userPlaylist.hymns.push(hymn.title);
                     }
                 });
-                savePlaylist(); // Save the loaded URL playlist to local storage
+                savePlaylist();
                 return;
             }
 
@@ -1366,13 +1352,12 @@
                 if (parsedPlaylist && parsedPlaylist.hymns) {
                     userPlaylist = parsedPlaylist;
                 } else if (Array.isArray(parsedPlaylist)) {
-                    // Handle older formats where playlist might just be an array
                     userPlaylist = { name: 'Eski Çalma Listem', hymns: parsedPlaylist };
                 }
             } else {
-                userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] }; // Initialize empty if no playlist found
+                userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] };
             }
-            updateUrlWithPlaylist(); // Ensure URL reflects current playlist
+            updateUrlWithPlaylist();
         }
 
         /**
@@ -1383,17 +1368,14 @@
             const encodedTitles = userPlaylist.hymns.map(encodeURIComponent);
             const encodedName = encodeURIComponent(userPlaylist.name);
             const currentPathname = window.location.pathname;
-            // Ensure base path ends with a slash for consistent relative URLs
             const basePath = currentPathname.endsWith('/') ? currentPathname : currentPathname + '/';
             const fullUrl = `${window.location.origin}${basePath}#playlist=${encodedName}|${encodedTitles.join(',')}`; 
             
             if (userPlaylist.hymns.length > 0) {
-                // Only update hash if it's different to avoid unnecessary history entries
                 if (window.location.hash !== `#playlist=${encodedName}|${encodedTitles.join(',')}`) {
                     window.location.hash = `playlist=${encodedName}|${encodedTitles.join(',')}`;
                 }
-                playlistShareLinkInput.value = fullUrl; // Display the full URL in the input
-                // Enable share and clear buttons
+                playlistShareLinkInput.value = fullUrl;
                 generateShareLinkBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
                 generateShareLinkBtn.classList.add('bg-highlight-blue', 'active:bg-blue-600');
                 generateShareLinkBtn.disabled = false;
@@ -1401,7 +1383,6 @@
                 clearPlaylistBtn.classList.add('bg-highlight-red', 'active:bg-red-600');
                 clearPlaylistBtn.disabled = false;
             } else {
-                // If playlist is empty, clear hash and disable buttons
                 if (window.location.hash.startsWith('#playlist=')) {
                     window.location.hash = '';
                 }
@@ -1432,23 +1413,22 @@
 
             const shortenerCreator = `https://is.gd/create.php?url=${encodeURIComponent(longUrl)}`;
             
-            window.open(shortenerCreator, '_blank'); // Open in a new tab
+            window.open(shortenerCreator, '_blank');
 
-            updateUrlWithPlaylist(); // Update URL hash after potentially generating link
+            updateUrlWithPlaylist();
         }
 
         /**
          * Clears the user's playlist.
          */
         function clearPlaylist() {
-            userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] }; // Reset playlist
-            savePlaylist(); // Save empty playlist
-            renderPlaylist(); // Re-render playlist modal
-            // Update all hymns modal if open to reflect changes in playlist status
+            userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] };
+            savePlaylist();
+            renderPlaylist();
             if (allHymnsModal.classList.contains('visible')) {
                 filterHymnsList(); 
             }
-            showNotification('Çalma listesi temizlendi!', 'bg-highlight-red'); // Show notification
+            showNotification('Çalma listesi temizlendi!', 'bg-highlight-red');
         }
 
         /**
@@ -1478,15 +1458,14 @@
          * Renders the items in the playlist modal.
          */
         function renderPlaylist() {
-            playlistItemsContainer.innerHTML = ''; // Clear existing items
-            playlistNameInput.value = userPlaylist.name; // Update playlist name input
+            playlistItemsContainer.innerHTML = '';
+            playlistNameInput.value = userPlaylist.name;
 
             if (userPlaylist.hymns.length === 0) {
                 const emptyMessage = document.createElement('div');
                 emptyMessage.textContent = "Çalma listeniz boş. 'İlahi Veri Tabanı' kısmından ilahi ekleyebilirsiniz.";
                 emptyMessage.classList.add('text-text-subtle', 'text-center', 'p-4');
                 playlistItemsContainer.appendChild(emptyMessage);
-                // Disable share and clear buttons if playlist is empty
                 playlistShareLinkInput.value = '';
                 generateShareLinkBtn.classList.remove('bg-highlight-blue', 'active:bg-blue-600');
                 generateShareLinkBtn.classList.add('bg-gray-500', 'cursor-not-allowed');
@@ -1497,7 +1476,7 @@
             } else {
                 userPlaylist.hymns.forEach(hymnTitle => {
                     const hymn = hymns.find(h => h.title === hymnTitle);
-                    if (!hymn) return; // Skip if hymn not found (e.g., deleted from data)
+                    if (!hymn) return;
 
                     const listItem = document.createElement('div');
                     listItem.classList.add('p-2', 'sm:p-3', 'rounded-md', 'cursor-pointer', 'text-base', 'sm:text-lg', 'border-b', 'border-gray-700', 'last:border-b-0', 'flex', 'justify-between', 'items-center', 'active:bg-primary-bg', 'transition-colors');
@@ -1508,40 +1487,38 @@
                     hymnLink.addEventListener('click', () => {
                         const hymnIndex = hymns.findIndex(h => h.title === hymn.title);
                         if (hymnIndex !== -1) {
-                            selectHymn(hymnIndex); // Select hymn when clicked in playlist
+                            selectHymn(hymnIndex);
                             closeModal('playlist-modal');
                         }
                     });
                     listItem.appendChild(hymnLink);
 
                     const removeBtn = document.createElement('button');
-                    removeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#666666"><path d="M200-440v-80h560v80H200Z"/></svg>'; // Minus icon
+                    removeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#666666"><path d="M200-440v-80h560v80H200Z"/></svg>';
                    
                     removeBtn.classList.add('bg-highlight-red', 'text-primary-bg', 'py-2', 'px-3', 'rounded-md', 'text-sm', 'transition-colors', 'active:bg-red-600', 'duration-300', 'flex', 'items-center', 'justify-center');
                     removeBtn.addEventListener('click', (e) => {
-                        e.stopPropagation(); // Prevent listItem click
+                        e.stopPropagation();
                         
                         const titleToRemove = hymn.title;
                         userPlaylist.hymns = userPlaylist.hymns.filter(title => title !== titleToRemove);
-                        savePlaylist(); // Save updated playlist
-                        renderPlaylist(); // Re-render playlist modal
-                        // Update all hymns modal if open
+                        savePlaylist();
+                        renderPlaylist();
                         if (allHymnsModal.classList.contains('visible')) {
                             filterHymnsList(); 
                         }
-                        showNotification('İlahi çalma listesinden çıkarıldı!', 'bg-highlight-red'); // Show notification
+                        showNotification('İlahi çalma listesinden çıkarıldı!', 'bg-highlight-red');
                     });
                     listItem.appendChild(removeBtn);
                     playlistItemsContainer.appendChild(listItem);
                 });
-                // Enable share and clear buttons as playlist is not empty
                 generateShareLinkBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
                 generateShareLinkBtn.classList.add('bg-highlight-blue', 'active:bg-blue-600');
                 generateShareLinkBtn.disabled = false; 
                 clearPlaylistBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
                 clearPlaylistBtn.classList.add('bg-highlight-red', 'active:bg-red-600');
                 clearPlaylistBtn.disabled = false;
-                updateUrlWithPlaylist(); // Update URL hash again to ensure it's correct after rendering
+                updateUrlWithPlaylist();
             }
         }
 
@@ -1552,15 +1529,14 @@
         function openPlaylistModal(e) {
             e.stopPropagation();
             openModal('playlist-modal');
-            renderPlaylist(); // Render playlist content when opening
+            renderPlaylist();
         }
 
         /**
          * Copies the playlist share link to the clipboard.
          */
         function copyPlaylistLink() {
-            playlistShareLinkInput.select(); // Select the text in the input
-            // Use document.execCommand('copy') for better compatibility in iframes
+            playlistShareLinkInput.select();
             document.execCommand('copy'); 
         }
 
@@ -1575,18 +1551,16 @@
             notification.classList.add('fixed', 'bottom-4', 'right-4', 'p-3', 'rounded-lg', 'shadow-xl', 'text-white', bgColor, 'z-50', 'transition-all', 'duration-300', 'opacity-0', 'transform', 'translate-y-4');
             document.body.appendChild(notification);
 
-            // Animate in
             setTimeout(() => {
                 notification.classList.remove('opacity-0', 'translate-y-4');
                 notification.classList.add('opacity-100', 'translate-y-0');
-            }, 10); // Small delay to ensure CSS transition applies
+            }, 10);
 
-            // Animate out and remove after a duration
             setTimeout(() => {
                 notification.classList.remove('opacity-100', 'translate-y-0');
                 notification.classList.add('opacity-0', 'translate-y-4');
-                setTimeout(() => notification.remove(), 300); // Remove after fade-out
-            }, 3000); // Display duration
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
         }
     </script>
 </body>
