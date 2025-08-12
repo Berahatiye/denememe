@@ -54,6 +54,7 @@
             padding: 0.5rem 0;
             /* Only transition properties that are active and don't cause layout shifts */
             transition: color 0.15s ease-in-out, opacity 0.15s ease-in-out, font-weight 0.15s ease-in-out;
+            will-change: color, opacity, font-weight; /* Hint browser for performance */
             cursor: pointer;
         }
 
@@ -230,6 +231,7 @@
             transform: scale(0.95);
             /* These transitions are already good for performance (GPU-accelerated) */
             transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            will-change: opacity, transform; /* Hint browser for performance */
         }
         #single-line-text.visible {
             opacity: 1;
@@ -832,15 +834,12 @@
          */
         function selectHymn(index) {
             showLoader(); // Show loader before rendering
-            // Use a short delay to ensure loader is visible before heavy rendering
-            setTimeout(() => {
-                currentHymnIndex = index;
-                renderHymn(); // Render the selected hymn
-                resetLyrics(); // Reset lyrics to the first line
-                closeModal('all-hymns-modal'); // Close modals if open
-                closeModal('playlist-modal');
-                hideLoader(); // Hide loader after rendering
-            }, 300);
+            currentHymnIndex = index;
+            renderHymn(); // Render the selected hymn
+            resetLyrics(); // Reset lyrics to the first line
+            closeModal('all-hymns-modal'); // Close modals if open
+            closeModal('playlist-modal');
+            hideLoader(); // Hide loader after rendering
         }
 
         /**
@@ -946,12 +945,12 @@
                             userPlaylist.hymns = userPlaylist.hymns.filter(t => t !== title);
                             playlistButton.classList.remove('bg-highlight-red', 'active:bg-red-600');
                             playlistButton.classList.add('bg-highlight-blue', 'active:bg-blue-600');
-                            playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#666666"><path d="M520-400h80v-120h120v-80H600v-120h-80v120H400v80h120v120ZM320-240q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/></svg>';
+                            playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#666666"><path d="M200-440v-80h560v80H200Z"/></svg>';
                         } else {
                             userPlaylist.hymns.push(title);
                             playlistButton.classList.remove('bg-highlight-blue', 'active:bg-blue-600');
                             playlistButton.classList.add('bg-highlight-red', 'active:bg-red-600');
-                            playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#666666"><path d="M200-440v-80h560v80H200Z"/></svg>';
+                            playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#666666"><path d="M520-400h80v-120h120v-80H600v-120h-80v120H400v80h120v120ZM320-240q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/></svg>';
                         }
                         savePlaylist(); // Save updated playlist
                         
@@ -1539,7 +1538,7 @@
                 generateShareLinkBtn.classList.add('bg-highlight-blue', 'active:bg-blue-600');
                 generateShareLinkBtn.disabled = false; 
                 clearPlaylistBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
-                clearPlaylistBtn.classList.add('bg-highlight-red', 'active:bg-red-600');
+                clearPlaylistBtn.classList.add('bg-gray-500', 'cursor-not-allowed');
                 clearPlaylistBtn.disabled = false;
                 updateUrlWithPlaylist(); // Update URL hash again to ensure it's correct after rendering
             }
