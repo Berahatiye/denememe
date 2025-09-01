@@ -817,12 +817,16 @@ pointer-events: auto;
 
         function selectHymn(index) {
             showLoader();
-            currentHymnIndex = index;
-            renderHymn();
-            resetLyrics();
-            closeModal('all-hymns-modal');
-            closeModal('playlist-modal');
-            hideLoader();
+            
+            // Use setTimeout to allow the loader to render before processing.
+            setTimeout(() => {
+                currentHymnIndex = index;
+                renderHymn();
+                resetLyrics();
+                closeModal('all-hymns-modal');
+                closeModal('playlist-modal');
+                hideLoader();
+            }, 50);
         }
 
         function renderHymn() {
