@@ -611,7 +611,7 @@
         
         .tuner-status {
             font-size: 0.875rem;
-            width: 5rem;
+            width: 6rem; /* Increased width to fit "Akort Tamam" */
             text-align: center;
             font-weight: 500;
         }
@@ -1566,7 +1566,7 @@
             // Update status text
             if (status) {
                 if (Math.abs(diff) < 0.5) {
-                    status.textContent = 'Tamam';
+                    status.textContent = 'Akort Tamam';
                     status.className = 'tuner-status in-tune';
                     stringElement.classList.add('in-tune');
                 } else if (diff < 0) {
