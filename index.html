@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -553,7 +554,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Improved GuitarTuna-like Styles */
+        /* GuitarTuna-like Styles */
         #tuner-mode-selector button {
             transition: all 0.2s ease-in-out;
         }
@@ -575,143 +576,8 @@
              box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0.7);
         }
 
-        /* Improved Tuner Bar Styles */
-        .tuner-meter-container {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            height: 60px;
-            margin: 1rem auto;
-        }
-
-        .tuner-meter-scale {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 6px;
-            background: linear-gradient(to right, #f87171 0%, #f87171 40%, #4ade80 45%, #4ade80 55%, #f87171 60%, #f87171 100%);
-            border-radius: 3px;
-            transform: translateY(-50%);
-        }
-
-        .tuner-meter-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 2px;
-            height: 20px;
-            background-color: #fff;
-            transform: translate(-50%, -50%);
-        }
-
-        .tuner-meter-marks {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 30px;
-            transform: translateY(-50%);
-        }
-
-        .tuner-meter-mark {
-            position: absolute;
-            top: 0;
-            width: 2px;
-            height: 10px;
-            background-color: #94a3b8;
-            transform: translateX(-50%);
-        }
-
-        .tuner-meter-mark.major {
-            height: 15px;
-        }
-
-        .tuner-meter-mark-label {
-            position: absolute;
-            top: 18px;
-            font-size: 10px;
-            color: #94a3b8;
-            transform: translateX(-50%);
-        }
-
-        .tuner-meter-needle {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 4px;
-            height: 30px;
-            background-color: #a5b4fc;
-            border-radius: 2px;
-            transform: translate(-50%, -50%);
+        #tuner-meter-line {
             transition: transform 0.1s ease-out;
-            z-index: 10;
-        }
-
-        .tuner-meter-frequency {
-            text-align: center;
-            font-size: 14px;
-            color: #94a3b8;
-            margin-top: 5px;
-        }
-
-        .tuner-note-display {
-            font-size: 3rem;
-            font-weight: bold;
-            text-align: center;
-            margin: 1rem 0;
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .tuner-status {
-            text-align: center;
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-            height: 30px;
-        }
-
-        .tuner-status.in-tune {
-            color: #4ade80;
-        }
-
-        .tuner-status.flat {
-            color: #f87171;
-        }
-
-        .tuner-status.sharp {
-            color: #f87171;
-        }
-
-        /* Responsive adjustments for tuner */
-        @media (max-width: 480px) {
-            .tuner-meter-container {
-                height: 50px;
-                max-width: 300px;
-            }
-            
-            .tuner-note-display {
-                font-size: 2.5rem;
-                height: 60px;
-            }
-            
-            .tuner-status {
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 320px) {
-            .tuner-meter-container {
-                height: 40px;
-                max-width: 250px;
-            }
-            
-            .tuner-note-display {
-                font-size: 2rem;
-                height: 50px;
-            }
         }
 
     </style>
@@ -869,7 +735,7 @@
         </div>
     </div>
 
-    <!-- Improved GuitarTuna Style Tuner Modal -->
+    <!-- GuitarTuna Style Tuner Modal -->
     <div id="guitar-tuner-modal" class="modal-overlay">
         <div class="modal-content w-full max-w-md mx-auto flex flex-col bg-gray-900">
             <div class="flex justify-between items-center p-4 border-b border-gray-700">
@@ -888,32 +754,23 @@
                     <button id="manual-mode-btn" class="px-4 py-1 font-semibold rounded-full text-sm">Manual</button>
                 </div>
                 
-                <!-- Note Display -->
-                <div class="tuner-note-display">
-                    <div id="tuner-note-name" class="text-5xl font-bold text-text-light">-</div>
+                <!-- Main Visual Display -->
+                <div class="relative flex items-center justify-center w-48 h-48 mb-4">
+                    <div id="tuner-peg" class="w-full h-full bg-gray-800 rounded-full border-4 border-gray-700 flex items-center justify-center">
+                        <div id="tuner-string-indicator" class="w-32 h-32 bg-secondary-bg rounded-full flex items-center justify-center text-center">
+                            <div>
+                                <div id="tuner-note-name" class="text-6xl font-bold text-text-light">-</div>
+                                <div id="tuner-status-text" class="text-lg text-text-subtle font-semibold h-6"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Status Text -->
-                <div id="tuner-status-text" class="tuner-status">Teli çalın...</div>
-
-                <!-- Improved Tuner Bar -->
-                <div class="tuner-meter-container">
-                    <div class="tuner-meter-scale"></div>
-                    <div class="tuner-meter-center"></div>
-                    <div class="tuner-meter-marks">
-                        <div class="tuner-meter-mark" style="left: 10%;"></div>
-                        <div class="tuner-meter-mark major" style="left: 20%;"></div>
-                        <div class="tuner-meter-mark" style="left: 30%;"></div>
-                        <div class="tuner-meter-mark major" style="left: 40%;"></div>
-                        <div class="tuner-meter-mark" style="left: 45%;"></div>
-                        <div class="tuner-meter-mark" style="left: 55%;"></div>
-                        <div class="tuner-meter-mark major" style="left: 60%;"></div>
-                        <div class="tuner-meter-mark" style="left: 70%;"></div>
-                        <div class="tuner-meter-mark major" style="left: 80%;"></div>
-                        <div class="tuner-meter-mark" style="left: 90%;"></div>
+                <!-- Fine-tune Meter -->
+                 <div class="w-full h-12 flex items-center justify-center mb-4">
+                    <div class="relative w-full max-w-xs h-1 bg-gray-700 rounded-full">
+                         <div id="tuner-meter-line" class="absolute top-1/2 -translate-y-1/2 w-1 h-8 bg-highlight-green rounded-full" style="left: 50%;"></div>
                     </div>
-                    <div class="tuner-meter-needle" id="tuner-needle"></div>
-                    <div class="tuner-meter-frequency" id="tuner-frequency">0 Hz</div>
                 </div>
 
                 <!-- Manual String Selection (hidden by default) -->
@@ -994,10 +851,6 @@
         const guitarTunerBtn = document.getElementById('guitar-tuner-btn');
         const guitarTunerModal = document.getElementById('guitar-tuner-modal');
         const startTunerBtn = document.getElementById('start-tuner-btn');
-        const tunerNoteNameEl = document.getElementById('tuner-note-name');
-        const tunerStatusTextEl = document.getElementById('tuner-status-text');
-        const tunerNeedleEl = document.getElementById('tuner-needle');
-        const tunerFrequencyEl = document.getElementById('tuner-frequency');
 
         const loaderOverlay = document.getElementById('loader-overlay');
 
@@ -1385,7 +1238,7 @@
             }
         }, 100);
 
-        document.addEventListener('fullscreenchange', () {
+        document.addEventListener('fullscreenchange', () => {
             if (!document.fullscreenElement) {
                 initialFullscreenBtn.textContent = 'Ana Ekranı Tam Yap';
                 if (isCastingMode) {
@@ -1440,7 +1293,7 @@
             e.preventDefault();
         });
 
-        // --- Improved GuitarTuna-like Tuner Functions ---
+        // --- GuitarTuna-like Tuner Functions ---
 
         function setTunerMode(mode) {
             tunerMode = mode;
@@ -1586,11 +1439,11 @@
         }
         
         function resetTunerDisplay() {
-            tunerNoteNameEl.textContent = '-';
-            tunerStatusTextEl.textContent = 'Teli çalın...';
-            tunerStatusTextEl.className = 'tuner-status';
-            tunerNeedleEl.style.transform = 'translate(-50%, -50%)';
-            tunerFrequencyEl.textContent = '0 Hz';
+            document.getElementById('tuner-note-name').textContent = '-';
+            document.getElementById('tuner-status-text').textContent = '...';
+            document.getElementById('tuner-meter-line').style.transform = 'translateX(0px)';
+            document.getElementById('tuner-string-indicator').classList.remove('in-tune');
+            document.getElementById('tuner-string-indicator').style.backgroundColor = '#1e293b';
         }
 
         function updateTunerUI(frequency) {
@@ -1609,27 +1462,37 @@
             const targetFrequency = targetString.frequency;
             const cents = 1200 * Math.log2(frequency / targetFrequency);
             
-            tunerNoteNameEl.textContent = targetString.note;
-            tunerFrequencyEl.textContent = frequency.toFixed(1) + ' Hz';
+            const noteNameEl = document.getElementById('tuner-note-name');
+            const statusTextEl = document.getElementById('tuner-status-text');
+            const pegEl = document.getElementById('tuner-peg');
+            const meterLineEl = document.getElementById('tuner-meter-line');
+            const indicatorEl = document.getElementById('tuner-string-indicator');
+            
+            noteNameEl.textContent = targetString.note;
 
-            // Update needle position (-50 to +50 cents maps to 0% to 100%)
-            const needlePosition = Math.max(-50, Math.min(50, cents));
-            const needlePercent = 50 + (needlePosition / 100) * 100;
-            tunerNeedleEl.style.transform = `translate(-50%, -50%) translateX(${needlePercent - 50}%)`;
+            const clamp = (val, min, max) => Math.max(min, Math.min(val, max));
+            const meterPosition = clamp(cents, -50, 50); // From -50 to 50
+            
+            meterLineEl.style.transform = `translateX(${meterPosition}%)`;
 
-            // Update status text and color
             if (Math.abs(cents) < 5) {
-                tunerStatusTextEl.textContent = 'Mükemmel!';
-                tunerStatusTextEl.className = 'tuner-status in-tune';
-                tunerNeedleEl.style.backgroundColor = '#4ade80';
+                statusTextEl.textContent = 'Mükemmel!';
+                statusTextEl.style.color = '#4ade80';
+                indicatorEl.classList.add('in-tune');
+                indicatorEl.style.backgroundColor = '#4ade80';
+                meterLineEl.style.backgroundColor = '#4ade80';
             } else if (cents < 0) {
-                tunerStatusTextEl.textContent = `Düşük (${Math.round(cents)}c)`;
-                tunerStatusTextEl.className = 'tuner-status flat';
-                tunerNeedleEl.style.backgroundColor = '#f87171';
+                statusTextEl.textContent = `Düşük (${Math.round(cents)}c)`;
+                statusTextEl.style.color = '#f87171';
+                indicatorEl.classList.remove('in-tune');
+                indicatorEl.style.backgroundColor = '#1e293b';
+                meterLineEl.style.backgroundColor = '#f87171';
             } else {
-                tunerStatusTextEl.textContent = `Yüksek (+${Math.round(cents)}c)`;
-                tunerStatusTextEl.className = 'tuner-status sharp';
-                tunerNeedleEl.style.backgroundColor = '#f87171';
+                statusTextEl.textContent = `Yüksek (+${Math.round(cents)}c)`;
+                statusTextEl.style.color = '#f87171';
+                indicatorEl.classList.remove('in-tune');
+                indicatorEl.style.backgroundColor = '#1e293b';
+                 meterLineEl.style.backgroundColor = '#f87171';
             }
         }
         
