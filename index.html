@@ -1440,7 +1440,6 @@
         function resetTunerDisplay() {
             document.getElementById('tuner-note-name').textContent = '-';
             document.getElementById('tuner-status-text').textContent = '...';
-            document.getElementById('tuner-peg').style.transform = 'rotate(0deg)';
             document.getElementById('tuner-meter-line').style.transform = 'translateX(0px)';
             document.getElementById('tuner-string-indicator').classList.remove('in-tune');
             document.getElementById('tuner-string-indicator').style.backgroundColor = '#1e293b';
@@ -1471,10 +1470,8 @@
             noteNameEl.textContent = targetString.note;
 
             const clamp = (val, min, max) => Math.max(min, Math.min(val, max));
-            const pegRotation = clamp(cents * 0.9, -45, 45); // Limit rotation
             const meterPosition = clamp(cents, -50, 50); // From -50 to 50
             
-            pegEl.style.transform = `rotate(${pegRotation}deg)`;
             meterLineEl.style.transform = `translateX(${meterPosition}%)`;
 
             if (Math.abs(cents) < 5) {
