@@ -77,7 +77,7 @@
             #search-bar {
                 padding: 0.6rem;
             }
-            #show-all-hymns-btn, #initial-fullscreen-btn, #display-on-tv-btn, #guitar-tuner-btn {
+            #show-all-hymns-btn, #initial-fullscreen-btn, #display-on-tv-btn {
                 padding: 0.6rem 0.8rem;
                 font-size: 0.875rem;
             }
@@ -364,6 +364,7 @@
             }
         }
 
+
         @media (min-width: 640px) {
             .modal-content {
                 padding: 2rem;
@@ -552,139 +553,105 @@
         }
 
         /* Guitar Tuner Styles */
-        .guitar-tuner-modal .modal-content {
-            max-width: 500px;
-            width: 90%;
+        .tuner-string {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            background-color: rgba(15, 23, 42, 0.5);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
         }
-
-        .tuner-container {
-            width: 100%;
-            padding: 1rem;
+        
+        .tuner-string.active {
+            background-color: rgba(165, 180, 252, 0.2);
+            box-shadow: 0 0 10px rgba(165, 180, 252, 0.5);
         }
-
-        .tuner-display {
+        
+        .tuner-string.in-tune {
+            background-color: rgba(72, 187, 120, 0.2);
+            box-shadow: 0 0 10px rgba(72, 187, 120, 0.5);
+        }
+        
+        .tuner-note {
+            font-size: 1.5rem;
+            font-weight: bold;
+            width: 3rem;
+            text-align: center;
+        }
+        
+        .tuner-frequency {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            width: 5rem;
+            text-align: center;
+        }
+        
+        .tuner-indicator {
+            flex-grow: 1;
+            height: 0.5rem;
+            background: linear-gradient(90deg, #f87171 0%, #4ade80 50%, #f87171 100%);
+            border-radius: 0.25rem;
+            margin: 0 1rem;
             position: relative;
-            height: 100px;
-            margin-bottom: 1.5rem;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 8px;
             overflow: hidden;
         }
-
+        
         .tuner-needle {
             position: absolute;
+            top: 0;
             bottom: 0;
-            left: 50%;
-            width: 4px;
-            height: 70%;
-            background: #a5b4fc;
-            transform: translateX(-50%);
-            transform-origin: bottom center;
-            transition: transform 0.2s ease;
-            z-index: 2;
-        }
-
-        .tuner-center-line {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
             width: 2px;
-            height: 100%;
-            background: #f87171;
+            background-color: white;
+            left: 50%;
             transform: translateX(-50%);
-            z-index: 1;
+            transition: left 0.2s ease;
         }
-
-        .tuner-frequency {
-            text-align: center;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: #a5b4fc;
-        }
-
-        .tuner-note {
-            font-size: 3rem;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 1rem;
-            color: #f8fafc;
-        }
-
+        
         .tuner-status {
+            font-size: 0.875rem;
+            width: 5rem;
             text-align: center;
-            font-size: 1.2rem;
-            margin-bottom: 1.5rem;
-            min-height: 1.5rem;
-            color: #94a3b8;
+            font-weight: 500;
         }
-
-        .tuner-strings {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
+        
+        .tuner-status.too-low {
+            color: #f87171;
         }
-
-        .tuner-string {
-            padding: 0.75rem;
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid #334155;
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
+        
+        .tuner-status.in-tune {
+            color: #4ade80;
         }
-
-        .tuner-string:hover {
-            background: rgba(165, 180, 252, 0.2);
+        
+        .tuner-status.too-high {
+            color: #f87171;
         }
-
-        .tuner-string.active {
-            background: rgba(165, 180, 252, 0.3);
-            border-color: #a5b4fc;
-        }
-
-        .tuner-string-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 0.25rem;
-        }
-
-        .tuner-string-frequency {
-            font-size: 0.9rem;
-            color: #94a3b8;
-        }
-
+        
         .tuner-controls {
             display: flex;
             justify-content: center;
             gap: 1rem;
+            margin-top: 1.5rem;
         }
-
-        .tuner-button {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
+        
+        .tuner-visualizer {
+            height: 4rem;
+            width: 100%;
+            margin: 1rem 0;
+            background-color: rgba(15, 23, 42, 0.5);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            position: relative;
         }
-
-        .tuner-button.play {
-            background: #10b981;
-            color: white;
-        }
-
-        .tuner-button.play:hover {
-            background: #059669;
-        }
-
-        .tuner-button.stop {
-            background: #ef4444;
-            color: white;
-        }
-
-        .tuner-button.stop:hover {
-            background: #dc2626;
+        
+        .tuner-waveform {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(to top, rgba(165, 180, 252, 0.2) 0%, transparent 100%);
         }
     </style>
 </head>
@@ -723,7 +690,7 @@
                         PLAYLIST
                     </button>
                     <button id="guitar-tuner-btn" class="w-full md:w-auto bg-purple-600 active:bg-purple-500 text-text-light font-bold py-2 px-4 rounded-lg shadow-lg transition-colors">
-                        GİTAR AKORT
+                        Gitar Akort
                     </button>
                 </div>
 
@@ -833,21 +800,18 @@
                     Paylaşım Li̇nki̇ni̇ Kısalt
                 </button>
             </div>
-            <div class="px-1 py-0.5 sm:px-2 sm:py-1 md:px-4 md:py-2 border-t border-gray-700 mt-0.5 sm:mt-1 flex flex-col sm:flex-row items-center justify-between space-y-0.5 sm:space-y-0 sm:space-x-1">
-                <button id="clear-playlist-btn" class="w-full sm:w-1/2 bg-highlight-red active:bg-red-600 text-text-light font-bold py-0.5 px-1 sm:py-1 sm:px-2 rounded-lg shadow-lg transition-colors text-xs sm:text-sm">
-                    Li̇steyi̇ Temi̇zle
-                </button>
-                <button id="save-playlist-btn" class="w-full sm:w-1/2 bg-green-600 active:bg-green-500 text-text-light font-bold py-0.5 px-1 sm:py-1 sm:px-2 rounded-lg shadow-lg transition-colors text-xs sm:text-sm">
-                    Li̇steyi̇ Kaydet
+            <div class="px-1 py-0.5 sm:px-2 sm:py-1 md:px-4 md:py-2 border-t border-gray-700 mt-0.5 sm:mt-1">
+                <button id="clear-playlist-btn" class="w-full bg-highlight-red active:bg-red-600 text-primary-bg font-bold py-0.5 px-1 sm:py-1 sm:px-2 rounded-lg shadow-lg transition-colors text-xs sm:text-sm">
+                    Çalma Li̇stesi̇ni̇ Temi̇zle
                 </button>
             </div>
         </div>
     </div>
 
     <!-- Guitar Tuner Modal -->
-    <div id="guitar-tuner-modal" class="modal-overlay guitar-tuner-modal">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
+    <div id="guitar-tuner-modal" class="modal-overlay">
+        <div class="modal-content w-full max-w-md mx-auto flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
                 <h2 class="text-xl font-bold">Gitar Akort Aleti</h2>
                 <button onclick="closeModal('guitar-tuner-modal')" class="text-text-subtle active:text-text-light transition-colors">
                     <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -856,832 +820,1060 @@
                 </button>
             </div>
             
-            <div class="tuner-container">
-                <div class="tuner-display">
-                    <div class="tuner-center-line"></div>
-                    <div class="tuner-needle" id="tuner-needle"></div>
+            <div class="p-4">
+                <div class="tuner-visualizer">
+                    <div class="tuner-waveform" id="tuner-waveform"></div>
                 </div>
                 
-                <div class="tuner-frequency" id="tuner-frequency">-- Hz</div>
-                <div class="tuner-note" id="tuner-note">--</div>
-                <div class="tuner-status" id="tuner-status">Mikrofon erişimi için izin verin</div>
-                
-                <div class="tuner-strings">
-                    <div class="tuner-string" data-note="E2" data-frequency="82.41">
-                        <div class="tuner-string-name">E</div>
-                        <div class="tuner-string-frequency">82.41 Hz</div>
-                    </div>
-                    <div class="tuner-string" data-note="A2" data-frequency="110.00">
-                        <div class="tuner-string-name">A</div>
-                        <div class="tuner-string-frequency">110.00 Hz</div>
-                    </div>
-                    <div class="tuner-string" data-note="D3" data-frequency="146.83">
-                        <div class="tuner-string-name">D</div>
-                        <div class="tuner-string-frequency">146.83 Hz</div>
-                    </div>
-                    <div class="tuner-string" data-note="G3" data-frequency="196.00">
-                        <div class="tuner-string-name">G</div>
-                        <div class="tuner-string-frequency">196.00 Hz</div>
-                    </div>
-                    <div class="tuner-string" data-note="B3" data-frequency="246.94">
-                        <div class="tuner-string-name">B</div>
-                        <div class="tuner-string-frequency">246.94 Hz</div>
-                    </div>
-                    <div class="tuner-string" data-note="E4" data-frequency="329.63">
-                        <div class="tuner-string-name">E</div>
-                        <div class="tuner-string-frequency">329.63 Hz</div>
-                    </div>
+                <div class="tuner-strings-container" id="tuner-strings">
+                    <!-- Strings will be added dynamically -->
                 </div>
                 
                 <div class="tuner-controls">
-                    <button id="tuner-start-btn" class="tuner-button play">Başlat</button>
-                    <button id="tuner-stop-btn" class="tuner-button stop" disabled>Durdur</button>
+                    <button id="start-tuner-btn" class="bg-highlight-blue text-primary-bg font-bold py-2 px-4 rounded-lg shadow-lg transition-colors">
+                        Başlat
+                    </button>
+                    <button id="stop-tuner-btn" class="bg-highlight-red text-primary-bg font-bold py-2 px-4 rounded-lg shadow-lg transition-colors" disabled>
+                        Durdur
+                    </button>
                 </div>
+                
+                <p class="text-text-subtle text-sm mt-4 text-center">
+                    Mikrofon erişimi istenecektir. Gitarınızı sakin bir ortamda akort edin.
+                </p>
             </div>
         </div>
     </div>
 
-    <div id="fullscreen-nav-container" class="fullscreen-nav-container">
-        <button id="prev-line-btn" class="fullscreen-btn left" style="width: 30%;" onclick="navigateLine('prev')">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+    <div class="fullscreen-nav-container">
+        <button onclick="previousLine()" class="fullscreen-btn left">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
         </button>
-        <button id="next-line-btn" class="fullscreen-btn right" style="width: 30%;" onclick="navigateLine('next')">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+        <button onclick="nextLine()" class="fullscreen-btn right">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
         </button>
-        <button id="exit-fullscreen-btn" class="fullscreen-btn exit-btn" onclick="exitFullscreenDisplay()">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        <button onclick="exitCastingMode()" class="fullscreen-btn exit-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
     </div>
 
     <script>
-        // Global variables
-        let hymnsData = [];
-        let currentHymnId = null;
+        let hymns = []; 
+        let currentHymnIndex = -1;
         let currentLineIndex = 0;
-        let isFullscreenMode = false;
         let isCastingMode = false;
-        let playlist = [];
-        let playlistName = "Çalma Listem";
+        let userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] }; 
+        let lyricsLineElements = [];
+
+        const searchBar = document.getElementById('search-bar');
+        const clearSearchBtn = document.getElementById('clear-search-btn');
+        const suggestionsContainer = document.getElementById('suggestions-container');
+        const hymnTitleElement = document.getElementById('hymn-title');
+        const hymnTitleContainer = document.getElementById('hymn-title-container');
+        const lyricsScrollContainer = document.getElementById('lyrics-scroll-container');
+        const lyricsProviderContainer = document.getElementById('lyrics-provider-container');
+        const singleLineDisplay = document.getElementById('single-line-display');
+        const singleLineText = document.getElementById('single-line-text');
+        const welcomeMessage = document.getElementById('welcome-message');
+        const hymnContent = document.getElementById('hymn-content');
+        const displayOnTvBtn = document.getElementById('display-on-tv-btn');
+        const initialFullscreenBtn = document.getElementById('initial-fullscreen-btn');
+        const castingModal = document.getElementById('casting-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const showAllHymnsBtn = document.getElementById('show-all-hymns-btn');
+        const allHymnsModal = document.getElementById('all-hymns-modal');
+        const modalSearchBar = document.getElementById('modal-search-bar');
+        const hymnsListContainer = document.getElementById('hymns-list');
+        const goToTopBtn = document.getElementById('go-to-top-btn');
+        const hymnCountSpan = document.getElementById('hymn-count');
+
+        const showPlaylistBtn = document.getElementById('show-playlist-btn');
+        const playlistModal = document.getElementById('playlist-modal');
+        const playlistNameInput = document.getElementById('playlist-name-input');
+        const playlistItemsContainer = document.getElementById('playlist-items-container');
+        const playlistShareLinkInput = document.getElementById('playlist-share-link');
+        const copyPlaylistLinkBtn = document.getElementById('copy-playlist-link-btn');
+        const generateShareLinkBtn = document.getElementById('generate-share-link-btn');
+        const clearPlaylistBtn = document.getElementById('clear-playlist-btn');
+
+        // Guitar tuner elements
+        const guitarTunerBtn = document.getElementById('guitar-tuner-btn');
+        const guitarTunerModal = document.getElementById('guitar-tuner-modal');
+        const startTunerBtn = document.getElementById('start-tuner-btn');
+        const stopTunerBtn = document.getElementById('stop-tuner-btn');
+        const tunerStringsContainer = document.getElementById('tuner-strings');
+        const tunerWaveform = document.getElementById('tuner-waveform');
+
+        const loaderOverlay = document.getElementById('loader-overlay');
+
+        // Guitar tuner variables
         let audioContext = null;
         let analyser = null;
         let microphone = null;
         let javascriptNode = null;
         let isTunerActive = false;
-        let selectedString = null;
+        let currentStringIndex = 0;
 
-        // DOM elements
-        const appContainer = document.getElementById('app-container');
-        const loaderOverlay = document.getElementById('loader-overlay');
-        const welcomeMessage = document.getElementById('welcome-message');
-        const hymnContent = document.getElementById('hymn-content');
-        const hymnTitle = document.getElementById('hymn-title');
-        const lyricsScrollContainer = document.getElementById('lyrics-scroll-container');
-        const singleLineDisplay = document.getElementById('single-line-display');
-        const singleLineText = document.getElementById('single-line-text');
-        const searchBar = document.getElementById('search-bar');
-        const clearSearchBtn = document.getElementById('clear-search-btn');
-        const suggestionsContainer = document.getElementById('suggestions-container');
-        const showAllHymnsBtn = document.getElementById('show-all-hymns-btn');
-        const showPlaylistBtn = document.getElementById('show-playlist-btn');
-        const guitarTunerBtn = document.getElementById('guitar-tuner-btn');
-        const initialFullscreenBtn = document.getElementById('initial-fullscreen-btn');
-        const displayOnTvBtn = document.getElementById('display-on-tv-btn');
-        const goToTopBtn = document.getElementById('go-to-top-btn');
-        const hymnCountElement = document.getElementById('hymn-count');
-        const allHymnsModal = document.getElementById('all-hymns-modal');
-        const playlistModal = document.getElementById('playlist-modal');
-        const guitarTunerModal = document.getElementById('guitar-tuner-modal');
-        const castingModal = document.getElementById('casting-modal');
-        const hymnsList = document.getElementById('hymns-list');
-        const modalSearchBar = document.getElementById('modal-search-bar');
-        const playlistItemsContainer = document.getElementById('playlist-items-container');
-        const playlistNameInput = document.getElementById('playlist-name-input');
-        const playlistShareLink = document.getElementById('playlist-share-link');
-        const copyPlaylistLinkBtn = document.getElementById('copy-playlist-link-btn');
-        const generateShareLinkBtn = document.getElementById('generate-share-link-btn');
-        const clearPlaylistBtn = document.getElementById('clear-playlist-btn');
-        const savePlaylistBtn = document.getElementById('save-playlist-btn');
-        const fullscreenNavContainer = document.getElementById('fullscreen-nav-container');
-        const prevLineBtn = document.getElementById('prev-line-btn');
-        const nextLineBtn = document.getElementById('next-line-btn');
-        const exitFullscreenBtn = document.getElementById('exit-fullscreen-btn');
-        const tunerStartBtn = document.getElementById('tuner-start-btn');
-        const tunerStopBtn = document.getElementById('tuner-stop-btn');
-        const tunerNeedle = document.getElementById('tuner-needle');
-        const tunerFrequency = document.getElementById('tuner-frequency');
-        const tunerNote = document.getElementById('tuner-note');
-        const tunerStatus = document.getElementById('tuner-status');
-        const tunerStrings = document.querySelectorAll('.tuner-string');
+        // Standard guitar tuning frequencies (E2, A2, D3, G3, B3, E4)
+        const guitarStrings = [
+            { note: 'E', frequency: 82.41, name: '6. Tel (Kalın Mi)' },
+            { note: 'A', frequency: 110.00, name: '5. Tel (La)' },
+            { note: 'D', frequency: 146.83, name: '4. Tel (Re)' },
+            { note: 'G', frequency: 196.00, name: '3. Tel (Sol)' },
+            { note: 'B', frequency: 246.94, name: '2. Tel (Si)' },
+            { note: 'E', frequency: 329.63, name: '1. Tel (İnce Mi)' }
+        ];
 
-        // Initialize the application
-        function initApp() {
-            loadHymnsData();
-            setupEventListeners();
-            loadPlaylist();
-            updatePlaylistShareLink();
+        function debounce(func, delay) {
+            let timeout;
+            return function(...args) {
+                const context = this;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
         }
 
-        // Load hymns data from JSON file
-        function loadHymnsData() {
-            fetch('https://raw.githubusercontent.com/Berahatiye/ilahi/refs/heads/main/ilahiler.json')
-                .then(response => response.json())
-                .then(data => {
-                    hymnsData = data;
-                    hymnCountElement.textContent = hymnsData.length;
-                    hideLoader();
-                })
-                .catch(error => {
-                    console.error('Error loading hymns data:', error);
-                    hideLoader();
-                });
+        function showLoader() {
+            loaderOverlay.classList.remove('hidden');
         }
 
-        // Hide loader with animation
         function hideLoader() {
-            setTimeout(() => {
-                loaderOverlay.classList.add('hidden');
-            }, 500);
+            loaderOverlay.classList.add('hidden');
         }
 
-        // Setup event listeners
-        function setupEventListeners() {
-            // Search functionality
-            searchBar.addEventListener('input', handleSearch);
-            clearSearchBtn.addEventListener('click', clearSearch);
-            
-            // Modal functionality
-            showAllHymnsBtn.addEventListener('click', () => showModal('all-hymns-modal'));
-            showPlaylistBtn.addEventListener('click', () => showModal('playlist-modal'));
-            guitarTunerBtn.addEventListener('click', () => showModal('guitar-tuner-modal'));
-            
-            // Modal search
-            modalSearchBar.addEventListener('input', filterHymnsList);
-            
-            // Playlist functionality
-            playlistNameInput.addEventListener('input', updatePlaylistName);
-            copyPlaylistLinkBtn.addEventListener('click', copyPlaylistLink);
-            generateShareLinkBtn.addEventListener('click', generateShareLink);
-            clearPlaylistBtn.addEventListener('click', clearPlaylist);
-            savePlaylistBtn.addEventListener('click', savePlaylist);
-            
-            // Scroll to top button
-            window.addEventListener('scroll', toggleScrollToTopButton);
-            
-            // Guitar tuner functionality
-            tunerStartBtn.addEventListener('click', startTuner);
-            tunerStopBtn.addEventListener('click', stopTuner);
-            
-            // String selection
-            tunerStrings.forEach(string => {
-                string.addEventListener('click', () => selectString(string));
-            });
+        function normalizeText(text) {
+            let normalized = text.toLowerCase();
+            normalized = normalized.replace(/ç/g, 'c');
+            normalized = normalized.replace(/ğ/g, 'g');
+            normalized = normalized.replace(/ı/g, 'i');
+            normalized = normalized.replace(/ö/g, 'o');
+            normalized = normalized.replace(/ş/g, 's');
+            normalized = normalized.replace(/ü/g, 'u');
+            normalized = normalized.replace(/i̇/g, 'i');
+            normalized = normalized.replace(/[^a-z0-9]/g, '');
+            return normalized.trim();
         }
 
-        // Handle search input
-        function handleSearch() {
-            const query = searchBar.value.trim().toLowerCase();
-            
-            if (query.length === 0) {
-                clearSearchBtn.style.display = 'none';
-                suggestionsContainer.classList.add('hidden');
-                return;
-            }
-            
-            clearSearchBtn.style.display = 'flex';
-            
-            // Filter hymns based on search query
-            const filteredHymns = hymnsData.filter(hymn => 
-                hymn.title.toLowerCase().includes(query) || 
-                hymn.lyrics.toLowerCase().includes(query)
-            ).slice(0, 5); // Limit to 5 suggestions
-            
-            displaySuggestions(filteredHymns);
-        }
-
-        // Display search suggestions
-        function displaySuggestions(hymns) {
+        function renderSuggestions(hymnList) {
             suggestionsContainer.innerHTML = '';
-            
-            if (hymns.length === 0) {
+            if (hymnList.length > 0) {
+                hymnList.forEach(hymn => {
+                    const originalIndex = hymns.findIndex(h => h.title === hymn.title);
+                    const suggestionDiv = document.createElement('div');
+                    suggestionDiv.textContent = hymn.title;
+                    suggestionDiv.classList.add('p-2', 'rounded-md', 'cursor-pointer', 'active:bg-primary-bg', 'transition-colors');
+                    suggestionDiv.addEventListener('click', () => {
+                        selectHymn(originalIndex);
+                        suggestionsContainer.classList.add('hidden');
+                        searchBar.value = '';
+                        clearSearchBtn.style.display = 'none';
+                    });
+                    suggestionsContainer.appendChild(suggestionDiv);
+                });
+                suggestionsContainer.classList.remove('hidden');
+            } else {
                 suggestionsContainer.classList.add('hidden');
-                return;
             }
-            
-            hymns.forEach(hymn => {
-                const suggestionItem = document.createElement('div');
-                suggestionItem.className = 'p-2 hover:bg-primary-bg cursor-pointer transition-colors';
-                suggestionItem.textContent = hymn.title;
-                suggestionItem.addEventListener('click', () => {
-                    loadHymn(hymn.id);
-                    searchBar.value = '';
-                    suggestionsContainer.classList.add('hidden');
-                    clearSearchBtn.style.display = 'none';
-                });
-                
-                suggestionsContainer.appendChild(suggestionItem);
-            });
-            
-            suggestionsContainer.classList.remove('hidden');
         }
 
-        // Clear search
-        function clearSearch() {
-            searchBar.value = '';
-            clearSearchBtn.style.display = 'none';
-            suggestionsContainer.classList.add('hidden');
-        }
-
-        // Load a specific hymn
-        function loadHymn(hymnId) {
-            const hymn = hymnsData.find(h => h.id === hymnId);
-            if (!hymn) return;
+        function selectHymn(index) {
+            showLoader();
             
-            currentHymnId = hymnId;
-            currentLineIndex = 0;
-            
-            // Update UI
-            welcomeMessage.classList.add('hidden');
-            hymnContent.classList.remove('hidden');
-            hymnTitle.textContent = hymn.title;
-            
-            // Display lyrics
-            displayLyrics(hymn.lyrics);
-            
-            // Scroll to top
-            scrollToTop();
-        }
-
-        // Display lyrics
-        function displayLyrics(lyrics) {
-            lyricsScrollContainer.innerHTML = '';
-            
-            const lines = lyrics.split('\n').filter(line => line.trim() !== '');
-            
-            lines.forEach((line, index) => {
-                const lineElement = document.createElement('div');
-                lineElement.className = 'lyrics-line';
-                lineElement.textContent = line;
-                lineElement.dataset.index = index;
-                
-                if (index === 0) {
-                    lineElement.classList.add('active');
-                }
-                
-                lineElement.addEventListener('click', () => {
-                    setActiveLine(index);
-                });
-                
-                lyricsScrollContainer.appendChild(lineElement);
-            });
-        }
-
-        // Set active line
-        function setActiveLine(index) {
-            const lines = document.querySelectorAll('.lyrics-line');
-            
-            lines.forEach(line => {
-                line.classList.remove('active');
-            });
-            
-            lines[index].classList.add('active');
-            currentLineIndex = index;
-            
-            // Update single line display if in casting mode
-            if (isCastingMode) {
-                updateSingleLineDisplay();
-            }
-            
-            // Scroll to active line
-            lines[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        // Update single line display
-        function updateSingleLineDisplay() {
-            const lines = document.querySelectorAll('.lyrics-line');
-            if (lines.length === 0) return;
-            
-            const activeLine = lines[currentLineIndex];
-            singleLineText.textContent = activeLine.textContent;
-            
-            // Add animation
-            singleLineText.classList.remove('visible');
+            // Use setTimeout to allow the loader to render before processing.
             setTimeout(() => {
-                singleLineText.classList.add('visible');
+                currentHymnIndex = index;
+                renderHymn();
+                resetLyrics();
+                closeModal('all-hymns-modal');
+                closeModal('playlist-modal');
+                hideLoader();
             }, 50);
         }
 
-        // Show modal
-        function showModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.classList.add('visible');
-            
-            if (modalId === 'all-hymns-modal') {
-                populateHymnsList();
-            } else if (modalId === 'playlist-modal') {
-                populatePlaylistItems();
-            }
-        }
+        function renderHymn() {
+            if (currentHymnIndex === -1) return;
+            const hymn = hymns[currentHymnIndex];
+            hymnTitleElement.textContent = hymn.title;
+            lyricsScrollContainer.innerHTML = '';
+            lyricsLineElements = [];
 
-        // Close modal
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.classList.remove('visible');
-            
-            if (modalId === 'guitar-tuner-modal') {
-                stopTuner();
-            }
-        }
+            welcomeMessage.classList.add('hidden');
+            hymnContent.classList.remove('hidden');
 
-        // Populate hymns list
-        function populateHymnsList() {
-            hymnsList.innerHTML = '';
-            
-            hymnsData.forEach(hymn => {
-                const hymnItem = document.createElement('div');
-                hymnItem.className = 'p-2 hover:bg-primary-bg rounded-md cursor-pointer transition-colors flex items-center justify-between';
-                
-                const hymnTitle = document.createElement('div');
-                hymnTitle.textContent = hymn.title;
-                
-                const addButton = document.createElement('button');
-                addButton.className = 'text-highlight-blue hover:text-blue-300 transition-colors';
-                addButton.innerHTML = `
-                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                    </svg>
-                `;
-                
-                addButton.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    addToPlaylist(hymn.id);
+            hymn.lyrics.forEach((line, index) => {
+                const p = document.createElement('p');
+                p.textContent = line;
+                p.classList.add('lyrics-line');
+                p.dataset.index = index;
+                p.addEventListener('click', () => {
+                    currentLineIndex = index;
+                    updateLyrics();
                 });
-                
-                hymnItem.appendChild(hymnTitle);
-                hymnItem.appendChild(addButton);
-                
-                hymnItem.addEventListener('click', () => {
-                    loadHymn(hymn.id);
-                    closeModal('all-hymns-modal');
-                });
-                
-                hymnsList.appendChild(hymnItem);
+                lyricsScrollContainer.appendChild(p);
+                lyricsLineElements.push(p);
             });
+
+            lyricsProviderContainer.style.display = 'block';
         }
 
-        // Filter hymns list
+        function handleSearch() {
+            const query = normalizeText(searchBar.value);
+        
+            if (hymns.length > 0 && query.length >= 3) {
+                clearSearchBtn.style.display = 'flex';
+                const filteredHymns = hymns.filter(hymn =>
+                    normalizeText(hymn.title).includes(query)
+                );
+                renderSuggestions(filteredHymns);
+            } else {
+                clearSearchBtn.style.display = 'none';
+                suggestionsContainer.classList.add('hidden');
+            }
+        }
+
+        function clearSearch() {
+            searchBar.value = '';
+            handleSearch();
+        }
+
+        function renderAllHymnsList(hymnList) {
+            hymnsListContainer.innerHTML = '';
+            if (hymnList.length === 0) {
+                const noResultsDiv = document.createElement('div');
+                noResultsDiv.textContent = "Eşleşen ilahi bulunamadı.";
+                noResultsDiv.classList.add('text-text-subtle', 'text-center', 'p-4');
+                hymnsListContainer.appendChild(noResultsDiv);
+            } else {
+                hymnList.forEach((hymn) => {
+                    const listItem = document.createElement('div');
+                    listItem.classList.add('p-4', 'rounded-md', 'cursor-pointer', 'text-xl', 'border-b', 'border-gray-700', 'last:border-b-0', 'flex', 'justify-between', 'items-center', 'active:bg-primary-bg', 'transition-colors');
+                    
+                    const hymnTitleSpan = document.createElement('span');
+                    hymnTitleSpan.textContent = hymn.title;
+                    hymnTitleSpan.classList.add('flex-grow', 'mr-4');
+                    listItem.appendChild(hymnTitleSpan);
+                    
+                    listItem.addEventListener('click', () => {
+                        const originalIndex = hymns.findIndex(h => h.title === hymn.title);
+                        selectHymn(originalIndex);
+                    });
+
+                    const playlistButton = document.createElement('button');
+                    let isInPlaylist = userPlaylist.hymns.includes(hymn.title); 
+                    
+                    // Set initial icon and styling based on whether hymn is in playlist
+                    if (isInPlaylist) {
+                        playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>'; // Check icon
+                        playlistButton.classList.add('bg-green-600', 'text-primary-bg', 'active:bg-green-500');
+                    } else {
+                        playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>'; // Plus icon
+                        playlistButton.classList.add('bg-highlight-blue', 'text-primary-bg', 'active:bg-blue-600');
+                    }
+
+                    
+                    playlistButton.classList.add('py-2', 'px-4', 'rounded-md', 'text-sm', 'transition-colors', 'duration-300', 'flex', 'items-center', 'justify-center');
+                    
+                    playlistButton.onclick = (e) => {
+                        e.stopPropagation();
+                        const title = hymn.title;
+
+                        if (userPlaylist.hymns.includes(title)) {
+                            userPlaylist.hymns = userPlaylist.hymns.filter(t => t !== title);
+                            playlistButton.classList.remove('bg-green-600', 'active:bg-green-500');
+                            playlistButton.classList.add('bg-highlight-blue', 'active:bg-blue-600');
+                            playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>'; // Change to Plus icon
+                        } else {
+                            userPlaylist.hymns.push(title);
+                            playlistButton.classList.remove('bg-highlight-blue', 'active:bg-blue-600');
+                            playlistButton.classList.add('bg-green-600', 'active:bg-green-500');
+                            playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>'; // Change to Check icon
+                        }
+                        savePlaylist();
+                        
+                        if (playlistModal.classList.contains('visible')) {
+                            renderPlaylist();
+                        }
+                    };
+                    listItem.appendChild(playlistButton);
+                    hymnsListContainer.appendChild(listItem);
+                });
+            }
+        }
+
+        function openAllHymnsModal(e) {
+            e.stopPropagation();
+            
+            if (hymns.length === 0) {
+                modalTitle.textContent = "Veriler Yükleniyor";
+                modalMessage.textContent = "İlahiler yüklenirken lütfen bekleyin...";
+                openModal('casting-modal');
+                return;
+            }
+            showLoader(); 
+            openModal('all-hymns-modal');
+            modalSearchBar.value = '';
+            
+            // Defer the rendering to ensure the loader is displayed first for large datasets.
+            setTimeout(() => {
+                renderAllHymnsList(hymns);
+                hideLoader();
+            }, 50);
+        }
+
         function filterHymnsList() {
-            const query = modalSearchBar.value.trim().toLowerCase();
-            const hymnItems = hymnsList.querySelectorAll('div');
+            const query = normalizeText(modalSearchBar.value);
             
-            hymnItems.forEach(item => {
-                const title = item.querySelector('div').textContent.toLowerCase();
-                if (title.includes(query)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+            if (hymns.length === 0) return;
+
+            const filteredHymns = hymns.filter(hymn =>
+                normalizeText(hymn.title).includes(query)
+            );
+            renderAllHymnsList(filteredHymns);
         }
 
-        // Add to playlist
-        function addToPlaylist(hymnId) {
-            if (!playlist.includes(hymnId)) {
-                playlist.push(hymnId);
-                savePlaylist();
-                
-                if (playlistModal.classList.contains('visible')) {
-                    populatePlaylistItems();
-                }
-            }
-        }
+        let previouslyActiveLine = null;
 
-        // Remove from playlist
-        function removeFromPlaylist(hymnId) {
-            playlist = playlist.filter(id => id !== hymnId);
-            savePlaylist();
-            populatePlaylistItems();
-        }
-
-        // Populate playlist items
-        function populatePlaylistItems() {
-            playlistItemsContainer.innerHTML = '';
-            
-            if (playlist.length === 0) {
-                playlistItemsContainer.innerHTML = '<p class="text-text-subtle text-center p-4">Çalma listeniz boş</p>';
-                return;
-            }
-            
-            playlist.forEach(hymnId => {
-                const hymn = hymnsData.find(h => h.id === hymnId);
-                if (!hymn) return;
-                
-                const playlistItem = document.createElement('div');
-                playlistItem.className = 'p-2 hover:bg-primary-bg rounded-md transition-colors flex items-center justify-between';
-                
-                const hymnTitle = document.createElement('div');
-                hymnTitle.textContent = hymn.title;
-                hymnTitle.className = 'flex-grow mr-2';
-                
-                const removeButton = document.createElement('button');
-                removeButton.className = 'text-highlight-red hover:text-red-300 transition-colors';
-                removeButton.innerHTML = `
-                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                    </svg>
-                `;
-                
-                removeButton.addEventListener('click', () => {
-                    removeFromPlaylist(hymnId);
-                });
-                
-                playlistItem.appendChild(hymnTitle);
-                playlistItem.appendChild(removeButton);
-                
-                playlistItem.addEventListener('click', () => {
-                    loadHymn(hymnId);
-                    closeModal('playlist-modal');
-                });
-                
-                playlistItemsContainer.appendChild(playlistItem);
-            });
-        }
-
-        // Update playlist name
-        function updatePlaylistName() {
-            playlistName = playlistNameInput.value.trim() || "Çalma Listem";
-            updatePlaylistShareLink();
-        }
-
-        // Update playlist share link
-        function updatePlaylistShareLink() {
-            if (playlist.length === 0) {
-                playlistShareLink.value = "Önce çalma listenize ilahi ekleyin";
-                return;
-            }
-            
-            const baseUrl = window.location.origin + window.location.pathname;
-            const playlistString = playlist.join(',');
-            const encodedPlaylist = btoa(playlistString);
-            playlistShareLink.value = `${baseUrl}?playlist=${encodedPlaylist}&name=${encodeURIComponent(playlistName)}`;
-        }
-
-        // Copy playlist link
-        function copyPlaylistLink() {
-            playlistShareLink.select();
-            document.execCommand('copy');
-            
-            // Show confirmation
-            const originalText = generateShareLinkBtn.textContent;
-            generateShareLinkBtn.textContent = "Kopyalandı!";
-            
-            setTimeout(() => {
-                generateShareLinkBtn.textContent = originalText;
-            }, 2000);
-        }
-
-        // Generate share link
-        function generateShareLink() {
-            updatePlaylistShareLink();
-            
-            // Show confirmation
-            const originalText = generateShareLinkBtn.textContent;
-            generateShareLinkBtn.textContent = "Oluşturuldu!";
-            
-            setTimeout(() => {
-                generateShareLinkBtn.textContent = originalText;
-            }, 2000);
-        }
-
-        // Clear playlist
-        function clearPlaylist() {
-            playlist = [];
-            savePlaylist();
-            populatePlaylistItems();
-            updatePlaylistShareLink();
-        }
-
-        // Save playlist to localStorage
-        function savePlaylist() {
-            localStorage.setItem('playlist', JSON.stringify(playlist));
-            localStorage.setItem('playlistName', playlistName);
-            updatePlaylistShareLink();
-        }
-
-        // Load playlist from localStorage
-        function loadPlaylist() {
-            const savedPlaylist = localStorage.getItem('playlist');
-            const savedPlaylistName = localStorage.getItem('playlistName');
-            
-            if (savedPlaylist) {
-                playlist = JSON.parse(savedPlaylist);
-            }
-            
-            if (savedPlaylistName) {
-                playlistName = savedPlaylistName;
-                playlistNameInput.value = playlistName;
-            }
-        }
-
-        // Toggle scroll to top button
-        function toggleScrollToTopButton() {
-            if (window.scrollY > 300) {
-                goToTopBtn.classList.add('visible');
-            } else {
-                goToTopBtn.classList.remove('visible');
-            }
-        }
-
-        // Scroll to top
-        function scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Toggle initial page fullscreen
-        function toggleInitialPageFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.error('Error attempting to enable fullscreen:', err);
-                });
-            } else {
-                document.exitFullscreen();
-            }
-        }
-
-        // Toggle fullscreen display
-        function toggleFullscreenDisplay() {
-            if (currentHymnId === null) {
-                showModal('casting-modal');
-                document.getElementById('modal-title').textContent = "İlahi Seçilmemiş";
-                document.getElementById('modal-message').textContent = "Lütfen önce bir ilahi seçin.";
-                return;
-            }
-            
-            isCastingMode = !isCastingMode;
+        function updateLyrics() {
+            if (currentHymnIndex === -1 || lyricsLineElements.length === 0) return;
+            const hymn = hymns[currentHymnIndex];
             
             if (isCastingMode) {
+                singleLineText.classList.remove('visible');
+                requestAnimationFrame(() => {
+                    singleLineText.textContent = hymn.lyrics[currentLineIndex];
+                    singleLineText.classList.add('visible');
+                });
+            } else {
+                if (previouslyActiveLine && previouslyActiveLine !== lyricsLineElements[currentLineIndex]) {
+                    previouslyActiveLine.classList.remove('active');
+                }
+
+                const currentLineElement = lyricsLineElements[currentLineIndex];
+                if (currentLineElement) {
+                    if (!currentLineElement.classList.contains('active')) {
+                        currentLineElement.classList.add('active');
+                        currentLineElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    previouslyActiveLine = currentLineElement;
+                }
+            }
+        }
+
+        function resetLyrics() {
+            currentLineIndex = 0;
+            if (previouslyActiveLine) {
+                previouslyActiveLine.classList.remove('active');
+                previouslyActiveLine = null;
+            }
+            updateLyrics();
+        }
+
+        function nextLine() {
+            if (currentHymnIndex !== -1 && currentLineIndex < hymns[currentHymnIndex].lyrics.length - 1) {
+                currentLineIndex++;
+                updateLyrics();
+            }
+            if (playlistModal.classList.contains('visible')) {
+                renderPlaylist();
+            }
+            if (allHymnsModal.classList.contains('visible')) {
+                filterHymnsList();
+            }
+        }
+
+        function previousLine() {
+            if (currentHymnIndex !== -1 && currentLineIndex > 0) {
+                currentLineIndex--;
+                updateLyrics();
+            }
+            if (playlistModal.classList.contains('visible')) {
+                renderPlaylist();
+            }
+            if (allHymnsModal.classList.contains('visible')) {
+                filterHymnsList();
+            }
+        }
+        
+        function toggleFullscreenDisplay() {
+            if (currentHymnIndex === -1) {
+                modalTitle.textContent = "Uyarı";
+                modalMessage.textContent = "İlahiyi yansıtmak için lütfen önce bir ilahi seçin.";
+                openModal('casting-modal');
+                return;
+            }
+
+            if (!isCastingMode) {
                 enterCastingMode();
             } else {
                 exitCastingMode();
             }
         }
 
-        // Enter casting mode
         function enterCastingMode() {
-            isFullscreenMode = true;
+            isCastingMode = true;
             document.body.classList.add('full-screen', 'casting-mode');
+            displayOnTvBtn.textContent = 'Ekranı Kapat';
+            displayOnTvBtn.classList.remove('bg-highlight-blue');
+            displayOnTvBtn.classList.add('bg-highlight-red');
+            
             singleLineDisplay.classList.remove('hidden');
-            updateSingleLineDisplay();
+            updateLyrics();
             
-            // Hide control panel after a delay
-            setTimeout(() => {
-                document.getElementById('control-panel').style.opacity = '0';
-            }, 500);
+            if(!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Tam ekrana geçiş hatası: ${err.message} (${err.name})`);
+                });
+            }
         }
 
-        // Exit casting mode
         function exitCastingMode() {
-            isFullscreenMode = false;
             isCastingMode = false;
-            document.body.classList.remove('full-screen', 'casting-mode');
-            singleLineDisplay.classList.add('hidden');
-            document.getElementById('control-panel').style.opacity = '1';
+            singleLineText.classList.remove('visible');
+            
+            setTimeout(() => {
+                document.body.classList.remove('full-screen', 'casting-mode');
+                displayOnTvBtn.textContent = 'İlahiyi Yansıt';
+                displayOnTvBtn.classList.remove('bg-highlight-red');
+                displayOnTvBtn.classList.add('bg-highlight-blue');
+                
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                }
+                
+                closeModal('casting-modal');
+                singleLineDisplay.classList.add('hidden');
+                updateLyrics();
+            }, 150);
         }
 
-        // Exit fullscreen display
-        function exitFullscreenDisplay() {
-            exitCastingMode();
-            
-            if (document.fullscreenElement) {
-                document.exitFullscreen();
+        function toggleInitialPageFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().then(() => {
+                    initialFullscreenBtn.textContent = 'Tam Ekrandan Çık';
+                    if (currentHymnIndex !== -1) {
+                        welcomeMessage.classList.add('hidden');
+                        hymnContent.classList.remove('hidden');
+                        lyricsProviderContainer.style.display = 'block';
+                        updateLyrics();
+                    }
+                }).catch(err => {
+                    console.error(`Tam ekrana geçiş hatası: ${err.message} (${err.name})`);
+                });
+            } else {
+                document.exitFullscreen().then(() => {
+                    initialFullscreenBtn.textContent = 'Ana Ekranı Tam Yap';
+                    if (currentHymnIndex === -1) {
+                        welcomeMessage.classList.remove('hidden');
+                        hymnContent.classList.add('hidden');
+                    }
+                    if (currentHymnIndex !== -1 && !isCastingMode) {
+                         singleLineDisplay.classList.add('hidden');
+                         updateLyrics();
+                    }
+                });
             }
+        }
+        
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('visible');
         }
 
-        // Navigate to previous or next line
-        function navigateLine(direction) {
-            const lines = document.querySelectorAll('.lyrics-line');
-            if (lines.length === 0) return;
-            
-            if (direction === 'prev' && currentLineIndex > 0) {
-                setActiveLine(currentLineIndex - 1);
-            } else if (direction === 'next' && currentLineIndex < lines.length - 1) {
-                setActiveLine(currentLineIndex + 1);
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.pointerEvents = 'none';
+                modal.classList.remove('visible');
+                modal.style.pointerEvents = '';
             }
         }
+        
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        const debouncedScrollHandler = debounce(() => {
+            const isScrolledToBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 5);
+            if (isScrolledToBottom && document.documentElement.scrollHeight > window.innerHeight) {
+                goToTopBtn.classList.add('visible');
+            } else {
+                goToTopBtn.classList.remove('visible');
+            }
+        }, 100);
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                initialFullscreenBtn.textContent = 'Ana Ekranı Tam Yap';
+                if (isCastingMode) {
+                    exitCastingMode();
+                }
+                if (currentHymnIndex === -1 && !isCastingMode) {
+                    welcomeMessage.classList.remove('hidden');
+                    hymnContent.classList.add('hidden');
+                }
+            } else {
+                if (document.fullscreenElement === document.documentElement) {
+                    initialFullscreenBtn.textContent = 'Tam Ekrandan Çık';
+                }
+            }
+        });
+
+        window.addEventListener('scroll', debouncedScrollHandler);
+
+        document.addEventListener('keydown', (e) => {
+            if (currentHymnIndex !== -1) {
+                if (e.key === "ArrowRight") {
+                    e.preventDefault();
+                    nextLine();
+                } else if (e.key === "ArrowLeft") {
+                    e.preventDefault();
+                    previousLine();
+                }
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            const isClickInsideSearchBar = searchBar.contains(e.target) || suggestionsContainer.contains(e.target) || clearSearchBtn.contains(e.target);
+            const isClickInsideAllHymnsModal = allHymnsModal.contains(e.target);
+            const isClickInsidePlaylistModal = playlistModal.contains(e.target);
+            const isClickInsideGuitarTunerModal = guitarTunerModal.contains(e.target);
+
+            if (!isClickInsideSearchBar) {
+                suggestionsContainer.classList.add('hidden');
+            }
+            if (!isClickInsideAllHymnsModal && !showAllHymnsBtn.contains(e.target)) {
+                 closeModal('all-hymns-modal');
+            }
+            if (!isClickInsidePlaylistModal && !showPlaylistBtn.contains(e.target)) {
+                closeModal('playlist-modal');
+            }
+            if (!isClickInsideGuitarTunerModal && !guitarTunerBtn.contains(e.target)) {
+                closeModal('guitar-tuner-modal');
+            }
+        });
+
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
 
         // Guitar tuner functions
+        function initGuitarTuner() {
+            // Create UI for guitar strings
+            tunerStringsContainer.innerHTML = '';
+            guitarStrings.forEach((string, index) => {
+                const stringElement = document.createElement('div');
+                stringElement.className = 'tuner-string';
+                stringElement.id = `tuner-string-${index}`;
+                stringElement.innerHTML = `
+                    <div class="tuner-note">${string.note}</div>
+                    <div class="tuner-frequency">${string.frequency.toFixed(2)} Hz</div>
+                    <div class="tuner-indicator">
+                        <div class="tuner-needle" style="left: 50%"></div>
+                    </div>
+                    <div class="tuner-status">--</div>
+                    <div class="tuner-name">${string.name}</div>
+                `;
+                tunerStringsContainer.appendChild(stringElement);
+            });
+        }
+
+        function openGuitarTunerModal(e) {
+            e.stopPropagation();
+            openModal('guitar-tuner-modal');
+            initGuitarTuner();
+        }
+
         function startTuner() {
             if (isTunerActive) return;
             
-            // Initialize audio context
-            try {
+            // Request microphone access
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showNotification('Mikrofon erişimi desteklenmiyor.', 'bg-highlight-red');
+                return;
+            }
+            
+            navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+            .then(function(stream) {
+                isTunerActive = true;
+                startTunerBtn.disabled = true;
+                stopTunerBtn.disabled = false;
+                
+                // Initialize audio context
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioContext.createAnalyser();
-                javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+                microphone = audioContext.createMediaStreamSource(stream);
                 
-                analyser.smoothingTimeConstant = 0.8;
-                analyser.fftSize = 1024;
+                // Set up analyser
+                analyser.fftSize = 2048;
+                microphone.connect(analyser);
                 
-                // Connect nodes
-                javascriptNode.connect(audioContext.destination);
-                analyser.connect(javascriptNode);
+                // Start processing audio
+                processAudio();
                 
-                javascriptNode.onaudioprocess = processAudio;
-                
-                // Request microphone access
-                navigator.mediaDevices.getUserMedia({ audio: true })
-                    .then(stream => {
-                        microphone = audioContext.createMediaStreamSource(stream);
-                        microphone.connect(analyser);
-                        
-                        isTunerActive = true;
-                        tunerStartBtn.disabled = true;
-                        tunerStopBtn.disabled = false;
-                        tunerStatus.textContent = "Dinleniyor...";
-                    })
-                    .catch(err => {
-                        console.error('Error accessing microphone:', err);
-                        tunerStatus.textContent = "Mikrofon erişimi reddedildi";
-                    });
-            } catch (e) {
-                console.error('Error initializing audio:', e);
-                tunerStatus.textContent = "Tarayıcınız bu özelliği desteklemiyor";
-            }
+                showNotification('Mikrofon bağlandı. Gitarınızı çalmaya başlayın.', 'bg-highlight-blue');
+            })
+            .catch(function(err) {
+                console.error('Mikrofon erişimi reddedildi:', err);
+                showNotification('Mikrofon erişimi reddedildi. Lütfen mikrofon erişimine izin verin.', 'bg-highlight-red');
+            });
         }
 
         function stopTuner() {
             if (!isTunerActive) return;
             
-            // Disconnect and close audio context
-            if (javascriptNode) {
-                javascriptNode.onaudioprocess = null;
-                javascriptNode.disconnect();
-            }
+            isTunerActive = false;
+            startTunerBtn.disabled = false;
+            stopTunerBtn.disabled = true;
             
-            if (analyser) {
-                analyser.disconnect();
-            }
-            
-            if (microphone) {
-                microphone.disconnect();
-            }
-            
+            // Close audio context
             if (audioContext) {
                 audioContext.close();
                 audioContext = null;
             }
             
-            isTunerActive = false;
-            tunerStartBtn.disabled = false;
-            tunerStopBtn.disabled = true;
-            tunerStatus.textContent = "Durduruldu";
-            tunerFrequency.textContent = "-- Hz";
-            tunerNote.textContent = "--";
-            tunerNeedle.style.transform = 'translateX(-50%) rotate(0deg)';
+            // Reset all strings
+            guitarStrings.forEach((_, index) => {
+                const stringElement = document.getElementById(`tuner-string-${index}`);
+                if (stringElement) {
+                    stringElement.classList.remove('active', 'in-tune');
+                    const needle = stringElement.querySelector('.tuner-needle');
+                    const status = stringElement.querySelector('.tuner-status');
+                    if (needle) needle.style.left = '50%';
+                    if (status) {
+                        status.textContent = '--';
+                        status.className = 'tuner-status';
+                    }
+                }
+            });
+            
+            // Clear waveform
+            tunerWaveform.innerHTML = '';
+            
+            showNotification('Akort aleti durduruldu.', 'bg-highlight-red');
         }
 
-        function processAudio(event) {
-            const data = new Float32Array(analyser.fftSize);
-            analyser.getFloatTimeDomainData(data);
+        function processAudio() {
+            if (!isTunerActive) return;
             
-            // Auto-correlation for pitch detection
-            let maxValue = -1;
-            let maxIndex = -1;
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            analyser.getByteTimeDomainData(dataArray);
             
-            for (let lag = 0; lag < data.length; lag++) {
-                let value = 0;
-                
-                for (let i = 0; i < data.length - lag; i++) {
-                    value += Math.abs(data[i] * data[i + lag]);
+            // Simple pitch detection using autocorrelation
+            const sampleRate = audioContext.sampleRate;
+            const correlations = new Array(bufferLength).fill(0);
+            
+            for (let lag = 0; lag < bufferLength; lag++) {
+                for (let i = 0; i < bufferLength - lag; i++) {
+                    correlations[lag] += (dataArray[i] - 128) * (dataArray[i + lag] - 128);
                 }
-                
-                if (value > maxValue) {
-                    maxValue = value;
-                    maxIndex = lag;
+            }
+            
+            // Find the peak in correlations (excluding very short lags)
+            let maxCorrelation = -1;
+            let foundPeriod = 0;
+            
+            for (let lag = 50; lag < bufferLength / 2; lag++) {
+                if (correlations[lag] > maxCorrelation) {
+                    maxCorrelation = correlations[lag];
+                    foundPeriod = lag;
                 }
             }
             
             // Calculate frequency
-            let frequency = audioContext.sampleRate / maxIndex;
+            let frequency = 0;
+            if (foundPeriod > 0) {
+                frequency = sampleRate / foundPeriod;
+            }
             
-            // Update UI on main thread
-            requestAnimationFrame(() => {
-                updateTunerDisplay(frequency);
+            // Update UI with detected frequency
+            updateTunerUI(frequency);
+            
+            // Draw waveform
+            drawWaveform(dataArray, bufferLength);
+            
+            // Continue processing
+            requestAnimationFrame(processAudio);
+        }
+
+        function updateTunerUI(frequency) {
+            if (frequency < 70 || frequency > 350) {
+                // Frequency outside guitar range, ignore
+                return;
+            }
+            
+            // Find the closest guitar string
+            let closestStringIndex = 0;
+            let minDifference = Math.abs(frequency - guitarStrings[0].frequency);
+            
+            for (let i = 1; i < guitarStrings.length; i++) {
+                const difference = Math.abs(frequency - guitarStrings[i].frequency);
+                if (difference < minDifference) {
+                    minDifference = difference;
+                    closestStringIndex = i;
+                }
+            }
+            
+            // Update all strings
+            guitarStrings.forEach((string, index) => {
+                const stringElement = document.getElementById(`tuner-string-${index}`);
+                if (stringElement) {
+                    if (index === closestStringIndex) {
+                        stringElement.classList.add('active');
+                    } else {
+                        stringElement.classList.remove('active', 'in-tune');
+                        const needle = stringElement.querySelector('.tuner-needle');
+                        const status = stringElement.querySelector('.tuner-status');
+                        if (needle) needle.style.left = '50%';
+                        if (status) {
+                            status.textContent = '--';
+                            status.className = 'tuner-status';
+                        }
+                    }
+                }
             });
-        }
-
-        function updateTunerDisplay(frequency) {
-            if (!isTunerActive || frequency > 2000 || frequency < 50) return;
             
-            tunerFrequency.textContent = frequency.toFixed(2) + " Hz";
+            // Update the active string
+            const activeString = guitarStrings[closestStringIndex];
+            const stringElement = document.getElementById(`tuner-string-${closestStringIndex}`);
+            if (!stringElement) return;
             
-            // Find closest note
-            const note = frequencyToNote(frequency);
-            tunerNote.textContent = note.name;
+            const needle = stringElement.querySelector('.tuner-needle');
+            const status = stringElement.querySelector('.tuner-status');
+            const freqDisplay = stringElement.querySelector('.tuner-frequency');
             
-            // Calculate cents deviation from target frequency
-            let cents = 0;
-            if (selectedString) {
-                const targetFrequency = parseFloat(selectedString.dataset.frequency);
-                cents = 1200 * Math.log2(frequency / targetFrequency);
+            if (freqDisplay) {
+                freqDisplay.textContent = frequency.toFixed(2) + ' Hz';
             }
             
-            // Update needle position (-50 cents to +50 cents maps to -45deg to +45deg)
-            const rotation = Math.max(-45, Math.min(45, cents * 0.9));
-            tunerNeedle.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+            // Calculate how far from the target frequency
+            const diff = frequency - activeString.frequency;
+            const diffPercent = diff / (activeString.frequency * 0.05); // 5% tolerance
             
-            // Update status
-            if (Math.abs(cents) < 5) {
-                tunerStatus.textContent = "Mükemmel!";
-                tunerStatus.style.color = "#10b981";
-            } else if (Math.abs(cents) < 20) {
-                tunerStatus.textContent = "Yakın";
-                tunerStatus.style.color = "#a5b4fc";
-            } else {
-                tunerStatus.textContent = cents > 0 ? "Çok yüksek" : "Çok düşük";
-                tunerStatus.style.color = "#f87171";
+            // Update needle position
+            if (needle) {
+                let needlePosition = 50 + (diffPercent * 50);
+                needlePosition = Math.max(0, Math.min(100, needlePosition));
+                needle.style.left = needlePosition + '%';
             }
-        }
-
-        function frequencyToNote(frequency) {
-            const A4 = 440;
-            const noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
             
-            const noteNum = 12 * (Math.log2(frequency / A4)) + 49;
-            const noteIndex = Math.round(noteNum) % 12;
-            const octave = Math.floor(noteNum / 12);
-            
-            return {
-                name: noteNames[noteIndex] + octave,
-                value: noteNum
-            };
-        }
-
-        function selectString(stringElement) {
-            // Remove active class from all strings
-            tunerStrings.forEach(s => s.classList.remove('active'));
-            
-            // Add active class to selected string
-            stringElement.classList.add('active');
-            selectedString = stringElement;
-            
-            // Update status
-            tunerStatus.textContent = `${stringElement.dataset.note} telini akort edin`;
-            tunerStatus.style.color = "#94a3b8";
-        }
-
-        // Initialize the app when DOM is loaded
-        document.addEventListener('DOMContentLoaded', initApp);
-
-        // Handle fullscreen change events
-        document.addEventListener('fullscreenchange', () => {
-            isFullscreenMode = !!document.fullscreenElement;
-        });
-
-        // Handle key events for navigation
-        document.addEventListener('keydown', (e) => {
-            if (isCastingMode) {
-                if (e.key === 'ArrowLeft') {
-                    navigateLine('prev');
-                } else if (e.key === 'ArrowRight') {
-                    navigateLine('next');
-                } else if (e.key === 'Escape') {
-                    exitFullscreenDisplay();
+            // Update status text
+            if (status) {
+                if (Math.abs(diff) < 0.5) {
+                    status.textContent = 'Tamam';
+                    status.className = 'tuner-status in-tune';
+                    stringElement.classList.add('in-tune');
+                } else if (diff < 0) {
+                    status.textContent = 'Düşük';
+                    status.className = 'tuner-status too-low';
+                    stringElement.classList.remove('in-tune');
+                } else {
+                    status.textContent = 'Yüksek';
+                    status.className = 'tuner-status too-high';
+                    stringElement.classList.remove('in-tune');
                 }
             }
-        });
+        }
 
-        // Handle playlist from URL parameters
-        window.addEventListener('load', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const playlistParam = urlParams.get('playlist');
-            const nameParam = urlParams.get('name');
+        function drawWaveform(dataArray, bufferLength) {
+            tunerWaveform.innerHTML = '';
+            const canvas = document.createElement('canvas');
+            canvas.width = tunerWaveform.offsetWidth;
+            canvas.height = tunerWaveform.offsetHeight;
+            tunerWaveform.appendChild(canvas);
             
-            if (playlistParam) {
-                try {
-                    const decodedPlaylist = atob(playlistParam);
-                    playlist = decodedPlaylist.split(',').map(id => parseInt(id));
-                    
-                    if (nameParam) {
-                        playlistName = decodeURIComponent(nameParam);
-                        playlistNameInput.value = playlistName;
-                    }
-                    
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2);
+            
+            const sliceWidth = canvas.width / bufferLength;
+            let x = 0;
+            
+            for (let i = 0; i < bufferLength; i++) {
+                const v = dataArray[i] / 128.0;
+                const y = v * canvas.height / 2;
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+                
+                x += sliceWidth;
+            }
+            
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.strokeStyle = '#a5b4fc';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        async function initializeApp() {
+            showLoader();
+
+            try {
+                const response = await fetch('hymns.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                hymns = await response.json(); 
+
+                hymnCountSpan.textContent = hymns.length;
+
+                searchBar.addEventListener('input', handleSearch);
+                clearSearchBtn.addEventListener('click', clearSearch);
+                showAllHymnsBtn.addEventListener('click', openAllHymnsModal);
+                modalSearchBar.addEventListener('input', filterHymnsList);
+
+                showPlaylistBtn.addEventListener('click', openPlaylistModal);
+                generateShareLinkBtn.addEventListener('click', openShortenerService);
+                copyPlaylistLinkBtn.addEventListener('click', copyPlaylistLink);
+                clearPlaylistBtn.addEventListener('click', clearPlaylist);
+
+                // Guitar tuner event listeners
+                guitarTunerBtn.addEventListener('click', openGuitarTunerModal);
+                startTunerBtn.addEventListener('click', startTuner);
+                stopTunerBtn.addEventListener('click', stopTuner);
+
+                playlistNameInput.addEventListener('input', (e) => {
+                    userPlaylist.name = e.target.value;
                     savePlaylist();
-                    
-                    if (playlist.length > 0) {
-                        loadHymn(playlist[0]);
-                    }
-                } catch (e) {
-                    console.error('Error parsing playlist from URL:', e);
-                }
+                });
+
+                loadPlaylist();
+
+            } catch (error) {
+                console.error("Hymns verileri yüklenirken bir hata oluştu:", error);
+                modalTitle.textContent = "Hata!";
+                modalMessage.textContent = "İlahi verileri yüklenemedi. Lütfen internet bağlantınızı kontrol edin veya daha sonra tekrar deneyin.";
+                openModal('casting-modal');
+            } finally {
+                hideLoader();
             }
-        });
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        function savePlaylist() {
+            localStorage.setItem('hymnPlaylist', JSON.stringify(userPlaylist));
+            updateUrlWithPlaylist();
+        }
+
+        function loadPlaylist() {
+            const hash = window.location.hash.substring(1);
+            if (hash.startsWith('playlist=')) {
+                const playlistData = hash.substring('playlist='.length).split('|');
+                let playlistNameFromUrl = 'Yeni Çalma Listem';
+                let playlistTitles = [];
+
+                if (playlistData.length > 1) {
+                    playlistNameFromUrl = decodeURIComponent(playlistData[0]);
+                    playlistTitles = playlistData[1].split(',').map(decodeURIComponent);
+                } else {
+                    playlistTitles = playlistData[0].split(',').map(decodeURIComponent);
+                }
+
+                userPlaylist.name = playlistNameFromUrl;
+                userPlaylist.hymns = [];
+                playlistTitles.forEach(title => {
+                    const hymn = hymns.find(h => h.title === title);
+                    if (hymn && !userPlaylist.hymns.includes(hymn.title)) {
+                        userPlaylist.hymns.push(hymn.title);
+                    }
+                });
+                savePlaylist();
+                return;
+            }
+
+            const storedPlaylist = localStorage.getItem('hymnPlaylist');
+            if (storedPlaylist) {
+                const parsedPlaylist = JSON.parse(storedPlaylist);
+                if (parsedPlaylist && parsedPlaylist.hymns) {
+                    userPlaylist = parsedPlaylist;
+                } else if (Array.isArray(parsedPlaylist)) {
+                    userPlaylist = { name: 'Eski Çalma Listem', hymns: parsedPlaylist };
+                }
+            } else {
+                userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] };
+            }
+            updateUrlWithPlaylist();
+        }
+
+        function updateUrlWithPlaylist() {
+            const encodedTitles = userPlaylist.hymns.map(encodeURIComponent);
+            const encodedName = encodeURIComponent(userPlaylist.name);
+            const currentPathname = window.location.pathname;
+            const basePath = currentPathname.endsWith('/') ? currentPathname : currentPathname + '/';
+            const fullUrl = `${window.location.origin}${basePath}#playlist=${encodedName}|${encodedTitles.join(',')}`; 
+            
+            if (userPlaylist.hymns.length > 0) {
+                if (window.location.hash !== `#playlist=${encodedName}|${encodedTitles.join(',')}`) {
+                    window.location.hash = `playlist=${encodedName}|${encodedTitles.join(',')}`;
+                }
+                playlistShareLinkInput.value = fullUrl;
+                generateShareLinkBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
+                generateShareLinkBtn.classList.add('bg-highlight-blue', 'active:bg-blue-600');
+                generateShareLinkBtn.disabled = false;
+                clearPlaylistBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
+                clearPlaylistBtn.classList.add('bg-highlight-red', 'active:bg-red-600');
+                clearPlaylistBtn.disabled = false;
+            } else {
+                if (window.location.hash.startsWith('#playlist=')) {
+                    window.location.hash = '';
+                }
+                playlistShareLinkInput.value = '';
+                generateShareLinkBtn.classList.remove('bg-highlight-blue', 'active:bg-blue-600');
+                generateShareLinkBtn.classList.add('bg-gray-500', 'cursor-not-allowed');
+                generateShareLinkBtn.disabled = true;
+                clearPlaylistBtn.classList.remove('bg-highlight-red', 'active:bg-red-600');
+                clearPlaylistBtn.classList.add('bg-gray-500', 'cursor-not-allowed');
+                clearPlaylistBtn.disabled = true;
+            }
+        }
+
+        function openShortenerService() { 
+            if (userPlaylist.hymns.length === 0) {
+                showNotification('Çalma listeniz boş, link kısaltılamaz.', 'bg-highlight-red');
+                return;
+            }
+
+            const encodedTitles = userPlaylist.hymns.map(encodeURIComponent);
+            const encodedName = encodeURIComponent(userPlaylist.name);
+            const currentPathname = window.location.pathname;
+            const basePath = currentPathname.endsWith('/') ? currentPathname : currentPathname + '/';
+            const longUrl = `${window.location.origin}${basePath}#playlist=${encodedName}|${encodedTitles.join(',')}`;
+
+            const shortenerCreator = `https://is.gd/create.php?url=${encodeURIComponent(longUrl)}`;
+            
+            window.open(shortenerCreator, '_blank');
+
+            updateUrlWithPlaylist();
+        }
+
+        function clearPlaylist() {
+            userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] };
+            savePlaylist();
+            renderPlaylist();
+            if (allHymnsModal.classList.contains('visible')) {
+                filterHymnsList(); 
+            }
+            showNotification('Çalma listesi temizlendi!', 'bg-highlight-red');
+        }
+
+        function addToPlaylist(hymnTitle) {
+            if (!userPlaylist.hymns.includes(hymnTitle)) {
+                userPlaylist.hymns.push(hymnTitle);
+                savePlaylist();
+            }
+        }
+
+        function removeFromPlaylist(hymnTitle) {
+            userPlaylist.hymns = userPlaylist.hymns.filter(title => title !== hymnTitle);
+            savePlaylist();
+            renderPlaylist();
+        }
+
+        function renderPlaylist() {
+            playlistItemsContainer.innerHTML = '';
+            playlistNameInput.value = userPlaylist.name;
+
+            if (userPlaylist.hymns.length === 0) {
+                const emptyMessage = document.createElement('div');
+                emptyMessage.textContent = "Çalma listeniz boş. 'İlahi Veri Tabanı' kısmından ilahi ekleyebilirsiniz.";
+                emptyMessage.classList.add('text-text-subtle', 'text-center', 'p-4');
+                playlistItemsContainer.appendChild(emptyMessage);
+                playlistShareLinkInput.value = '';
+                generateShareLinkBtn.classList.remove('bg-highlight-blue', 'active:bg-blue-600');
+                generateShareLinkBtn.classList.add('bg-gray-500', 'cursor-not-allowed');
+                generateShareLinkBtn.disabled = true; 
+                clearPlaylistBtn.classList.remove('bg-highlight-red', 'active:bg-red-600');
+                clearPlaylistBtn.classList.add('bg-gray-500', 'cursor-not-allowed');
+                clearPlaylistBtn.disabled = true;
+            } else {
+                userPlaylist.hymns.forEach(hymnTitle => {
+                    const hymn = hymns.find(h => h.title === hymnTitle);
+                    if (!hymn) return;
+
+                    const listItem = document.createElement('div');
+                    listItem.classList.add('p-2', 'sm:p-3', 'rounded-md', 'cursor-pointer', 'text-base', 'sm:text-lg', 'border-b', 'border-gray-700', 'last:border-b-0', 'flex', 'justify-between', 'items-center', 'active:bg-primary-bg', 'transition-colors');
+                    
+                    const hymnLink = document.createElement('span');
+                    hymnLink.textContent = hymn.title;
+                    hymnLink.classList.add('flex-grow', 'mr-1.5', 'sm:mr-3', 'truncate');
+                    hymnLink.addEventListener('click', () => {
+                        const hymnIndex = hymns.findIndex(h => h.title === hymn.title);
+                        if (hymnIndex !== -1) {
+                            selectHymn(hymnIndex);
+                            closeModal('playlist-modal');
+                        }
+                    });
+                    listItem.appendChild(hymnLink);
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" /></svg>'; // Minus icon
+                   
+                    removeBtn.classList.add('bg-highlight-red', 'text-primary-bg', 'py-2', 'px-3', 'rounded-md', 'text-sm', 'transition-colors', 'active:bg-red-600', 'duration-300', 'flex', 'items-center', 'justify-center');
+                    removeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        
+                        const titleToRemove = hymn.title;
+                        userPlaylist.hymns = userPlaylist.hymns.filter(title => title !== titleToRemove);
+                        savePlaylist();
+                        renderPlaylist();
+                        if (allHymnsModal.classList.contains('visible')) {
+                            filterHymnsList(); 
+                        }
+                        showNotification('İlahi çalma listesinden çıkarıldı!', 'bg-highlight-red');
+                    });
+                    listItem.appendChild(removeBtn);
+                    playlistItemsContainer.appendChild(listItem);
+                });
+                generateShareLinkBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
+                generateShareLinkBtn.classList.add('bg-highlight-blue', 'active:bg-blue-600');
+                generateShareLinkBtn.disabled = false; 
+                clearPlaylistBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
+                clearPlaylistBtn.classList.add('bg-gray-500', 'cursor-not-allowed');
+                clearPlaylistBtn.disabled = false;
+                updateUrlWithPlaylist();
+            }
+        }
+
+        function openPlaylistModal(e) {
+            e.stopPropagation();
+            openModal('playlist-modal');
+            renderPlaylist();
+        }
+
+        function copyPlaylistLink() {
+            playlistShareLinkInput.select();
+            document.execCommand('copy'); 
+        }
+
+        function showNotification(message, bgColor) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.classList.add('fixed', 'bottom-4', 'right-4', 'p-3', 'rounded-lg', 'shadow-xl', 'text-white', bgColor, 'z-50', 'transition-all', 'duration-300', 'opacity-0', 'transform', 'translate-y-4');
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.remove('opacity-0', 'translate-y-4');
+                notification.classList.add('opacity-100', 'translate-y-0');
+            }, 10);
+
+            setTimeout(() => {
+                notification.classList.remove('opacity-100', 'translate-y-0');
+                notification.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
     </script>
 </body>
 </html>
