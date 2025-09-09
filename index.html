@@ -576,7 +576,7 @@
         }
 
         #tuner-meter-line {
-            transition: transform 0.1s ease-out;
+            transition: transform 0.1s linear;
         }
 
     </style>
@@ -766,9 +766,14 @@
                 </div>
 
                 <!-- Fine-tune Meter -->
-                 <div class="w-full h-12 flex items-center justify-center mb-4">
+                <div class="w-full h-12 flex items-center justify-center mb-4">
                     <div class="relative w-full max-w-xs h-1 bg-gray-700 rounded-full">
-                         <div id="tuner-meter-line" class="absolute top-1/2 -translate-y-1/2 w-1 h-8 bg-highlight-green rounded-full" style="left: 50%;"></div>
+                        <!-- In-tune zone marker lines -->
+                        <div class="absolute top-1/2 -translate-y-1/2 w-px h-6 bg-green-500 opacity-50" style="left: calc(50% - 6px);"></div>
+                        <div class="absolute top-1/2 -translate-y-1/2 w-px h-6 bg-green-500 opacity-50" style="left: calc(50% + 6px);"></div>
+                        
+                        <!-- Moving indicator line -->
+                        <div id="tuner-meter-line" class="absolute top-1/2 -translate-y-1/2 w-1 h-8 bg-highlight-blue rounded-full" style="left: 50%;"></div>
                     </div>
                 </div>
 
@@ -1447,9 +1452,11 @@
         }
         
         function resetTunerDisplay() {
+            const meterLineEl = document.getElementById('tuner-meter-line');
             document.getElementById('tuner-note-name').textContent = '-';
             document.getElementById('tuner-status-text').textContent = '...';
-            document.getElementById('tuner-meter-line').style.transform = 'translateX(0px)';
+            meterLineEl.style.transform = 'translateX(0px)';
+            meterLineEl.style.backgroundColor = '#a5b4fc'; // highlight-blue
             document.getElementById('tuner-peg').style.transform = 'rotate(0deg)';
             document.getElementById('tuner-string-indicator').classList.remove('in-tune');
             document.getElementById('tuner-string-indicator').style.backgroundColor = '#1e293b';
