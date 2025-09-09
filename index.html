@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -858,10 +857,10 @@
         let audioContext = null;
         let analyser = null;
         let microphone = null;
-        let javascriptNode = null;
         let isTunerActive = false;
         let tunerMode = 'auto'; // 'auto' or 'manual'
         let currentStringIndex = 0; // For manual mode
+        let pitchDetectionFrame;
 
         const guitarStrings = [
             { note: 'E', frequency: 82.41, name: '6. Tel (Kalın Mi)' },
@@ -1364,7 +1363,7 @@
                 analyser = audioContext.createAnalyser();
                 microphone = audioContext.createMediaStreamSource(stream);
                 
-                analyser.fftSize = 4096; // Increased for better low-freq resolution
+                analyser.fftSize = 4096;
                 microphone.connect(analyser);
                 
                 processAudio();
@@ -1378,7 +1377,8 @@
 
         function stopTuner() {
             if (!isTunerActive) return;
-            
+
+            cancelAnimationFrame(pitchDetectionFrame);
             isTunerActive = false;
             startTunerBtn.textContent = "Başlat";
             startTunerBtn.classList.remove('bg-highlight-red');
@@ -1402,19 +1402,26 @@
         function processAudio() {
             if (!isTunerActive || !analyser) return;
             
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
-            analyser.getByteTimeDomainData(dataArray);
+            const buffer = new Float32Array(analyser.fftSize);
+            analyser.getFloatTimeDomainData(buffer);
+
+            // Calculate signal power (RMS) to ignore silence
+            const rms = Math.sqrt(buffer.reduce((sum, val) => sum + val * val, 0) / buffer.length);
             
-            const sampleRate = audioContext.sampleRate;
+            if (rms < 0.01) { // If it's too quiet, don't detect pitch
+                updateTunerUI(0); // Pass 0 to indicate silence
+                pitchDetectionFrame = requestAnimationFrame(processAudio);
+                return;
+            }
+
+            // Autocorrelation logic for pitch detection
             let bestCorrelation = 0;
             let bestLag = -1;
-            
-            // Autocorrelation
-            for (let lag = 40; lag < bufferLength; lag++) {
+            // Limit search range for guitar frequencies
+            for (let lag = Math.floor(audioContext.sampleRate / 350); lag < Math.floor(audioContext.sampleRate / 70); lag++) {
                 let correlation = 0;
-                for (let i = 0; i < bufferLength - lag; i++) {
-                    correlation += (dataArray[i] - 128) * (dataArray[i+lag] - 128);
+                for (let i = 0; i < buffer.length - lag; i++) {
+                    correlation += buffer[i] * buffer[i+lag];
                 }
                 if (correlation > bestCorrelation) {
                     bestCorrelation = correlation;
@@ -1424,13 +1431,14 @@
             
             let frequency = 0;
             if (bestLag !== -1) {
-                frequency = sampleRate / bestLag;
+                frequency = audioContext.sampleRate / bestLag;
             }
             
             updateTunerUI(frequency);
             
-            requestAnimationFrame(processAudio);
+            pitchDetectionFrame = requestAnimationFrame(processAudio);
         }
+
 
         function findClosestString(frequency) {
             return guitarStrings.reduce((prev, curr) => {
@@ -1442,13 +1450,14 @@
             document.getElementById('tuner-note-name').textContent = '-';
             document.getElementById('tuner-status-text').textContent = '...';
             document.getElementById('tuner-meter-line').style.transform = 'translateX(0px)';
+            document.getElementById('tuner-peg').style.transform = 'rotate(0deg)';
             document.getElementById('tuner-string-indicator').classList.remove('in-tune');
             document.getElementById('tuner-string-indicator').style.backgroundColor = '#1e293b';
         }
 
         function updateTunerUI(frequency) {
-            if (!isTunerActive || frequency < 50 || frequency > 1000) {
-                 if(tunerMode === 'auto') resetTunerDisplay();
+            if (!isTunerActive || frequency === 0) {
+                 if (tunerMode === 'auto') resetTunerDisplay();
                  return;
             }
 
@@ -1470,10 +1479,12 @@
             
             noteNameEl.textContent = targetString.note;
 
-            const clamp = (val, min, max) => Math.max(min, Math.min(val, max));
-            const meterPosition = clamp(cents, -50, 50); // From -50 to 50
+            // Clamp values for smooth UI transition
+            const meterPosition = Math.max(-50, Math.min(50, cents)); // Clamp between -50 and 50
+            const pegRotation = Math.max(-45, Math.min(45, cents * 0.8)); // Clamp rotation
             
             meterLineEl.style.transform = `translateX(${meterPosition}%)`;
+            pegEl.style.transform = `rotate(${pegRotation}deg)`;
 
             if (Math.abs(cents) < 5) {
                 statusTextEl.textContent = 'Mükemmel!';
@@ -1481,18 +1492,12 @@
                 indicatorEl.classList.add('in-tune');
                 indicatorEl.style.backgroundColor = '#4ade80';
                 meterLineEl.style.backgroundColor = '#4ade80';
-            } else if (cents < 0) {
-                statusTextEl.textContent = `Düşük (${Math.round(cents)}c)`;
+            } else {
+                statusTextEl.textContent = cents < 0 ? 'Düşük' : 'Yüksek';
                 statusTextEl.style.color = '#f87171';
                 indicatorEl.classList.remove('in-tune');
                 indicatorEl.style.backgroundColor = '#1e293b';
                 meterLineEl.style.backgroundColor = '#f87171';
-            } else {
-                statusTextEl.textContent = `Yüksek (+${Math.round(cents)}c)`;
-                statusTextEl.style.color = '#f87171';
-                indicatorEl.classList.remove('in-tune');
-                indicatorEl.style.backgroundColor = '#1e293b';
-                 meterLineEl.style.backgroundColor = '#f87171';
             }
         }
         
@@ -1502,7 +1507,7 @@
             showLoader();
 
             try {
-                const response = await fetch('hymns.json');
+                const response = await fetch('https://raw.githubusercontent.com/Berahatiye/ilahi/main/hymns.json');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
