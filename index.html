@@ -19,7 +19,8 @@
                         'text-subtle': '#94a3b8',
                         'highlight-blue': '#a5b4fc',
                         'highlight-red': '#f87171',
-                        'highlight-green': '#4ade80'
+                        'highlight-green': '#4ade80',
+                        'highlight-yellow': '#facc15',
                     }
                 }
             }
@@ -562,22 +563,33 @@
             color: #0f172a;
         }
 
-        #tuner-peg {
-            transition: transform 0.2s ease-out;
-        }
-
         #tuner-string-indicator {
             transition: all 0.2s ease-in-out;
-            box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0);
-        }
-
-        #tuner-string-indicator.in-tune {
-             box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0.7);
         }
 
         #tuner-meter-line {
-            transition: transform 0.1s linear;
+            transition: transform 0.1s linear, background-color 0.2s ease-in-out;
         }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 25px 10px rgba(74, 222, 128, 1);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0.7);
+            }
+        }
+
+        .pulse-animation {
+            animation: pulse 1.5s infinite;
+        }
+
 
     </style>
 </head>
@@ -755,7 +767,7 @@
                 
                 <!-- Main Visual Display -->
                 <div class="relative flex items-center justify-center w-48 h-48 mb-4">
-                    <div id="tuner-peg" class="w-full h-full bg-gray-800 rounded-full border-4 border-gray-700 flex items-center justify-center">
+                    <div class="w-full h-full bg-gray-800 rounded-full border-4 border-gray-700 flex items-center justify-center">
                         <div id="tuner-string-indicator" class="w-32 h-32 bg-secondary-bg rounded-full flex items-center justify-center text-center">
                             <div>
                                 <div id="tuner-note-name" class="text-6xl font-bold text-text-light">-</div>
@@ -766,11 +778,12 @@
                 </div>
 
                 <!-- Fine-tune Meter -->
-                <div class="w-full h-12 flex items-center justify-center mb-4">
+                 <div class="w-full h-12 flex flex-col items-center justify-center mb-4">
+                    <div id="cents-display" class="text-sm text-text-subtle mb-2 h-4"></div>
                     <div class="relative w-full max-w-xs h-1 bg-gray-700 rounded-full">
                         <!-- In-tune zone marker lines -->
-                        <div class="absolute top-1/2 -translate-y-1/2 w-px h-6 bg-green-500 opacity-50" style="left: calc(50% - 6px);"></div>
-                        <div class="absolute top-1/2 -translate-y-1/2 w-px h-6 bg-green-500 opacity-50" style="left: calc(50% + 6px);"></div>
+                        <div class="absolute top-1/2 -translate-y-1/2 w-px h-6 bg-green-500 opacity-50" style="left: calc(50% - 10px);"></div>
+                        <div class="absolute top-1/2 -translate-y-1/2 w-px h-6 bg-green-500 opacity-50" style="left: calc(50% + 10px);"></div>
                         
                         <!-- Moving indicator line -->
                         <div id="tuner-meter-line" class="absolute top-1/2 -translate-y-1/2 w-1 h-8 bg-highlight-blue rounded-full" style="left: 50%;"></div>
@@ -868,7 +881,10 @@
         let tunerMode = 'auto'; // 'auto' or 'manual'
         let currentStringIndex = 0; // For manual mode
         let pitchDetectionFrame;
-        let wasInTune = false; // To play sound only once when in tune
+        let wasInTune = false;
+        let centsHistory = [];
+        const historySize = 5;
+
 
         const guitarStrings = [
             { note: 'E', frequency: 82.41, name: '6. Tel (Kalın Mi)' },
@@ -1414,19 +1430,16 @@
             const buffer = new Float32Array(analyser.fftSize);
             analyser.getFloatTimeDomainData(buffer);
 
-            // Calculate signal power (RMS) to ignore silence
             const rms = Math.sqrt(buffer.reduce((sum, val) => sum + val * val, 0) / buffer.length);
             
-            if (rms < 0.01) { // If it's too quiet, don't detect pitch
-                updateTunerUI(0); // Pass 0 to indicate silence
+            if (rms < 0.01) {
+                updateTunerUI(0);
                 pitchDetectionFrame = requestAnimationFrame(processAudio);
                 return;
             }
 
-            // Autocorrelation logic for pitch detection
             let bestCorrelation = 0;
             let bestLag = -1;
-            // Limit search range for guitar frequencies
             for (let lag = Math.floor(audioContext.sampleRate / 350); lag < Math.floor(audioContext.sampleRate / 70); lag++) {
                 let correlation = 0;
                 for (let i = 0; i < buffer.length - lag; i++) {
@@ -1457,18 +1470,23 @@
         
         function resetTunerDisplay() {
             const meterLineEl = document.getElementById('tuner-meter-line');
+            const indicatorEl = document.getElementById('tuner-string-indicator');
+            const centsDisplayEl = document.getElementById('cents-display');
+
             document.getElementById('tuner-note-name').textContent = '-';
             document.getElementById('tuner-status-text').textContent = '...';
+            centsDisplayEl.textContent = '';
             meterLineEl.style.transform = 'translateX(0px)';
             meterLineEl.style.backgroundColor = '#a5b4fc'; // highlight-blue
-            document.getElementById('tuner-peg').style.transform = 'rotate(0deg)';
-            document.getElementById('tuner-string-indicator').classList.remove('in-tune');
-            document.getElementById('tuner-string-indicator').style.backgroundColor = '#1e293b';
+            indicatorEl.style.backgroundColor = '#1e293b';
+            indicatorEl.classList.remove('pulse-animation');
             wasInTune = false;
+            centsHistory = [];
         }
 
         function updateTunerUI(frequency) {
-            if (!isTunerActive || frequency === 0) {
+            if (!isTunerActive) return;
+            if (frequency === 0) {
                  if (tunerMode === 'auto') resetTunerDisplay();
                  wasInTune = false;
                  return;
@@ -1481,37 +1499,48 @@
                 targetString = guitarStrings[currentStringIndex];
             }
             
-            const targetFrequency = targetString.frequency;
-            const cents = 1200 * Math.log2(frequency / targetFrequency);
+            const cents = 1200 * Math.log2(frequency / targetString.frequency);
             
+            // --- Smoothing Logic ---
+            centsHistory.push(cents);
+            if (centsHistory.length > historySize) {
+                centsHistory.shift(); 
+            }
+            const averageCents = centsHistory.reduce((a, b) => a + b, 0) / centsHistory.length;
+
             const noteNameEl = document.getElementById('tuner-note-name');
             const statusTextEl = document.getElementById('tuner-status-text');
             const meterLineEl = document.getElementById('tuner-meter-line');
             const indicatorEl = document.getElementById('tuner-string-indicator');
+            const centsDisplayEl = document.getElementById('cents-display');
             
             noteNameEl.textContent = targetString.note;
+            centsDisplayEl.textContent = `${averageCents.toFixed(1)} cents`;
 
-            const meterPosition = Math.max(-50, Math.min(50, cents));
-            
+            const meterPosition = Math.max(-50, Math.min(50, averageCents));
             meterLineEl.style.transform = `translateX(${meterPosition}%)`;
 
-            const isInTuneNow = Math.abs(cents) < 5;
+            const isInTuneNow = Math.abs(averageCents) < 8;
 
             if (isInTuneNow) {
                 statusTextEl.textContent = 'Mükemmel!';
                 statusTextEl.style.color = '#4ade80';
-                indicatorEl.classList.add('in-tune');
-                indicatorEl.style.backgroundColor = '#4ade80';
+                indicatorEl.style.backgroundColor = '#1e293b';
+                indicatorEl.classList.add('pulse-animation');
                 meterLineEl.style.backgroundColor = '#4ade80';
                 if (!wasInTune) {
                     playTickSound();
                 }
             } else {
-                statusTextEl.textContent = cents < 0 ? 'Düşük' : 'Yüksek';
+                statusTextEl.textContent = averageCents > 0 ? 'Sık' : 'Gevşet';
                 statusTextEl.style.color = '#f87171';
-                indicatorEl.classList.remove('in-tune');
-                indicatorEl.style.backgroundColor = '#1e293b';
-                meterLineEl.style.backgroundColor = '#f87171';
+                indicatorEl.classList.remove('pulse-animation');
+                
+                if (Math.abs(averageCents) > 20) {
+                    meterLineEl.style.backgroundColor = '#f87171'; // red
+                } else {
+                    meterLineEl.style.backgroundColor = '#facc15'; // yellow
+                }
             }
             wasInTune = isInTuneNow;
         }
