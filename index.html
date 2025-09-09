@@ -554,51 +554,64 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* GuitarTuna-like Styles */
-        #tuner-mode-selector button {
-            transition: all 0.2s ease-in-out;
-        }
-        #tuner-mode-selector button.active {
-            background-color: #a5b4fc;
-            color: #0f172a;
-        }
-
-        #tuner-string-indicator {
+        /* Basit Gitar Akort Aleti Stilleri */
+        .tuner-indicator {
             transition: all 0.2s ease-in-out;
         }
 
-        #tuner-meter-line {
-            transition: transform 0.1s linear, background-color 0.2s ease-in-out;
+        .tuner-visual {
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(to right, #f87171, #4ade80, #f87171);
+            border-radius: 10px;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
         }
 
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0.7);
-            }
-            50% {
-                transform: scale(1.05);
-                box-shadow: 0 0 25px 10px rgba(74, 222, 128, 1);
-            }
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0.7);
-            }
-        }
-
-        .pulse-animation {
-            animation: pulse 1.5s infinite;
-        }
-        
-        .tick-mark {
+        .tuner-needle {
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 1px;
-            background-color: rgba(100, 116, 139, 0.7);
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: white;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: left 0.1s ease-out;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
 
+        .tuner-center-mark {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: white;
+            left: 50%;
+            transform: translateX(-50%);
+        }
 
+        .tuner-status {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 10px;
+            min-height: 1.5em;
+        }
+
+        .tuner-note {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(165, 180, 252, 0.5);
+        }
+
+        .tuner-instruction {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-top: 20px;
+            text-align: center;
+            max-width: 300px;
+        }
     </style>
 </head>
 <body class="bg-primary-bg">
@@ -754,11 +767,11 @@
         </div>
     </div>
 
-    <!-- GuitarTuna Style Tuner Modal -->
+    <!-- Basit Gitar Akort Aleti Modal -->
     <div id="guitar-tuner-modal" class="modal-overlay">
         <div class="modal-content w-full max-w-md mx-auto flex flex-col bg-gray-900 overflow-hidden">
             <div class="flex justify-between items-center p-4 border-b border-gray-700">
-                <h2 class="text-xl font-bold text-text-light">Gitar Akort Aleti</h2>
+                <h2 class="text-xl font-bold text-text-light">Basit Gitar Akort Aleti</h2>
                 <button onclick="closeModal('guitar-tuner-modal')" class="text-text-subtle hover:text-text-light transition-colors">
                      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -766,59 +779,35 @@
                 </button>
             </div>
             
-            <div class="p-4 flex-grow flex flex-col items-center justify-between">
-                <!-- Mode Selector -->
-                <div id="tuner-mode-selector" class="flex bg-secondary-bg p-1 rounded-full mb-4">
-                    <button id="auto-mode-btn" class="px-4 py-1 font-semibold rounded-full text-sm">Auto</button>
-                    <button id="manual-mode-btn" class="px-4 py-1 font-semibold rounded-full text-sm">Manual</button>
-                </div>
-                
-                <!-- Main Visual Display -->
-                <div class="relative flex items-center justify-center w-48 h-48 mb-4">
-                    <div class="w-full h-full bg-gray-800 rounded-full border-4 border-gray-700 flex items-center justify-center">
-                        <div id="tuner-string-indicator" class="w-32 h-32 bg-secondary-bg rounded-full flex items-center justify-center text-center">
-                            <div>
-                                <div id="tuner-note-name" class="text-6xl font-bold text-text-light">-</div>
-                                <div id="tuner-status-text" class="text-lg text-text-subtle font-semibold h-6"></div>
-                            </div>
-                        </div>
+            <div class="p-4 flex-grow flex flex-col items-center justify-center">
+                <!-- Ana Görsel Ekran -->
+                <div class="w-full flex flex-col items-center justify-center mb-6">
+                    <div class="tuner-note" id="tuner-note-name">-</div>
+                    <div class="tuner-visual">
+                        <div class="tuner-center-mark"></div>
+                        <div class="tuner-needle" id="tuner-needle"></div>
                     </div>
+                    <div class="tuner-status" id="tuner-status-text">Mikrofon erişimi bekleniyor...</div>
+                    <div class="text-sm text-text-subtle mt-1" id="tuner-cents-display"></div>
                 </div>
 
-                <!-- Fine-tune Meter -->
-                <div class="w-full h-12 flex flex-col items-center justify-center mb-4">
-                    <div id="cents-display" class="text-sm text-text-subtle mb-2 h-4"></div>
-                    <div class="relative w-full max-w-xs h-1 bg-gray-700 rounded-full">
-                        <!-- Tick Marks -->
-                        <div class="tick-mark h-4" style="left: 10%;"></div>
-                        <div class="tick-mark h-3" style="left: 20%;"></div>
-                        <div class="tick-mark h-4" style="left: 30%;"></div>
-                        <div class="tick-mark h-3" style="left: 40%;"></div>
-                        <div class="tick-mark h-4" style="left: 50%;"></div>
-                        <div class="tick-mark h-3" style="left: 60%;"></div>
-                        <div class="tick-mark h-4" style="left: 70%;"></div>
-                        <div class="tick-mark h-3" style="left: 80%;"></div>
-                        <div class="tick-mark h-4" style="left: 90%;"></div>
-                        
-                        <!-- In-tune zone marker lines -->
-                        <div class="absolute top-1/2 -translate-y-1/2 w-px h-6 bg-green-500 opacity-50" style="left: calc(50% - 12px);"></div>
-                        <div class="absolute top-1/2 -translate-y-1/2 w-px h-6 bg-green-500 opacity-50" style="left: calc(50% + 12px);"></div>
-                        
-                        <!-- Moving indicator line -->
-                        <div id="tuner-meter-line" class="absolute top-1/2 -translate-y-1/2 w-1 h-8 bg-highlight-blue rounded-full" style="left: 50%;"></div>
-                    </div>
-                </div>
-
-                <!-- Manual String Selection (hidden by default) -->
-                <div id="tuner-string-selectors" class="hidden grid grid-cols-6 gap-2 w-full mb-4">
-                    <!-- Buttons generated by JS -->
+                <!-- Tel Bilgisi -->
+                <div class="text-text-subtle text-sm mb-6" id="tuner-string-info">
+                    Standart akort: E-A-D-G-B-E
                 </div>
                 
-                <!-- Start/Stop Controls -->
-                <div class="flex justify-center gap-4 mt-auto">
-                    <button id="start-tuner-btn" class="bg-highlight-blue text-primary-bg font-bold py-2 px-4 rounded-lg shadow-lg transition-colors">
+                <!-- Başlat/Durdur Kontrolleri -->
+                <div class="flex justify-center gap-4 mt-2">
+                    <button id="start-tuner-btn" class="bg-highlight-blue text-primary-bg font-bold py-3 px-6 rounded-lg shadow-lg transition-colors text-lg">
                         Başlat
                     </button>
+                </div>
+
+                <!-- Talimatlar -->
+                <div class="tuner-instruction">
+                    <p>1. "Başlat" butonuna tıklayın ve mikrofon erişimine izin verin</p>
+                    <p>2. Akort etmek istediğiniz gitar telini çalın</p>
+                    <p>3. İbreyi ortaya getirmek için teli sıkın veya gevşetin</p>
                 </div>
             </div>
         </div>
@@ -887,6 +876,10 @@
         const guitarTunerBtn = document.getElementById('guitar-tuner-btn');
         const guitarTunerModal = document.getElementById('guitar-tuner-modal');
         const startTunerBtn = document.getElementById('start-tuner-btn');
+        const tunerNoteNameEl = document.getElementById('tuner-note-name');
+        const tunerStatusTextEl = document.getElementById('tuner-status-text');
+        const tunerCentsDisplayEl = document.getElementById('tuner-cents-display');
+        const tunerNeedleEl = document.getElementById('tuner-needle');
 
         const loaderOverlay = document.getElementById('loader-overlay');
 
@@ -895,13 +888,10 @@
         let analyser = null;
         let microphone = null;
         let isTunerActive = false;
-        let tunerMode = 'auto'; // 'auto' or 'manual'
-        let currentStringIndex = 0; // For manual mode
         let pitchDetectionFrame;
         let wasInTune = false;
         let centsHistory = [];
         const historySize = 5;
-
 
         const guitarStrings = [
             { note: 'E', frequency: 82.41, name: '6. Tel (Kalın Mi)' },
@@ -1333,53 +1323,11 @@
             e.preventDefault();
         });
 
-        // --- GuitarTuna-like Tuner Functions ---
+        // --- Basit Gitar Akort Aleti Fonksiyonları ---
 
-        function setTunerMode(mode) {
-            tunerMode = mode;
-            const autoBtn = document.getElementById('auto-mode-btn');
-            const manualBtn = document.getElementById('manual-mode-btn');
-            const selectors = document.getElementById('tuner-string-selectors');
-
-            if (mode === 'auto') {
-                autoBtn.classList.add('active');
-                manualBtn.classList.remove('active');
-                selectors.classList.add('hidden');
-            } else {
-                manualBtn.classList.add('active');
-                autoBtn.classList.remove('active');
-                selectors.classList.remove('hidden');
-            }
-            resetTunerDisplay();
-        }
-
-        function initGuitarTuner() {
-            setTunerMode('auto'); // Default to auto
-            const selectorsContainer = document.getElementById('tuner-string-selectors');
-            selectorsContainer.innerHTML = '';
-            guitarStrings.forEach((string, index) => {
-                const button = document.createElement('button');
-                button.className = 'p-2 rounded-lg font-bold text-lg bg-secondary-bg text-text-light transition-colors';
-                button.textContent = string.note;
-                button.dataset.index = index;
-                button.addEventListener('click', () => {
-                    currentStringIndex = index;
-                    document.querySelectorAll('#tuner-string-selectors button').forEach(btn => btn.classList.remove('ring-2', 'ring-highlight-blue'));
-                    button.classList.add('ring-2', 'ring-highlight-blue');
-                    resetTunerDisplay();
-                });
-                selectorsContainer.appendChild(button);
-            });
-             document.getElementById('auto-mode-btn').addEventListener('click', () => setTunerMode('auto'));
-             document.getElementById('manual-mode-btn').addEventListener('click', () => setTunerMode('manual'));
-        }
-        
         function openGuitarTunerModal(e) {
             e.stopPropagation();
             openModal('guitar-tuner-modal');
-            if(!isTunerActive) { // Prevent re-init if already running
-                initGuitarTuner();
-            }
         }
 
         function startTuner() {
@@ -1393,12 +1341,17 @@
                 return;
             }
             
+            // Arayüzü sıfırla
+            resetTunerDisplay();
+            tunerStatusTextEl.textContent = "Mikrofona erişim isteniyor...";
+            
             navigator.mediaDevices.getUserMedia({ audio: true, video: false })
             .then(function(stream) {
                 isTunerActive = true;
                 startTunerBtn.textContent = "Durdur";
                 startTunerBtn.classList.remove('bg-highlight-blue');
                 startTunerBtn.classList.add('bg-highlight-red');
+                tunerStatusTextEl.textContent = "Bir tel çalın...";
 
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioContext.createAnalyser();
@@ -1408,10 +1361,10 @@
                 microphone.connect(analyser);
                 
                 processAudio();
-                showNotification('Mikrofon bağlandı. Bir tel çalın.', 'bg-highlight-blue');
             })
             .catch(function(err) {
                 console.error('Mikrofon erişimi reddedildi:', err);
+                tunerStatusTextEl.textContent = "Mikrofon erişimi reddedildi.";
                 showNotification('Mikrofon erişimi reddedildi.', 'bg-highlight-red');
             });
         }
@@ -1437,8 +1390,9 @@
                     analyser = null;
                 });
             }
-            wasInTune = false;
+            
             resetTunerDisplay();
+            tunerStatusTextEl.textContent = "Durduruldu. Tekrar başlatmak için 'Başlat' butonuna tıklayın.";
         }
 
         function processAudio() {
@@ -1450,7 +1404,13 @@
             const rms = Math.sqrt(buffer.reduce((sum, val) => sum + val * val, 0) / buffer.length);
             
             if (rms < 0.01) {
-                updateTunerUI(0);
+                // Ses seviyesi çok düşük, muhtemelen ses yok
+                if (tunerNoteNameEl.textContent !== '-') {
+                    tunerNoteNameEl.textContent = '-';
+                    tunerStatusTextEl.textContent = "Ses algılanmadı. Bir tel çalın...";
+                    tunerCentsDisplayEl.textContent = "";
+                    resetNeedlePosition();
+                }
                 pitchDetectionFrame = requestAnimationFrame(processAudio);
                 return;
             }
@@ -1478,7 +1438,6 @@
             pitchDetectionFrame = requestAnimationFrame(processAudio);
         }
 
-
         function findClosestString(frequency) {
             return guitarStrings.reduce((prev, curr) => {
                 return (Math.abs(curr.frequency - frequency) < Math.abs(prev.frequency - frequency) ? curr : prev);
@@ -1486,36 +1445,25 @@
         }
         
         function resetTunerDisplay() {
-            const meterLineEl = document.getElementById('tuner-meter-line');
-            const indicatorEl = document.getElementById('tuner-string-indicator');
-            const centsDisplayEl = document.getElementById('cents-display');
-
-            document.getElementById('tuner-note-name').textContent = '-';
-            document.getElementById('tuner-status-text').textContent = '...';
-            centsDisplayEl.textContent = '';
-            meterLineEl.style.transform = 'translateX(-50%)';
-            meterLineEl.style.backgroundColor = '#a5b4fc'; // highlight-blue
-            indicatorEl.style.backgroundColor = '#1e293b';
-            indicatorEl.classList.remove('pulse-animation');
+            tunerNoteNameEl.textContent = '-';
+            tunerCentsDisplayEl.textContent = '';
+            resetNeedlePosition();
             wasInTune = false;
             centsHistory = [];
+        }
+        
+        function resetNeedlePosition() {
+            tunerNeedleEl.style.left = '50%';
+            tunerNeedleEl.style.backgroundColor = '#a5b4fc'; // Mavi renk
         }
 
         function updateTunerUI(frequency) {
             if (!isTunerActive) return;
             if (frequency === 0) {
-                 if (tunerMode === 'auto') resetTunerDisplay();
-                 wasInTune = false;
-                 return;
+                return;
             }
 
-            let targetString;
-            if(tunerMode === 'auto'){
-                targetString = findClosestString(frequency);
-            } else {
-                targetString = guitarStrings[currentStringIndex];
-            }
-            
+            let targetString = findClosestString(frequency);
             const cents = 1200 * Math.log2(frequency / targetString.frequency);
             
             centsHistory.push(cents);
@@ -1524,67 +1472,54 @@
             }
             const averageCents = centsHistory.reduce((a, b) => a + b, 0) / centsHistory.length;
 
-            const noteNameEl = document.getElementById('tuner-note-name');
-            const statusTextEl = document.getElementById('tuner-status-text');
-            const meterLineEl = document.getElementById('tuner-meter-line');
-            const indicatorEl = document.getElementById('tuner-string-indicator');
-            const centsDisplayEl = document.getElementById('cents-display');
+            // Nota ismini güncelle
+            tunerNoteNameEl.textContent = targetString.note;
             
-            noteNameEl.textContent = targetString.note;
-            centsDisplayEl.textContent = `${averageCents.toFixed(1)} cents`;
-
-            // Map cents to a wider translation range. 1 cent = 1% translation.
-            // Clamp to prevent it from going too far off-screen.
-            const meterPosition = Math.max(-90, Math.min(90, averageCents * 1.8));
-            meterLineEl.style.transform = `translateX(calc(-50% + ${meterPosition}%))`;
-
-            const isInTuneNow = Math.abs(averageCents) < 8;
-
+            // İbre pozisyonunu güncelle (-50 cent ile +50 cent arasında)
+            let needlePosition = 50 + Math.max(-50, Math.min(50, averageCents));
+            tunerNeedleEl.style.left = `${needlePosition}%`;
+            
+            // Cent değerini göster
+            tunerCentsDisplayEl.textContent = `${averageCents.toFixed(1)} cents`;
+            
+            // Akort durumunu güncelle
+            const isInTuneNow = Math.abs(averageCents) < 5;
+            
             if (isInTuneNow) {
-                statusTextEl.textContent = 'Mükemmel!';
-                statusTextEl.style.color = '#4ade80';
-                indicatorEl.style.backgroundColor = '#1e293b';
-                indicatorEl.classList.add('pulse-animation');
-                meterLineEl.style.backgroundColor = '#4ade80';
+                tunerStatusTextEl.textContent = 'Mükemmel!';
+                tunerStatusTextEl.style.color = '#4ade80'; // Yeşil
+                tunerNeedleEl.style.backgroundColor = '#4ade80'; // Yeşil
+                
                 if (!wasInTune) {
-                    playTickSound();
+                    // İlk defa akort olduğunda titreşim efekti ver
+                    tunerNoteNameEl.classList.add('animate-pulse');
+                    setTimeout(() => {
+                        tunerNoteNameEl.classList.remove('animate-pulse');
+                    }, 1000);
                 }
             } else {
-                statusTextEl.textContent = averageCents > 0 ? 'Sık' : 'Gevşet';
-                statusTextEl.style.color = '#f87171';
-                indicatorEl.classList.remove('pulse-animation');
+                tunerNoteNameEl.classList.remove('animate-pulse');
                 
-                if (Math.abs(averageCents) > 25) {
-                    meterLineEl.style.backgroundColor = '#f87171'; // red
+                if (averageCents < 0) {
+                    tunerStatusTextEl.textContent = 'Daha sık';
+                    tunerStatusTextEl.style.color = '#f87171'; // Kırmızı
                 } else {
-                    meterLineEl.style.backgroundColor = '#facc15'; // yellow
+                    tunerStatusTextEl.textContent = 'Daha gevşek';
+                    tunerStatusTextEl.style.color = '#f87171'; // Kırmızı
+                }
+                
+                // İbre rengini ayarla (akort durumuna göre)
+                if (Math.abs(averageCents) > 25) {
+                    tunerNeedleEl.style.backgroundColor = '#f87171'; // Kırmızı
+                } else {
+                    tunerNeedleEl.style.backgroundColor = '#facc15'; // Sarı
                 }
             }
+            
             wasInTune = isInTuneNow;
         }
         
-        function playTickSound() {
-            if (!audioContext) return;
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            oscillator.type = 'square';
-            oscillator.frequency.setValueAtTime(2000, audioContext.currentTime);
-            gainNode.gain.setValueAtTime(1.0, audioContext.currentTime);
-
-            oscillator.start(audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.05);
-            oscillator.stop(audioContext.currentTime + 0.05);
-        }
-        
-        // --- END OF TUNER FUNCTIONS ---
+        // --- GİTAR AKORT ALETİ FONKSİYONLARI SONU ---
 
         async function initializeApp() {
             showLoader();
