@@ -810,6 +810,8 @@
             </svg>
         </button>
     </div>
+    
+    <audio id="tick-sound" src="https://github.com/Berahatiye/denememe/raw/refs/heads/main/Correct%20Sound%20Effect.mp3" preload="auto"></audio>
 
     <script>
         let hymns = []; 
@@ -1484,17 +1486,14 @@
             
             const noteNameEl = document.getElementById('tuner-note-name');
             const statusTextEl = document.getElementById('tuner-status-text');
-            const pegEl = document.getElementById('tuner-peg');
             const meterLineEl = document.getElementById('tuner-meter-line');
             const indicatorEl = document.getElementById('tuner-string-indicator');
             
             noteNameEl.textContent = targetString.note;
 
-            // Clamp values for smooth UI transition
-            const meterPosition = Math.max(-50, Math.min(50, cents)); // Clamp between -50 and 50
+            const meterPosition = Math.max(-50, Math.min(50, cents));
             
             meterLineEl.style.transform = `translateX(${meterPosition}%)`;
-            // pegEl.style.transform = `rotate(${pegRotation}deg)`; // ROTATION REMOVED
 
             const isInTuneNow = Math.abs(cents) < 5;
 
@@ -1517,28 +1516,15 @@
             wasInTune = isInTuneNow;
         }
         
-        // --- END OF TUNER FUNCTIONS ---
-        
         function playTickSound() {
-            if (!audioContext) return;
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(1200, audioContext.currentTime);
-            gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
-
-            oscillator.start(audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.05);
-            oscillator.stop(audioContext.currentTime + 0.05);
+           const tickSound = document.getElementById('tick-sound');
+           if (tickSound) {
+               tickSound.currentTime = 0;
+               tickSound.play().catch(error => console.error("Audio play failed:", error));
+           }
         }
+        
+        // --- END OF TUNER FUNCTIONS ---
 
         async function initializeApp() {
             showLoader();
