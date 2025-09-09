@@ -589,6 +589,14 @@
         .pulse-animation {
             animation: pulse 1.5s infinite;
         }
+        
+        .tick-mark {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            background-color: rgba(100, 116, 139, 0.7);
+        }
 
 
     </style>
@@ -748,7 +756,7 @@
 
     <!-- GuitarTuna Style Tuner Modal -->
     <div id="guitar-tuner-modal" class="modal-overlay">
-        <div class="modal-content w-full max-w-md mx-auto flex flex-col bg-gray-900">
+        <div class="modal-content w-full max-w-md mx-auto flex flex-col bg-gray-900 overflow-hidden">
             <div class="flex justify-between items-center p-4 border-b border-gray-700">
                 <h2 class="text-xl font-bold text-text-light">Gitar Akort Aleti</h2>
                 <button onclick="closeModal('guitar-tuner-modal')" class="text-text-subtle hover:text-text-light transition-colors">
@@ -778,12 +786,23 @@
                 </div>
 
                 <!-- Fine-tune Meter -->
-                 <div class="w-full h-12 flex flex-col items-center justify-center mb-4">
+                <div class="w-full h-12 flex flex-col items-center justify-center mb-4">
                     <div id="cents-display" class="text-sm text-text-subtle mb-2 h-4"></div>
                     <div class="relative w-full max-w-xs h-1 bg-gray-700 rounded-full">
+                        <!-- Tick Marks -->
+                        <div class="tick-mark h-4" style="left: 10%;"></div>
+                        <div class="tick-mark h-3" style="left: 20%;"></div>
+                        <div class="tick-mark h-4" style="left: 30%;"></div>
+                        <div class="tick-mark h-3" style="left: 40%;"></div>
+                        <div class="tick-mark h-4" style="left: 50%;"></div>
+                        <div class="tick-mark h-3" style="left: 60%;"></div>
+                        <div class="tick-mark h-4" style="left: 70%;"></div>
+                        <div class="tick-mark h-3" style="left: 80%;"></div>
+                        <div class="tick-mark h-4" style="left: 90%;"></div>
+                        
                         <!-- In-tune zone marker lines -->
-                        <div class="absolute top-1/2 -translate-y-1/2 w-px h-6 bg-green-500 opacity-50" style="left: calc(50% - 10px);"></div>
-                        <div class="absolute top-1/2 -translate-y-1/2 w-px h-6 bg-green-500 opacity-50" style="left: calc(50% + 10px);"></div>
+                        <div class="absolute top-1/2 -translate-y-1/2 w-px h-6 bg-green-500 opacity-50" style="left: calc(50% - 12px);"></div>
+                        <div class="absolute top-1/2 -translate-y-1/2 w-px h-6 bg-green-500 opacity-50" style="left: calc(50% + 12px);"></div>
                         
                         <!-- Moving indicator line -->
                         <div id="tuner-meter-line" class="absolute top-1/2 -translate-y-1/2 w-1 h-8 bg-highlight-blue rounded-full" style="left: 50%;"></div>
@@ -1474,7 +1493,7 @@
             document.getElementById('tuner-note-name').textContent = '-';
             document.getElementById('tuner-status-text').textContent = '...';
             centsDisplayEl.textContent = '';
-            meterLineEl.style.transform = 'translateX(0px)';
+            meterLineEl.style.transform = 'translateX(-50%)';
             meterLineEl.style.backgroundColor = '#a5b4fc'; // highlight-blue
             indicatorEl.style.backgroundColor = '#1e293b';
             indicatorEl.classList.remove('pulse-animation');
@@ -1499,7 +1518,6 @@
             
             const cents = 1200 * Math.log2(frequency / targetString.frequency);
             
-            // --- Smoothing Logic ---
             centsHistory.push(cents);
             if (centsHistory.length > historySize) {
                 centsHistory.shift(); 
@@ -1515,8 +1533,10 @@
             noteNameEl.textContent = targetString.note;
             centsDisplayEl.textContent = `${averageCents.toFixed(1)} cents`;
 
-            const meterPosition = Math.max(-50, Math.min(50, averageCents));
-            meterLineEl.style.transform = `translateX(${meterPosition}%)`;
+            // Map cents to a wider translation range. 1 cent = 1% translation.
+            // Clamp to prevent it from going too far off-screen.
+            const meterPosition = Math.max(-90, Math.min(90, averageCents * 1.8));
+            meterLineEl.style.transform = `translateX(calc(-50% + ${meterPosition}%))`;
 
             const isInTuneNow = Math.abs(averageCents) < 8;
 
@@ -1534,7 +1554,7 @@
                 statusTextEl.style.color = '#f87171';
                 indicatorEl.classList.remove('pulse-animation');
                 
-                if (Math.abs(averageCents) > 20) {
+                if (Math.abs(averageCents) > 25) {
                     meterLineEl.style.backgroundColor = '#f87171'; // red
                 } else {
                     meterLineEl.style.backgroundColor = '#facc15'; // yellow
