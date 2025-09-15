@@ -631,7 +631,7 @@
             
             <div id="welcome-message" class="text-xl md:text-2xl text-text-subtle font-light max-w-2xl text-center">
                 <p class="mb-4">Toplamda: <span id="hymn-count">0</span> adet Türkçe ilahi <br>bulunmaktadır.</p>
-                <p><i>"İlahiyi Yansıt"</i> tuşu, butonlarla sunumu; <br><i>"Ana Ekranı Tam Yap"</i> tuşu ise "Full Screen" moda geçerek kaydırarak sunumu <br>sağlamaktadır.</p>
+                <p style="font-size: 15px;"><i>"İlahiyi Yansıt"</i> tuşu, butonlarla sunumu; <br><i>"Ana Ekranı Tam Yap"</i> tuşu ise "Full Screen" moda geçerek kaydırarak daha estetik bir sunumu <br>sağlamaktadır. <br> 15/09/2025 ile bu uygulama hâlâ geliştirme aşamasındadır ve kullanıma açıktır.</p>
                 <p style="margin-top: 3.1rem; color: #f56fa1; font-size: 12px;">Site by Berahatiye © 2025</p>
             </div>
             
@@ -747,7 +747,7 @@
 
                 <!-- Note Display -->
                 <div class="text-center relative mb-4">
-                    <div id="tuner-note-name" class="text-8xl font-bold text-white transition-colors duration-300">-</div>
+                    <div id="tuner-note-name" class="text-9xl font-bold text-white transition-colors duration-300">-</div>
                     <div id="tuner-cents-display" class="text-xl text-gray-500 font-mono h-7">--</div>
                 </div>
 
@@ -1231,7 +1231,7 @@
             }
         }, 100);
 
-        document.addEventListener('fullscreenchange', () => {
+        document.addEventListener('fullscreenchange', () {
             if (!document.fullscreenElement) {
                 initialFullscreenBtn.textContent = 'Ana Ekranı Tam Yap';
                 if (isCastingMode) {
@@ -1523,7 +1523,7 @@
             } catch (error) {
                 console.error("Hymns verileri yüklenirken bir hata oluştu:", error);
                 modalTitle.textContent = "Hata!";
-                modalMessage.textContent = "İlahi verileri yüklenemedi. Lütfen internet bağlantınızı kontrol edin veya daha sonra tekrar deneyin.";
+                modalMessage.textContent = "İlahi verileri yüklenemedi. Lütfen internet bağlantınızı kontrol edin or daha sonra tekrar deneyin.";
                 openModal('casting-modal');
             } finally {
                 hideLoader();
