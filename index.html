@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -553,7 +555,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* NEW Guitar Tuner Styles */
+        /* GuitarTuna-like Styles */
         #tuner-mode-selector button {
             transition: all 0.2s ease-in-out;
         }
@@ -561,17 +563,22 @@
             background-color: #a5b4fc;
             color: #0f172a;
         }
-        #start-tuner-btn.active {
-            background-color: #f87171;
-            color: white;
+
+        #tuner-peg {
+            transition: transform 0.2s ease-out;
         }
-        #tuner-needle {
-            transform-origin: bottom center;
-            transition: transform 0.1s linear; /* Fast, responsive feel */
+
+        #tuner-string-indicator {
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0);
         }
-        .note-in-tune {
-            color: #4ade80 !important; /* highlight-green */
-            text-shadow: 0 0 20px #4ade80;
+
+        #tuner-string-indicator.in-tune {
+             box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0.7);
+        }
+
+        #tuner-meter-line {
+            transition: transform 0.1s ease-out;
         }
 
     </style>
@@ -631,7 +638,7 @@
             
             <div id="welcome-message" class="text-xl md:text-2xl text-text-subtle font-light max-w-2xl text-center">
                 <p class="mb-4">Toplamda: <span id="hymn-count">0</span> adet Türkçe ilahi <br>bulunmaktadır.</p>
-                <p style="font-size: 15px;"><i>"İlahiyi Yansıt"</i> tuşu, butonlarla sunumu; <br><i>"Ana Ekranı Tam Yap"</i> tuşu ise "Full Screen" moda geçerek kaydırarak daha estetik bir sunumu <br>sağlamaktadır. <br> 15/09/2025 ile bu uygulama hâlâ geliştirme aşamasındadır ve kullanıma açıktır.</p>
+                <p><i>"İlahiyi Yansıt"</i> tuşu, butonlarla sunumu; <br><i>"Ana Ekranı Tam Yap"</i> tuşu ise "Full Screen" moda geçerek kaydırarak sunumu <br>sağlamaktadır.</p>
                 <p style="margin-top: 3.1rem; color: #f56fa1; font-size: 12px;">Site by Berahatiye © 2025</p>
             </div>
             
@@ -729,54 +736,54 @@
         </div>
     </div>
 
-    <!-- NEW Guitar Tuner Modal -->
+    <!-- GuitarTuna Style Tuner Modal -->
     <div id="guitar-tuner-modal" class="modal-overlay">
-        <div class="modal-content w-full max-w-sm mx-auto flex flex-col bg-black rounded-2xl shadow-2xl border border-gray-800 p-0">
-            <!-- Header -->
-            <div class="flex justify-between items-center p-4 border-b border-gray-800">
-                <h2 class="text-lg font-bold text-gray-200 tracking-wider">GİTAR AKORT ALETİ</h2>
-                <button onclick="closeModal('guitar-tuner-modal')" class="text-gray-500 hover:text-white transition-colors">
+        <div class="modal-content w-full max-w-md mx-auto flex flex-col bg-gray-900">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h2 class="text-xl font-bold text-text-light">Gitar Akort Aleti</h2>
+                <button onclick="closeModal('guitar-tuner-modal')" class="text-text-subtle hover:text-text-light transition-colors">
                      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
             
-            <!-- Main Display Area -->
-            <div class="p-6 flex-grow flex flex-col items-center justify-around">
-
-                <!-- Note Display -->
-                <div class="text-center relative mb-4">
-                    <div id="tuner-note-name" class="text-9xl font-bold text-white transition-colors duration-300">-</div>
-                    <div id="tuner-cents-display" class="text-xl text-gray-500 font-mono h-7">--</div>
+            <div class="p-4 flex-grow flex flex-col items-center justify-between">
+                <!-- Mode Selector -->
+                <div id="tuner-mode-selector" class="flex bg-secondary-bg p-1 rounded-full mb-4">
+                    <button id="auto-mode-btn" class="px-4 py-1 font-semibold rounded-full text-sm">Auto</button>
+                    <button id="manual-mode-btn" class="px-4 py-1 font-semibold rounded-full text-sm">Manual</button>
+                </div>
+                
+                <!-- Main Visual Display -->
+                <div class="relative flex items-center justify-center w-48 h-48 mb-4">
+                    <div id="tuner-peg" class="w-full h-full bg-gray-800 rounded-full border-4 border-gray-700 flex items-center justify-center">
+                        <div id="tuner-string-indicator" class="w-32 h-32 bg-secondary-bg rounded-full flex items-center justify-center text-center">
+                            <div>
+                                <div id="tuner-note-name" class="text-6xl font-bold text-text-light">-</div>
+                                <div id="tuner-status-text" class="text-lg text-text-subtle font-semibold h-6"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Visualizer (Needle/Dial) -->
-                <div class="relative w-64 h-32 overflow-hidden mb-4">
-                    <div class="w-full h-full border-t-4 border-l-4 border-r-4 border-gray-700 rounded-t-full absolute bottom-0"></div>
-                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-4 bg-highlight-green"></div>
-                    <div id="tuner-needle" class="absolute bottom-0 left-1/2 w-1 h-32 bg-highlight-red origin-bottom transition-transform duration-100" style="transform: rotate(0deg);"></div>
+                <!-- Fine-tune Meter -->
+                 <div class="w-full h-12 flex items-center justify-center mb-4">
+                    <div class="relative w-full max-w-xs h-1 bg-gray-700 rounded-full">
+                         <div id="tuner-meter-line" class="absolute top-1/2 -translate-y-1/2 w-1 h-8 bg-highlight-green rounded-full" style="left: 50%;"></div>
+                    </div>
                 </div>
 
-                <!-- String Display & Status -->
-                <div class="text-center mb-4">
-                     <div id="tuner-string-name" class="text-lg text-gray-400 h-6">Bir tel çalın</div>
-                </div>
-
-                <!-- Manual Mode String Selectors -->
-                <div id="tuner-string-selectors" class="hidden grid grid-cols-6 gap-2 w-full mt-2">
+                <!-- Manual String Selection (hidden by default) -->
+                <div id="tuner-string-selectors" class="hidden grid grid-cols-6 gap-2 w-full mb-4">
                     <!-- Buttons generated by JS -->
                 </div>
                 
-                <!-- Controls -->
-                <div class="flex items-center justify-center gap-4 mt-4 w-full">
-                    <button id="start-tuner-btn" class="w-20 h-20 bg-gray-800 text-white font-bold rounded-full shadow-lg transition-colors border-2 border-transparent hover:border-blue-500 flex items-center justify-center text-sm">
-                        BAŞLAT
+                <!-- Start/Stop Controls -->
+                <div class="flex justify-center gap-4 mt-auto">
+                    <button id="start-tuner-btn" class="bg-highlight-blue text-primary-bg font-bold py-2 px-4 rounded-lg shadow-lg transition-colors">
+                        Başlat
                     </button>
-                    <div id="tuner-mode-selector" class="flex bg-gray-800 p-1 rounded-full">
-                         <button id="auto-mode-btn" class="px-4 py-1 font-semibold rounded-full text-xs text-gray-400">AUTO</button>
-                         <button id="manual-mode-btn" class="px-4 py-1 font-semibold rounded-full text-xs text-gray-400">MANUAL</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -852,6 +859,7 @@
         let audioContext = null;
         let analyser = null;
         let microphone = null;
+        let javascriptNode = null;
         let isTunerActive = false;
         let tunerMode = 'auto'; // 'auto' or 'manual'
         let currentStringIndex = 0; // For manual mode
@@ -1231,7 +1239,7 @@
             }
         }, 100);
 
-        document.addEventListener('fullscreenchange', () {
+        document.addEventListener('fullscreenchange', () => {
             if (!document.fullscreenElement) {
                 initialFullscreenBtn.textContent = 'Ana Ekranı Tam Yap';
                 if (isCastingMode) {
@@ -1349,8 +1357,9 @@
             navigator.mediaDevices.getUserMedia({ audio: true, video: false })
             .then(function(stream) {
                 isTunerActive = true;
-                startTunerBtn.textContent = "DURDUR";
-                startTunerBtn.classList.add('active');
+                startTunerBtn.textContent = "Durdur";
+                startTunerBtn.classList.remove('bg-highlight-blue');
+                startTunerBtn.classList.add('bg-highlight-red');
 
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioContext.createAnalyser();
@@ -1372,8 +1381,9 @@
             if (!isTunerActive) return;
             
             isTunerActive = false;
-            startTunerBtn.textContent = "BAŞLAT";
-            startTunerBtn.classList.remove('active');
+            startTunerBtn.textContent = "Başlat";
+            startTunerBtn.classList.remove('bg-highlight-red');
+            startTunerBtn.classList.add('bg-highlight-blue');
 
             if (microphone) {
                 microphone.disconnect();
@@ -1393,18 +1403,19 @@
         function processAudio() {
             if (!isTunerActive || !analyser) return;
             
-            const buffer = new Float32Array(analyser.fftSize);
-            analyser.getFloatTimeDomainData(buffer);
-
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            analyser.getByteTimeDomainData(dataArray);
+            
             const sampleRate = audioContext.sampleRate;
             let bestCorrelation = 0;
             let bestLag = -1;
             
-            // Autocorrelation to find the fundamental frequency
-            for (let lag = 40; lag < buffer.length; lag++) {
+            // Autocorrelation
+            for (let lag = 40; lag < bufferLength; lag++) {
                 let correlation = 0;
-                for (let i = 0; i < buffer.length - lag; i++) {
-                    correlation += buffer[i] * buffer[i+lag];
+                for (let i = 0; i < bufferLength - lag; i++) {
+                    correlation += (dataArray[i] - 128) * (dataArray[i+lag] - 128);
                 }
                 if (correlation > bestCorrelation) {
                     bestCorrelation = correlation;
@@ -1429,28 +1440,14 @@
         }
         
         function resetTunerDisplay() {
-            const noteNameEl = document.getElementById('tuner-note-name');
-            const centsDisplayEl = document.getElementById('tuner-cents-display');
-            const stringNameEl = document.getElementById('tuner-string-name');
-            const needleEl = document.getElementById('tuner-needle');
-
-            if (noteNameEl) noteNameEl.textContent = '-';
-            if (noteNameEl) noteNameEl.classList.remove('note-in-tune');
-            if (centsDisplayEl) centsDisplayEl.textContent = '--';
-            if (centsDisplayEl) centsDisplayEl.style.color = '#94a3b8';
-            if (stringNameEl) stringNameEl.textContent = 'Bir tel çalın';
-            if (needleEl) {
-                needleEl.style.transform = 'rotate(0deg)';
-                needleEl.style.backgroundColor = '#f87171';
-            }
+            document.getElementById('tuner-note-name').textContent = '-';
+            document.getElementById('tuner-status-text').textContent = '...';
+            document.getElementById('tuner-meter-line').style.transform = 'translateX(0px)';
+            document.getElementById('tuner-string-indicator').classList.remove('in-tune');
+            document.getElementById('tuner-string-indicator').style.backgroundColor = '#1e293b';
         }
 
         function updateTunerUI(frequency) {
-            const noteNameEl = document.getElementById('tuner-note-name');
-            const centsDisplayEl = document.getElementById('tuner-cents-display');
-            const needleEl = document.getElementById('tuner-needle');
-            const stringNameEl = document.getElementById('tuner-string-name');
-
             if (!isTunerActive || frequency < 50 || frequency > 1000) {
                  if(tunerMode === 'auto') resetTunerDisplay();
                  return;
@@ -1466,23 +1463,37 @@
             const targetFrequency = targetString.frequency;
             const cents = 1200 * Math.log2(frequency / targetFrequency);
             
+            const noteNameEl = document.getElementById('tuner-note-name');
+            const statusTextEl = document.getElementById('tuner-status-text');
+            const pegEl = document.getElementById('tuner-peg');
+            const meterLineEl = document.getElementById('tuner-meter-line');
+            const indicatorEl = document.getElementById('tuner-string-indicator');
+            
             noteNameEl.textContent = targetString.note;
-            stringNameEl.textContent = targetString.name;
-            centsDisplayEl.textContent = `${cents >= 0 ? '+' : ''}${Math.round(cents)} sent`;
 
-            // Needle rotation: map -50 cents to -45 deg, +50 cents to +45 deg
-            const rotation = Math.max(-45, Math.min(45, cents * 0.9));
-            needleEl.style.transform = `rotate(${rotation}deg)`;
+            const clamp = (val, min, max) => Math.max(min, Math.min(val, max));
+            const meterPosition = clamp(cents, -50, 50); // From -50 to 50
+            
+            meterLineEl.style.transform = `translateX(${meterPosition}%)`;
 
-            // Color feedback
-            if (Math.abs(cents) < 5) { // In-tune threshold
-                noteNameEl.classList.add('note-in-tune');
-                needleEl.style.backgroundColor = '#4ade80'; // green
-                centsDisplayEl.style.color = '#4ade80';
-            } else { // Out of tune
-                noteNameEl.classList.remove('note-in-tune');
-                needleEl.style.backgroundColor = '#f87171'; // red
-                centsDisplayEl.style.color = '#94a3b8'; // subtle-text
+            if (Math.abs(cents) < 5) {
+                statusTextEl.textContent = 'Mükemmel!';
+                statusTextEl.style.color = '#4ade80';
+                indicatorEl.classList.add('in-tune');
+                indicatorEl.style.backgroundColor = '#4ade80';
+                meterLineEl.style.backgroundColor = '#4ade80';
+            } else if (cents < 0) {
+                statusTextEl.textContent = `Düşük (${Math.round(cents)}c)`;
+                statusTextEl.style.color = '#f87171';
+                indicatorEl.classList.remove('in-tune');
+                indicatorEl.style.backgroundColor = '#1e293b';
+                meterLineEl.style.backgroundColor = '#f87171';
+            } else {
+                statusTextEl.textContent = `Yüksek (+${Math.round(cents)}c)`;
+                statusTextEl.style.color = '#f87171';
+                indicatorEl.classList.remove('in-tune');
+                indicatorEl.style.backgroundColor = '#1e293b';
+                 meterLineEl.style.backgroundColor = '#f87171';
             }
         }
         
@@ -1523,7 +1534,7 @@
             } catch (error) {
                 console.error("Hymns verileri yüklenirken bir hata oluştu:", error);
                 modalTitle.textContent = "Hata!";
-                modalMessage.textContent = "İlahi verileri yüklenemedi. Lütfen internet bağlantınızı kontrol edin or daha sonra tekrar deneyin.";
+                modalMessage.textContent = "İlahi verileri yüklenemedi. Lütfen internet bağlantınızı kontrol edin veya daha sonra tekrar deneyin.";
                 openModal('casting-modal');
             } finally {
                 hideLoader();
