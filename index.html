@@ -738,16 +738,58 @@
         
         /* Responsive adjustments for tuner */
         @media (max-width: 480px) {
+            #guitar-tuner-modal .modal-content {
+                padding: 1rem;
+                justify-content: space-around;
+            }
+            #tuner-mode-selector {
+                margin-bottom: 1rem;
+            }
+            /* Target the sized container using an attribute selector for stability */
+            #guitar-tuner-modal [class*="w-64"] {
+                width: 14rem; /* 224px */
+                height: 14rem;
+                margin-top: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+            #tuner-string-indicator {
+                width: 11rem; /* 176px */
+                height: 11rem;
+            }
             #tuner-note-name {
                 font-size: 3.5rem;
             }
-            
+            #tuner-meter-container {
+                margin: 1rem 0;
+            }
             #tuner-string-selectors {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+                margin-bottom: 1rem;
             }
-            
             .tuner-string-btn {
+                padding: 0.75rem 0.5rem;
+            }
+            #start-tuner-btn {
+                margin-top: auto;
+            }
+        }
+
+        /* Adjustments for very small screens */
+        @media (max-width: 360px) {
+            #guitar-tuner-modal .modal-content {
                 padding: 0.5rem;
+            }
+            #guitar-tuner-modal [class*="w-64"] {
+                width: 12rem; /* 192px */
+                height: 12rem;
+            }
+            #tuner-string-indicator {
+                width: 9rem; /* 144px */
+                height: 9rem;
+            }
+             #tuner-note-name {
+                font-size: 3rem;
             }
         }
 
