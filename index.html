@@ -553,16 +553,25 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Enhanced GuitarTuna-like Styles */
+        /* --- START: TUNER STYLES --- */
+        #guitar-tuner-modal .modal-content {
+            max-height: 95vh; /* Allow more vertical space */
+        }
+
+        #guitar-tuner-modal .tuner-content-container {
+            padding: 1rem;
+        }
+        
         #tuner-mode-selector {
             display: flex;
             background-color: #334155;
             border-radius: 9999px;
             padding: 0.25rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             width: fit-content;
             margin-left: auto;
             margin-right: auto;
+            flex-shrink: 0;
         }
         
         #tuner-mode-selector button {
@@ -582,9 +591,18 @@
             color: #0f172a;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
+        
+        #tuner-visual-display {
+            width: min(65vw, 256px); /* Use viewport width, capped at 256px */
+            height: min(65vw, 256px);
+            margin: 1rem auto;
+            flex-shrink: 0;
+        }
 
         #tuner-peg {
             transition: transform 0.2s ease-out;
+            width: 100%;
+            height: 100%;
         }
 
         #tuner-string-indicator {
@@ -595,6 +613,8 @@
             align-items: center;
             justify-content: center;
             position: relative;
+            width: 75%; /* Relative to parent */
+            height: 75%;
         }
 
         #tuner-string-indicator.in-tune {
@@ -614,9 +634,10 @@
             height: 12px;
             background-color: #334155;
             border-radius: 9999px;
-            margin: 1.5rem 0;
+            margin: 1rem auto;
             position: relative;
             overflow: hidden;
+            flex-shrink: 0;
         }
         
         #tuner-meter-fill {
@@ -638,21 +659,21 @@
         }
         
         #tuner-note-name {
-            font-size: 4rem;
+            font-size: clamp(3rem, 15vw, 4rem); /* Responsive font size */
             font-weight: 800;
             color: white;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
         
         #tuner-frequency {
-            font-size: 1.25rem;
+            font-size: clamp(1rem, 4vw, 1.25rem);
             color: #94a3b8;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
         
         #tuner-status-text {
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 4vw, 1.1rem);
             font-weight: 600;
             height: 1.75rem;
             display: flex;
@@ -663,8 +684,8 @@
         #tuner-string-selectors {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
             width: 100%;
             max-width: 300px;
         }
@@ -712,6 +733,8 @@
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 0 4px 12px rgba(165, 180, 252, 0.3);
+            margin-top: auto; /* Pushes button to bottom in flex container */
+            flex-shrink: 0;
         }
         
         #start-tuner-btn.stop {
@@ -734,65 +757,16 @@
             margin-top: 1rem;
             text-align: center;
             max-width: 300px;
+            flex-shrink: 0;
         }
         
-        /* Responsive adjustments for tuner */
+        /* More robust responsive adjustments for tuner */
         @media (max-width: 480px) {
-            #guitar-tuner-modal .modal-content {
-                padding: 1rem;
-                justify-content: space-around;
-            }
-            #tuner-mode-selector {
-                margin-bottom: 1rem;
-            }
-            /* Target the sized container using an attribute selector for stability */
-            #guitar-tuner-modal [class*="w-64"] {
-                width: 14rem; /* 224px */
-                height: 14rem;
-                margin-top: 0.5rem;
-                margin-bottom: 0.5rem;
-            }
-            #tuner-string-indicator {
-                width: 11rem; /* 176px */
-                height: 11rem;
-            }
-            #tuner-note-name {
-                font-size: 3.5rem;
-            }
-            #tuner-meter-container {
-                margin: 1rem 0;
-            }
             #tuner-string-selectors {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 0.75rem;
-                margin-bottom: 1rem;
-            }
-            .tuner-string-btn {
-                padding: 0.75rem 0.5rem;
-            }
-            #start-tuner-btn {
-                margin-top: auto;
             }
         }
-
-        /* Adjustments for very small screens */
-        @media (max-width: 360px) {
-            #guitar-tuner-modal .modal-content {
-                padding: 0.5rem;
-            }
-            #guitar-tuner-modal [class*="w-64"] {
-                width: 12rem; /* 192px */
-                height: 12rem;
-            }
-            #tuner-string-indicator {
-                width: 9rem; /* 144px */
-                height: 9rem;
-            }
-             #tuner-note-name {
-                font-size: 3rem;
-            }
-        }
-
+        /* --- END: TUNER STYLES --- */
     </style>
 </head>
 <body class="bg-primary-bg">
@@ -951,7 +925,7 @@
     <!-- Enhanced GuitarTuna Style Tuner Modal -->
     <div id="guitar-tuner-modal" class="modal-overlay">
         <div class="modal-content w-full max-w-md mx-auto flex flex-col bg-gray-900 rounded-xl overflow-hidden">
-            <div class="flex justify-between items-center p-4 border-b border-gray-700 bg-gray-800">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700 bg-gray-800 flex-shrink-0">
                 <h2 class="text-xl font-bold text-text-light">Gitar Akort Aleti</h2>
                 <button onclick="closeModal('guitar-tuner-modal')" class="text-text-subtle hover:text-text-light transition-colors bg-gray-700 p-1 rounded-full">
                     <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -960,7 +934,7 @@
                 </button>
             </div>
             
-            <div class="p-6 flex-grow flex flex-col items-center justify-between">
+            <div class="tuner-content-container flex-grow flex flex-col items-center justify-around">
                 <!-- Mode Selector -->
                 <div id="tuner-mode-selector">
                     <button id="auto-mode-btn" class="active">Otomatik</button>
@@ -968,22 +942,20 @@
                 </div>
                 
                 <!-- Main Visual Display -->
-                <div class="relative flex items-center justify-center w-64 h-64 my-6">
-                    <div id="tuner-peg" class="w-full h-full bg-gray-800 rounded-full border-4 border-gray-700 flex items-center justify-center shadow-xl">
-                        <div id="tuner-string-indicator" class="w-48 h-48 bg-secondary-bg rounded-full flex flex-col items-center justify-center text-center p-4">
-                            <div id="tuner-note-name" class="text-6xl font-bold text-text-light">-</div>
-                            <div id="tuner-frequency" class="text-text-subtle">-- Hz</div>
-                            <div id="tuner-status-text" class="text-lg text-text-subtle font-semibold h-7 mt-2"></div>
+                <div id="tuner-visual-display" class="relative flex items-center justify-center">
+                    <div id="tuner-peg" class="bg-gray-800 rounded-full border-4 border-gray-700 flex items-center justify-center shadow-xl">
+                        <div id="tuner-string-indicator" class="bg-secondary-bg rounded-full p-2">
+                            <div id="tuner-note-name">-</div>
+                            <div id="tuner-frequency">-- Hz</div>
+                            <div id="tuner-status-text"></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Fine-tune Meter -->
-                <div class="w-full flex items-center justify-center mb-4">
-                    <div id="tuner-meter-container">
-                        <div id="tuner-meter-fill"></div>
-                        <div id="tuner-meter-center"></div>
-                    </div>
+                <div id="tuner-meter-container">
+                    <div id="tuner-meter-fill"></div>
+                    <div id="tuner-meter-center"></div>
                 </div>
 
                 <!-- Manual String Selection (hidden by default) -->
@@ -992,7 +964,7 @@
                 </div>
                 
                 <!-- Start/Stop Controls -->
-                <div class="flex justify-center mt-4">
+                <div class="flex justify-center">
                     <button id="start-tuner-btn">
                         Başlat
                     </button>
