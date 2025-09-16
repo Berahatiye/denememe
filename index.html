@@ -1125,7 +1125,7 @@
             normalized = normalized.replace(/ş/g, 's');
             normalized = normalized.replace(/ü/g, 'u');
             normalized = normalized.replace(/i̇/g, 'i');
-            normalized = normalized.replace(/[^a-z0.9]/g, '');
+            normalized = normalized.replace(/[^a-z0-9]/g, '');
             return normalized.trim();
         }
 
@@ -1522,6 +1522,30 @@
 
         // --- START: ADVANCED TUNER FUNCTIONS ---
 
+        function playStringTone(frequency) {
+            const tempAudioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = tempAudioContext.createOscillator();
+            const gainNode = tempAudioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(tempAudioContext.destination);
+            oscillator.type = 'sine';
+            oscillator.frequency.value = frequency;
+
+            gainNode.gain.setValueAtTime(0, tempAudioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.5, tempAudioContext.currentTime + 0.1);
+            gainNode.gain.linearRampToValueAtTime(0, tempAudioContext.currentTime + 1.5);
+
+            oscillator.start(tempAudioContext.currentTime);
+            oscillator.stop(tempAudioContext.currentTime + 1.5);
+
+            if (!audioContext) {
+                setTimeout(() => {
+                    tempAudioContext.close();
+                }, 2000);
+            }
+        }
+
         function setTunerMode(mode) {
             tunerMode = mode;
             
@@ -1538,9 +1562,8 @@
         }
 
         function initGuitarTuner() {
-            setTunerMode('auto'); // Default to auto
+            setTunerMode('auto');
             
-            // Create string selection buttons
             tunerStringSelectors.innerHTML = '';
             guitarStrings.forEach((string, index) => {
                 const button = document.createElement('button');
@@ -1554,6 +1577,9 @@
                     currentStringIndex = index;
                     document.querySelectorAll('.tuner-string-btn').forEach(btn => btn.classList.remove('active'));
                     button.classList.add('active');
+                    if (tunerMode === 'manual') {
+                        playStringTone(string.frequency);
+                    }
                     resetTunerDisplay();
                 });
                 tunerStringSelectors.appendChild(button);
@@ -1594,7 +1620,7 @@
                 
                 lowPassFilter = audioContext.createBiquadFilter();
                 lowPassFilter.type = 'lowpass';
-                lowPassFilter.frequency.setValueAtTime(1000, audioContext.currentTime); // Cutoff high-freq noise
+                lowPassFilter.frequency.setValueAtTime(1000, audioContext.currentTime);
                 
                 analyser.fftSize = 2048;
                 microphone.connect(lowPassFilter);
@@ -1652,12 +1678,11 @@
         }
 
         function yinPitchDetection(buffer, sampleRate) {
-            const threshold = 0.15; // Yin threshold
+            const threshold = 0.15;
             const bufferSize = buffer.length;
             const yinBuffer = new Float32Array(bufferSize / 2);
             let period, pitch, clarity;
 
-            // Step 2: Difference function
             for (let tau = 1; tau < yinBuffer.length; tau++) {
                 for (let i = 0; i < yinBuffer.length; i++) {
                     const delta = buffer[i] - buffer[i + tau];
@@ -1665,7 +1690,6 @@
                 }
             }
 
-            // Step 3: Cumulative mean normalized difference
             let runningSum = 0;
             yinBuffer[0] = 1;
             for (let tau = 1; tau < yinBuffer.length; tau++) {
@@ -1673,10 +1697,8 @@
                 yinBuffer[tau] *= tau / runningSum;
             }
 
-            // Step 4: Absolute threshold
             for (let tau = 2; tau < yinBuffer.length; tau++) {
                 if (yinBuffer[tau] < threshold) {
-                    // Parabolic interpolation for better accuracy
                     while (tau + 1 < yinBuffer.length && yinBuffer[tau + 1] < yinBuffer[tau]) {
                         tau++;
                     }
@@ -1703,7 +1725,6 @@
             
             if (period) {
                 pitch = sampleRate / period;
-                 // Filter out unreasonable frequencies
                 if (pitch > 50 && pitch < 1000) {
                      return { frequency: pitch, clarity: clarity };
                 }
@@ -1731,10 +1752,8 @@
         function updateTunerUI(frequency, clarity) {
             if (!isTunerActive) return;
 
-            // Update clarity bar
             tunerClarityFill.style.width = `${Math.max(0, Math.min(100, clarity * 100))}%`;
             
-            // Only update the rest of the UI if clarity is good enough
             if(clarity < 0.8) {
                 return;
             }
