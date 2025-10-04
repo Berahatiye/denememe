@@ -32,7 +32,10 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
 
-        html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: #0f172a;
@@ -40,107 +43,695 @@
             transition: background-color 0.5s ease-in-out;
             margin: 0;
             padding: 0;
-            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
-            user-select: none; -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
         }
+
         .lyrics-line {
-            font-size: 1.75rem; font-weight: 500; color: #94a3b8; opacity: 0.26;
-            padding: 0.5rem 0; transition: color 0.15s ease-in-out, opacity 0.15s ease-in-out, font-weight 0.15s ease-in-out;
-            will-change: color, opacity, font-weight; cursor: pointer;
+            font-size: 1.75rem;
+            font-weight: 500;
+            color: #94a3b8;
+            opacity: 0.26;
+            padding: 0.5rem 0;
+            transition: color 0.15s ease-in-out, opacity 0.15s ease-in-out, font-weight 0.15s ease-in-out;
+            will-change: color, opacity, font-weight;
+            cursor: pointer;
         }
-        @media (max-width: 480px) { .lyrics-line { font-size: 1.5rem; } #hymns-list > div { font-size: 0.9rem; padding: 0.4rem; } }
+
+        @media (max-width: 480px) {
+            .lyrics-line {
+                font-size: 1.5rem;
+            }
+            #hymns-list > div {
+                font-size: 0.9rem;
+                padding: 0.4rem;
+            }
+        }
+
         @media (max-width: 320px) {
-            .lyrics-line { font-size: 1.25rem; padding: 0.3rem 0; } .control-panel { padding: 0.75rem; }
-            #search-bar { padding: 0.6rem; } #show-all-hymns-btn, #initial-fullscreen-btn, #display-on-tv-btn { padding: 0.6rem 0.8rem; font-size: 0.875rem; }
-            .modal-content { padding: 0.75rem; } .modal-content h3, .modal-content p { font-size: 1rem; }
-            .all-hymns-modal-list > div { font-size: 0.8rem; padding: 0.3rem; }
+            .lyrics-line {
+                font-size: 1.25rem;
+                padding: 0.3rem 0;
+            }
+            .control-panel {
+                padding: 0.75rem;
+            }
+            #search-bar {
+                padding: 0.6rem;
+            }
+            #show-all-hymns-btn, #initial-fullscreen-btn, #display-on-tv-btn {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.875rem;
+            }
+            .modal-content {
+                padding: 0.75rem;
+            }
+            .modal-content h3, .modal-content p {
+                font-size: 1rem;
+            }
+            .all-hymns-modal-list > div {
+                font-size: 0.8rem;
+                padding: 0.3rem;
+            }
         }
-        @media (min-width: 768px) { .lyrics-line { font-size: 2.25rem; } }
-        @media (min-width: 1024px) { .lyrics-line { font-size: 3rem; } }
-        .lyrics-line.active { font-weight: 700; color: #f5f5f7; opacity: 1; }
-        .lyrics-provider { font-size: 0.7rem; color: #64748b; opacity: 0.8; text-align: center; margin-top: 2rem; margin-bottom: 1rem; width: 100%; }
-        @media (min-width: 768px) { .lyrics-provider { font-size: 0.8rem; margin-top: 2.5rem; } }
-        @media (min-width: 1024px) { .lyrics-provider { font-size: 0.9rem; margin-top: 3rem; } }
+        
+        @media (min-width: 768px) {
+            .lyrics-line {
+                font-size: 2.25rem;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .lyrics-line {
+                font-size: 3rem;
+            }
+        }
+        
+        .lyrics-line.active {
+            font-weight: 700;
+            color: #f5f5f7;
+            opacity: 1;
+        }
+
+        .lyrics-provider {
+            font-size: 0.7rem;
+            color: #64748b;
+            opacity: 0.8;
+            text-align: center;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+        @media (min-width: 768px) {
+            .lyrics-provider {
+                font-size: 0.8rem;
+                margin-top: 2.5rem;
+            }
+        }
+        @media (min-width: 1024px) {
+            .lyrics-provider {
+                font-size: 0.9rem;
+                margin-top: 3rem;
+            }
+        }
+
         #hymn-title-container {
-            background-color: #1e293b; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem; width: 100%; max-width: 48rem;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); display: flex; align-items: center; justify-content: center; gap: 1rem; border: 1px solid #334155;
+            background-color: #1e293b;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            width: 100%;
+            max-width: 48rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            border: 1px solid #334155;
         }
-        #hymn-title { font-size: 1rem; font-weight: 700; color: #a5b4fc; text-align: center; line-height: 1.2; }
-        @media (max-width: 480px) { #hymn-title-container { padding: 0.75rem; margin-bottom: 1rem; } #hymn-title { font-size: 0.9rem; } }
-        @media (max-width: 320px) { #hymn-title { font-size: 0.8rem; } }
-        @media (min-width: 768px) { #hymn-title { font-size: 1.25rem; } }
-        @media (min-width: 1024px) { #hymn-title { font-size: 1.5rem; } }
-        body.full-screen { overflow: hidden; background-color: black; }
-        body.full-screen.casting-mode .control-panel, body.full-screen.casting-mode #hymn-title-container, body.full-screen.casting-mode #lyrics-scroll-container,
-        body.full-screen.casting-mode #welcome-message, body.full-screen.casting-mode #lyrics-provider-container { display: none !important; }
-        body.full-screen.casting-mode #lyrics-display { padding: 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
-        body.full-screen.casting-mode #single-line-display { display: flex; align-items: center; justify-content: center; width: 100%; height: 100vh; padding: 0 2rem; }
+
+        #hymn-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #a5b4fc;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        @media (max-width: 480px) {
+            #hymn-title-container {
+                padding: 0.75rem;
+                margin-bottom: 1rem;
+            }
+            #hymn-title {
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            #hymn-title {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            #hymn-title {
+                font-size: 1.25rem;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            #hymn-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        body.full-screen {
+            overflow: hidden;
+            background-color: black;
+        }
+
+        body.full-screen.casting-mode .control-panel,
+        body.full-screen.casting-mode #hymn-title-container,
+        body.full-screen.casting-mode #lyrics-scroll-container,
+        body.full-screen.casting-mode #welcome-message,
+        body.full-screen.casting-mode #lyrics-provider-container
+        {
+            display: none !important;
+        }
+
+        body.full-screen.casting-mode #lyrics-display {
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        body.full-screen.casting-mode #single-line-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100vh;
+            padding: 0 2rem;
+        }
+        
         #single-line-text {
-            font-size: min(15vw, 15vh); font-weight: 700; color: #fff; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7); text-align: center; line-height: 1.2;
-            padding: 0 2rem; white-space: pre-wrap; opacity: 0; transform: scale(0.95); transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; will-change: opacity, transform;
+            font-size: min(15vw, 15vh);
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            line-height: 1.2;
+            padding: 0 2rem;
+            white-space: pre-wrap;
+            
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            will-change: opacity, transform;
         }
-        #single-line-text.visible { opacity: 1; transform: scale(1); }
-        .lyrics-scroll-container { max-height: 70vh; overflow-y: auto; }
-        .lyrics-scroll-container::-webkit-scrollbar { width: 10px; } .lyrics-scroll-container::-webkit-scrollbar-track { background: #2d3748; border-radius: 5px; }
-        .lyrics-scroll-container::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 5px; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.75); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; visibility: hidden; pointer-events: none; }
-        .modal-overlay.visible { opacity: 1; visibility: visible; pointer-events: auto; }
-        .modal-content { background-color: #1e293b; padding: 1rem; border-radius: 0.75rem; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); max-width: 90%; max-height: 90vh; text-align: center; transform: scale(0.95); transition: transform 0.3s ease-in-out; width: 90%; box-sizing: border-box; }
-        @media (max-width: 767px) { .modal-content { padding: 0.5rem; max-width: 100%; max-height: 100vh; width: 100%; font-size: 0.8rem; } }
-        @media (max-width: 320px) { .modal-content { padding: 0.25rem; } }
-        @media (min-width: 640px) { .modal-content { padding: 2rem; } }
-        .modal-overlay.visible .modal-content { transform: scale(1); }
-        .all-hymns-modal .modal-content, .playlist-modal .modal-content { width: 90%; max-width: 2xl; max-height: 85vh; }
-        .all-hymns-modal-list { max-height: 70vh; overflow-y: auto; }
-        .fullscreen-nav-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 110; display: none; }
-        body.full-screen.casting-mode .fullscreen-nav-container { display: block; }
-        .fullscreen-btn { position: fixed; top: 0; height: 100vh; display: flex; justify-content: center; align-items: center; pointer-events: auto; opacity: 0.1; transition: opacity 0.3s ease-in-out; }
-        .fullscreen-btn:active, .fullscreen-btn:focus { opacity: 0.5; } .fullscreen-btn.left { left: 0; } .fullscreen-btn.right { right: 0; }
-        .fullscreen-btn.exit-btn { top: 0.5rem; right: 0.5rem; width: 3rem; height: 3rem; border-radius: 9999px; background-color: rgba(30, 41, 59, 0.5); backdrop-filter: blur(5px); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: all 0.2s ease-in-out; opacity: 0.1; }
-        .fullscreen-btn.exit-btn:active { opacity: 0.5; background-color: rgba(55, 65, 81, 0.7); }
-        .fullscreen-btn svg { color: #d1d5db; height: 2rem; width: 2rem; filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5)); }
-        @media (min-width: 768px) { .fullscreen-btn.exit-btn { top: 2rem; right: 2rem; width: 4rem; height: 4rem; } .fullscreen-btn svg { height: 3rem; width: 3rem; } }
-        #go-to-top-btn { position: fixed; bottom: 2px; right: 2px; background-color: #a5b4fc; color: #0f172a; border-radius: 9999px; padding: 0.8rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); cursor: pointer; z-index: 50; transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; transform: scale(0); opacity: 0; }
-        #go-to-top-btn.visible { transform: scale(1); opacity: 1; }
-        body.full-screen #go-to-top-btn { display: none !important; }
-        .hymn-icon { width: min(8vw, 1.5rem); height: min(8vw, 1.5rem); flex-shrink: 0; }
-        @media (max-width: 320px) { .hymn-icon { width: min(10vw, 1.2rem); height: min(10vw, 1.2rem); } }
-        @media (min-width: 768px) { .hymn-icon { width: min(4vw, 2rem); height: min(4vw, 2rem); } }
-        @media (min-width: 1024px) { .hymn-icon { width: min(3vw, 2.5rem); height: min(3vw, 2.5rem); } }
-        .loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.8); display: flex; align-items: center; justify-content: center; z-index: 200; opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; }
-        .loader-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        .loader { border: 8px solid rgba(248, 250, 252, 0.2); border-top: 8px solid #a5b4fc; border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #guitar-tuner-modal .modal-content { max-height: 95vh; padding: 0; overflow: hidden; }
-        #guitar-tuner-modal .tuner-content-container { padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
-        #tuner-mode-selector { display: flex; background-color: #334155; border-radius: 9999px; padding: 0.25rem; width: fit-content; margin-left: auto; margin-right: auto; flex-shrink: 0; }
-        #tuner-mode-selector button { padding: 0.5rem 1rem; border-radius: 9999px; font-weight: 600; font-size: 0.875rem; transition: all 0.2s ease-in-out; border: none; cursor: pointer; background: transparent; color: #94a3b8; }
-        #tuner-mode-selector button.active { background-color: #a5b4fc; color: #0f172a; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
-        #tuner-visual-display { width: min(60vw, 224px); height: min(60vw, 224px); flex-shrink: 0; }
-        #tuner-peg { transition: transform 0.2s ease-out; width: 100%; height: 100%; }
-        #tuner-string-indicator { transition: all 0.2s ease-in-out; box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; width: 75%; height: 75%; padding: 0.5rem; }
-        #tuner-string-indicator.in-tune { box-shadow: 0 0 20px 8px rgba(74, 222, 128, 0.7); animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 20px 8px rgba(74, 222, 128, 0.7); } 50% { box-shadow: 0 0 25px 12px rgba(74, 222, 128, 0.9); } 100% { box-shadow: 0 0 20px 8px rgba(74, 222, 128, 0.7); } }
-        #tuner-meter-container { width: 100%; max-width: 300px; height: 12px; background-color: #334155; border-radius: 9999px; position: relative; overflow: hidden; flex-shrink: 0; }
-        #tuner-meter-fill { position: absolute; height: 100%; width: 50%; background: linear-gradient(90deg, #f87171 0%, #4ade80 50%, #f87171 100%); left: 25%; transition: transform 0.1s ease-out; }
-        #tuner-meter-center { position: absolute; height: 100%; width: 2px; background-color: white; left: 50%; transform: translateX(-50%); }
-        #tuner-note-name { font-size: clamp(2.5rem, 12vw, 3.5rem); font-weight: 800; color: white; line-height: 1; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
-        #tuner-frequency { font-size: clamp(0.875rem, 4vw, 1.125rem); color: #94a3b8; }
-        #tuner-status-text { font-size: clamp(0.875rem, 4vw, 1.1rem); font-weight: 600; height: 1.5rem; margin-top: 0.25rem; }
-        #tuner-clarity-container { width: 100px; height: 12px; background-color: #334155; border-radius: 9999px; margin-top: 0.5rem; position: relative; overflow: hidden; }
-        #tuner-clarity-fill { height: 100%; background-color: #a5b4fc; width: 0%; border-radius: 9999px; transition: width 0.2s ease-out; }
-        #tuner-clarity-label { font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem; }
-        #tuner-string-selectors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; width: 100%; max-width: 300px; flex-shrink: 0; }
-        .tuner-string-btn { padding: 0.75rem 0.5rem; border-radius: 0.5rem; font-weight: 600; background-color: #334155; color: white; border: none; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .tuner-string-btn.active { background-color: #a5b4fc; color: #0f172a; box-shadow: 0 2px 8px rgba(165, 180, 252, 0.4); }
-        .tuner-string-btn .string-name { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem; }
-        .tuner-string-btn .string-detail { font-size: 0.75rem; opacity: 0.8; }
-        #start-tuner-btn { padding: 0.75rem 2rem; border-radius: 9999px; font-weight: 600; font-size: 1.1rem; background-color: #a5b4fc; color: #0f172a; border: none; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(165, 180, 252, 0.3); flex-shrink: 0; }
-        #start-tuner-btn.stop { background-color: #f87171; box-shadow: 0 4px 12px rgba(248, 113, 113, 0.3); }
-        #start-tuner-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(165, 180, 252, 0.4); }
-        #start-tuner-btn.stop:hover { box-shadow: 0 6px 16px rgba(248, 113, 113, 0.4); }
-        .tuner-help-text { color: #94a3b8; font-size: 0.875rem; text-align: center; max-width: 300px; flex-shrink: 0; }
-        @media (max-width: 480px) { #tuner-string-selectors { grid-template-columns: repeat(2, 1fr); } }
+        #single-line-text.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .lyrics-scroll-container {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .lyrics-scroll-container::-webkit-scrollbar {
+            width: 10px;
+        }
+        .lyrics-scroll-container::-webkit-scrollbar-track {
+            background: #2d3748;
+            border-radius: 5px;
+        }
+        .lyrics-scroll-container::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border-radius: 5px;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: #1e293b;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            max-height: 90vh;
+            text-align: center;
+            transform: scale(0.95);
+            transition: transform 0.3s ease-in-out;
+            width: 90%;
+            box-sizing: border-box;
+        }
+        
+        @media (max-width: 767px) {
+            .modal-content {
+                padding: 0.5rem;
+                max-width: 100%;
+                max-height: 100vh;
+                width: 100%;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .modal-content {
+                padding: 0.25rem;
+            }
+        }
+
+        @media (min-width: 640px) {
+            .modal-content {
+                padding: 2rem;
+            }
+        }
+        
+        .modal-overlay.visible .modal-content {
+            transform: scale(1);
+        }
+
+        .all-hymns-modal .modal-content, .playlist-modal .modal-content {
+            width: 90%;
+            max-width: 2xl;
+            max-height: 85vh;
+        }
+
+        .all-hymns-modal-list {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .fullscreen-nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 110;
+            display: none;
+        }
+        
+        body.full-screen.casting-mode .fullscreen-nav-container {
+            display: block;
+        }
+
+        .fullscreen-btn {
+            position: fixed;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: auto;
+            
+            opacity: 0.1; 
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        .fullscreen-btn:active, .fullscreen-btn:focus {
+            opacity: 0.5;
+        }
+        
+        .fullscreen-btn.left {
+            left: 0;
+        }
+        
+        .fullscreen-btn.right {
+            right: 0;
+        }
+        
+        .fullscreen-btn.exit-btn {
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 9999px;
+            background-color: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease-in-out;
+            
+            opacity: 0.1;
+        }
+        
+        .fullscreen-btn.exit-btn:active {
+            opacity: 0.5;
+            background-color: rgba(55, 65, 81, 0.7);
+        }
+        
+        .fullscreen-btn svg {
+            color: #d1d5db;
+            height: 2rem;
+            width: 2rem;
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+        }
+
+        @media (min-width: 768px) {
+            .fullscreen-btn.exit-btn {
+                top: 2rem;
+                right: 2rem;
+                width: 4rem;
+                height: 4rem;
+            }
+            .fullscreen-btn svg {
+                height: 3rem;
+                width: 3rem;
+            }
+        }
+
+        #go-to-top-btn {
+            position: fixed;
+            bottom: 2px;
+            right: 2px;
+            background-color: #a5b4fc;
+            color: #0f172a;
+            border-radius: 9999px;
+            padding: 0.8rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 50;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        #go-to-top-btn.visible {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        body.full-screen #go-to-top-btn {
+            display: none !important;
+        }
+
+        .hymn-icon {
+            width: min(8vw, 1.5rem); 
+            height: min(8vw, 1.5rem);
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 320px) {
+            .hymn-icon {
+                width: min(10vw, 1.2rem);
+                height: min(10vw, 1.2rem);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .hymn-icon {
+                width: min(4vw, 2rem); 
+                height: min(4vw, 2rem);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .hymn-icon {
+                width: min(3vw, 2.5rem); 
+                height: min(3vw, 2.5rem);
+            }
+        }
+
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .loader-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader {
+            border: 8px solid rgba(248, 250, 252, 0.2);
+            border-top: 8px solid #a5b4fc;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- START: TUNER STYLES --- */
+        #guitar-tuner-modal .modal-content {
+            max-height: 95vh;
+            padding: 0; /* Remove padding from modal-content */
+            overflow: hidden; /* Prevent modal itself from scrolling */
+        }
+
+        #guitar-tuner-modal .tuner-content-container {
+            padding: 1rem;
+            overflow-y: auto; /* Allow this container to scroll */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem; /* Add gap for consistent spacing */
+        }
+        
+        #tuner-mode-selector {
+            display: flex;
+            background-color: #334155;
+            border-radius: 9999px;
+            padding: 0.25rem;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            flex-shrink: 0;
+        }
+        
+        #tuner-mode-selector button {
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s ease-in-out;
+            border: none;
+            cursor: pointer;
+            background: transparent;
+            color: #94a3b8;
+        }
+        
+        #tuner-mode-selector button.active {
+            background-color: #a5b4fc;
+            color: #0f172a;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        #tuner-visual-display {
+            width: min(60vw, 224px);
+            height: min(60vw, 224px);
+            flex-shrink: 0;
+        }
+
+        #tuner-peg {
+            transition: transform 0.2s ease-out;
+            width: 100%;
+            height: 100%;
+        }
+
+        #tuner-string-indicator {
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 75%;
+            height: 75%;
+            padding: 0.5rem;
+        }
+
+        #tuner-string-indicator.in-tune {
+            box-shadow: 0 0 20px 8px rgba(74, 222, 128, 0.7);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 20px 8px rgba(74, 222, 128, 0.7); }
+            50% { box-shadow: 0 0 25px 12px rgba(74, 222, 128, 0.9); }
+            100% { box-shadow: 0 0 20px 8px rgba(74, 222, 128, 0.7); }
+        }
+
+        #tuner-meter-container {
+            width: 100%;
+            max-width: 300px;
+            height: 12px;
+            background-color: #334155;
+            border-radius: 9999px;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        #tuner-meter-fill {
+            position: absolute;
+            height: 100%;
+            width: 50%;
+            background: linear-gradient(90deg, #f87171 0%, #4ade80 50%, #f87171 100%);
+            left: 25%;
+            transition: transform 0.1s ease-out;
+        }
+        
+        #tuner-meter-center {
+            position: absolute;
+            height: 100%;
+            width: 2px;
+            background-color: white;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        #tuner-note-name {
+            font-size: clamp(2.5rem, 12vw, 3.5rem);
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        #tuner-frequency {
+            font-size: clamp(0.875rem, 4vw, 1.125rem);
+            color: #94a3b8;
+        }
+        
+        #tuner-status-text {
+            font-size: clamp(0.875rem, 4vw, 1.1rem);
+            font-weight: 600;
+            height: 1.5rem;
+            margin-top: 0.25rem;
+        }
+        
+        #tuner-clarity-container {
+            width: 100px;
+            height: 12px;
+            background-color: #334155;
+            border-radius: 9999px;
+            margin-top: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #tuner-clarity-fill {
+            height: 100%;
+            background-color: #a5b4fc;
+            width: 0%;
+            border-radius: 9999px;
+            transition: width 0.2s ease-out;
+        }
+        
+        #tuner-clarity-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+        }
+        
+        #tuner-string-selectors {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 300px;
+            flex-shrink: 0;
+        }
+        
+        .tuner-string-btn {
+            padding: 0.75rem 0.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            background-color: #334155;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tuner-string-btn.active {
+            background-color: #a5b4fc;
+            color: #0f172a;
+            box-shadow: 0 2px 8px rgba(165, 180, 252, 0.4);
+        }
+        
+        .tuner-string-btn .string-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .tuner-string-btn .string-detail {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+        
+        #start-tuner-btn {
+            padding: 0.75rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            background-color: #a5b4fc;
+            color: #0f172a;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(165, 180, 252, 0.3);
+            flex-shrink: 0;
+        }
+        
+        #start-tuner-btn.stop {
+            background-color: #f87171;
+            box-shadow: 0 4px 12px rgba(248, 113, 113, 0.3);
+        }
+        
+        #start-tuner-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(165, 180, 252, 0.4);
+        }
+        
+        #start-tuner-btn.stop:hover {
+            box-shadow: 0 6px 16px rgba(248, 113, 113, 0.4);
+        }
+        
+        .tuner-help-text {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            text-align: center;
+            max-width: 300px;
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 480px) {
+            #tuner-string-selectors {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        /* --- END: TUNER STYLES --- */
 
         /* NEW: Styles for Shepherd Mode */
         #shepherd-mode-display {
@@ -169,7 +760,6 @@
             color: #94a3b8;
             font-style: italic;
         }
-
     </style>
 </head>
 <body class="bg-primary-bg">
@@ -225,7 +815,9 @@
             </button>
         </div>
 
-        <div id="lyrics-display" class="lyrics-display p-8 flex-grow flex flex-col items-center justify-center text-center duration-500">
+        <div id="lyrics-display" class="lyrics-display p-8 flex-grow flex flex-col items-center justify-center text-center duration-500" style="
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);">
             
             <div id="welcome-message" class="text-xl md:text-2xl text-text-subtle font-light max-w-2xl text-center">
                 <p class="mb-4">Toplamda: <span id="hymn-count">0</span> adet Türkçe ilahi <br>bulunmaktadır.</p>
@@ -263,12 +855,12 @@
         </div>
     </div>
 
-    <!-- ... (rest of your modals and other HTML elements are unchanged) ... -->
-    <div id="go-to-top-btn" class="p-4 rounded-full shadow-lg transition-transform duration-300" onclick="scrollToTop()">
+    <button id="go-to-top-btn" class="p-4 rounded-full shadow-lg transition-transform duration-300" onclick="scrollToTop()">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
         </svg>
     </button>
+
     <div id="casting-modal" class="modal-overlay">
         <div class="modal-content relative">
             <button onclick="closeModal('casting-modal')" class="absolute top-2 right-2 p-1 rounded-full bg-secondary-bg hover:bg-gray-600 transition-colors">
@@ -283,6 +875,7 @@
             </button>
         </div>
     </div>
+
     <div id="all-hymns-modal" class="modal-overlay all-hymns-modal">
         <div class="modal-content w-full max-w-2xl mx-auto flex flex-col">
             <div class="flex justify-between items-center p-2 sm:p-4 border-b border-gray-700">
@@ -300,6 +893,7 @@
             </div>
         </div>
     </div>
+
     <div id="playlist-modal" class="modal-overlay playlist-modal">
         <div class="modal-content w-full max-w-2xl mx-auto flex flex-col h-full">
             <div class="flex justify-between items-center px-1 py-0.5 sm:px-2 sm:py-1 md:px-4 md:py-2 border-b border-gray-700">
@@ -337,6 +931,8 @@
             </div>
         </div>
     </div>
+
+    <!-- Enhanced GuitarTuna Style Tuner Modal -->
     <div id="guitar-tuner-modal" class="modal-overlay">
         <div class="modal-content w-full max-w-md mx-auto flex flex-col bg-gray-900 rounded-xl">
             <div class="flex justify-between items-center p-4 border-b border-gray-700 bg-gray-800 flex-shrink-0">
@@ -347,30 +943,72 @@
                     </svg>
                 </button>
             </div>
+            
             <div class="tuner-content-container flex-grow">
-                <div id="tuner-mode-selector"> <button id="auto-mode-btn" class="active">Otomatik</button> <button id="manual-mode-btn">Manuel</button> </div>
+                <!-- Mode Selector -->
+                <div id="tuner-mode-selector">
+                    <button id="auto-mode-btn" class="active">Otomatik</button>
+                    <button id="manual-mode-btn">Manuel</button>
+                </div>
+                
+                <!-- Main Visual Display -->
                 <div id="tuner-visual-display" class="relative flex items-center justify-center">
                     <div id="tuner-peg" class="bg-gray-800 rounded-full border-4 border-gray-700 flex items-center justify-center shadow-xl">
                         <div id="tuner-string-indicator" class="bg-secondary-bg rounded-full">
-                            <div id="tuner-note-name">-</div> <div id="tuner-frequency">-- Hz</div> <div id="tuner-status-text">...</div>
+                            <div id="tuner-note-name">-</div>
+                            <div id="tuner-frequency">-- Hz</div>
+                            <div id="tuner-status-text">...</div>
                              <div class="flex flex-col items-center">
-                                <div id="tuner-clarity-container"> <div id="tuner-clarity-fill"></div> </div>
+                                <div id="tuner-clarity-container">
+                                    <div id="tuner-clarity-fill"></div>
+                                </div>
                                 <div id="tuner-clarity-label">Clarity</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div id="tuner-meter-container"> <div id="tuner-meter-fill"></div> <div id="tuner-meter-center"></div> </div>
-                <div id="tuner-string-selectors" class="hidden"> </div>
-                <div class="flex justify-center"> <button id="start-tuner-btn"> Başlat </button> </div>
-                <div class="tuner-help-text"> Mikrofon erişimi vererek gitarınızı akort edebilirsiniz </div>
+
+                <!-- Fine-tune Meter -->
+                <div id="tuner-meter-container">
+                    <div id="tuner-meter-fill"></div>
+                    <div id="tuner-meter-center"></div>
+                </div>
+
+                <!-- Manual String Selection (hidden by default) -->
+                <div id="tuner-string-selectors" class="hidden">
+                    <!-- Buttons will be generated by JS -->
+                </div>
+                
+                <!-- Start/Stop Controls -->
+                <div class="flex justify-center">
+                    <button id="start-tuner-btn">
+                        Başlat
+                    </button>
+                </div>
+                
+                <div class="tuner-help-text">
+                    Mikrofon erişimi vererek gitarınızı akort edebilirsiniz
+                </div>
             </div>
         </div>
     </div>
+
     <div class="fullscreen-nav-container">
-        <button onclick="previousLine()" class="fullscreen-btn left"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /> </svg> </button>
-        <button onclick="nextLine()" class="fullscreen-btn right"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /> </svg> </button>
-        <button onclick="exitCastingMode()" class="fullscreen-btn exit-btn"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /> </svg> </button>
+        <button onclick="previousLine()" class="fullscreen-btn left">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+        <button onclick="nextLine()" class="fullscreen-btn right">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+        <button onclick="exitCastingMode()" class="fullscreen-btn exit-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
     </div>
 
     <script>
@@ -463,18 +1101,36 @@
             return noteStrings[Math.round(noteNum + 69) % 12];
         }
 
-        // ... (All your existing functions like debounce, showLoader, normalizeText, etc. are unchanged) ...
-        function debounce(func, delay) { let timeout; return function(...args) { const context = this; clearTimeout(timeout); timeout = setTimeout(() => func.apply(context, args), delay); }; }
-        function showLoader() { loaderOverlay.classList.remove('hidden'); }
-        function hideLoader() { loaderOverlay.classList.add('hidden'); }
+        function debounce(func, delay) {
+            let timeout;
+            return function(...args) {
+                const context = this;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+
+        function showLoader() {
+            loaderOverlay.classList.remove('hidden');
+        }
+
+        function hideLoader() {
+            loaderOverlay.classList.add('hidden');
+        }
+
         function normalizeText(text) {
             let normalized = text.toLowerCase();
-            normalized = normalized.replace(/ç/g, 'c'); normalized = normalized.replace(/ğ/g, 'g');
-            normalized = normalized.replace(/ı/g, 'i'); normalized = normalized.replace(/ö/g, 'o');
-            normalized = normalized.replace(/ş/g, 's'); normalized = normalized.replace(/ü/g, 'u');
-            normalized = normalized.replace(/i̇/g, 'i'); normalized = normalized.replace(/[^a-z0-9]/g, '');
+            normalized = normalized.replace(/ç/g, 'c');
+            normalized = normalized.replace(/ğ/g, 'g');
+            normalized = normalized.replace(/ı/g, 'i');
+            normalized = normalized.replace(/ö/g, 'o');
+            normalized = normalized.replace(/ş/g, 's');
+            normalized = normalized.replace(/ü/g, 'u');
+            normalized = normalized.replace(/i̇/g, 'i');
+            normalized = normalized.replace(/[^a-z0-9]/g, '');
             return normalized.trim();
         }
+
         function renderSuggestions(hymnList) {
             suggestionsContainer.innerHTML = '';
             if (hymnList.length > 0) {
@@ -486,15 +1142,20 @@
                     suggestionDiv.addEventListener('click', () => {
                         selectHymn(originalIndex);
                         suggestionsContainer.classList.add('hidden');
-                        searchBar.value = ''; clearSearchBtn.style.display = 'none';
+                        searchBar.value = '';
+                        clearSearchBtn.style.display = 'none';
                     });
                     suggestionsContainer.appendChild(suggestionDiv);
                 });
                 suggestionsContainer.classList.remove('hidden');
-            } else { suggestionsContainer.classList.add('hidden'); }
+            } else {
+                suggestionsContainer.classList.add('hidden');
+            }
         }
+
         function selectHymn(index) {
             showLoader();
+            
             setTimeout(() => {
                 currentHymnIndex = index;
                 // NEW: Reset Shepherd Mode when a new hymn is selected
@@ -502,16 +1163,21 @@
                     currentShepherdLineIndex = 0;
                     updateShepherdDisplay(0);
                 }
-                renderHymn(); resetLyrics(); closeModal('all-hymns-modal');
-                closeModal('playlist-modal'); hideLoader();
+                renderHymn();
+                resetLyrics();
+                closeModal('all-hymns-modal');
+                closeModal('playlist-modal');
+                hideLoader();
             }, 50);
         }
+
         function renderHymn() {
             if (currentHymnIndex === -1) return;
             const hymn = hymns[currentHymnIndex];
             hymnTitleElement.textContent = hymn.title;
             lyricsScrollContainer.innerHTML = '';
             lyricsLineElements = [];
+
             welcomeMessage.classList.add('hidden');
             hymnContent.classList.remove('hidden');
             // NEW: Hide shepherd mode display when rendering normal lyrics
@@ -519,21 +1185,40 @@
 
             hymn.lyrics.forEach((line, index) => {
                 const p = document.createElement('p');
-                p.textContent = line; p.classList.add('lyrics-line'); p.dataset.index = index;
-                p.addEventListener('click', () => { currentLineIndex = index; updateLyrics(); });
-                lyricsScrollContainer.appendChild(p); lyricsLineElements.push(p);
+                p.textContent = line;
+                p.classList.add('lyrics-line');
+                p.dataset.index = index;
+                p.addEventListener('click', () => {
+                    currentLineIndex = index;
+                    updateLyrics();
+                });
+                lyricsScrollContainer.appendChild(p);
+                lyricsLineElements.push(p);
             });
+
             lyricsProviderContainer.style.display = 'block';
         }
+
         function handleSearch() {
             const query = normalizeText(searchBar.value);
+        
             if (hymns.length > 0 && query.length >= 3) {
                 clearSearchBtn.style.display = 'flex';
-                const filteredHymns = hymns.filter(hymn => normalizeText(hymn.title).includes(query));
+                const filteredHymns = hymns.filter(hymn =>
+                    normalizeText(hymn.title).includes(query)
+                );
                 renderSuggestions(filteredHymns);
-            } else { clearSearchBtn.style.display = 'none'; suggestionsContainer.classList.add('hidden'); }
+            } else {
+                clearSearchBtn.style.display = 'none';
+                suggestionsContainer.classList.add('hidden');
+            }
         }
-        function clearSearch() { searchBar.value = ''; handleSearch(); }
+
+        function clearSearch() {
+            searchBar.value = '';
+            handleSearch();
+        }
+
         function renderAllHymnsList(hymnList) {
             hymnsListContainer.innerHTML = '';
             if (hymnList.length === 0) {
@@ -545,12 +1230,20 @@
                 hymnList.forEach((hymn) => {
                     const listItem = document.createElement('div');
                     listItem.classList.add('p-4', 'rounded-md', 'cursor-pointer', 'text-xl', 'border-b', 'border-gray-700', 'last:border-b-0', 'flex', 'justify-between', 'items-center', 'active:bg-primary-bg', 'transition-colors');
+                    
                     const hymnTitleSpan = document.createElement('span');
-                    hymnTitleSpan.textContent = hymn.title; hymnTitleSpan.classList.add('flex-grow', 'mr-4');
+                    hymnTitleSpan.textContent = hymn.title;
+                    hymnTitleSpan.classList.add('flex-grow', 'mr-4');
                     listItem.appendChild(hymnTitleSpan);
-                    listItem.addEventListener('click', () => { const originalIndex = hymns.findIndex(h => h.title === hymn.title); selectHymn(originalIndex); });
+                    
+                    listItem.addEventListener('click', () => {
+                        const originalIndex = hymns.findIndex(h => h.title === hymn.title);
+                        selectHymn(originalIndex);
+                    });
+
                     const playlistButton = document.createElement('button');
-                    let isInPlaylist = userPlaylist.hymns.includes(hymn.title);
+                    let isInPlaylist = userPlaylist.hymns.includes(hymn.title); 
+                    
                     if (isInPlaylist) {
                         playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>';
                         playlistButton.classList.add('bg-green-600', 'text-primary-bg', 'active:bg-green-500');
@@ -558,9 +1251,13 @@
                         playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>';
                         playlistButton.classList.add('bg-highlight-blue', 'text-primary-bg', 'active:bg-blue-600');
                     }
+                    
                     playlistButton.classList.add('py-2', 'px-4', 'rounded-md', 'text-sm', 'transition-colors', 'duration-300', 'flex', 'items-center', 'justify-center');
+                    
                     playlistButton.onclick = (e) => {
-                        e.stopPropagation(); const title = hymn.title;
+                        e.stopPropagation();
+                        const title = hymn.title;
+
                         if (userPlaylist.hymns.includes(title)) {
                             userPlaylist.hymns = userPlaylist.hymns.filter(t => t !== title);
                             playlistButton.classList.remove('bg-green-600', 'active:bg-green-500');
@@ -572,117 +1269,521 @@
                             playlistButton.classList.add('bg-green-600', 'active:bg-green-500');
                             playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>';
                         }
-                        savePlaylist(); if (playlistModal.classList.contains('visible')) { renderPlaylist(); }
+                        savePlaylist();
+                        
+                        if (playlistModal.classList.contains('visible')) {
+                            renderPlaylist();
+                        }
                     };
-                    listItem.appendChild(playlistButton); hymnsListContainer.appendChild(listItem);
+                    listItem.appendChild(playlistButton);
+                    hymnsListContainer.appendChild(listItem);
                 });
             }
         }
-        function openAllHymnsModal(e) { e.stopPropagation(); if (hymns.length === 0) { modalTitle.textContent = "Veriler Yükleniyor"; modalMessage.textContent = "İlahiler yüklenirken lütfen bekleyin..."; openModal('casting-modal'); return; } showLoader(); openModal('all-hymns-modal'); modalSearchBar.value = ''; setTimeout(() => { renderAllHymnsList(hymns); hideLoader(); }, 50); }
-        function filterHymnsList() { const query = normalizeText(modalSearchBar.value); if (hymns.length === 0) return; const filteredHymns = hymns.filter(hymn => normalizeText(hymn.title).includes(query)); renderAllHymnsList(filteredHymns); }
+
+        function openAllHymnsModal(e) {
+            e.stopPropagation();
+            
+            if (hymns.length === 0) {
+                modalTitle.textContent = "Veriler Yükleniyor";
+                modalMessage.textContent = "İlahiler yüklenirken lütfen bekleyin...";
+                openModal('casting-modal');
+                return;
+            }
+            showLoader(); 
+            openModal('all-hymns-modal');
+            modalSearchBar.value = '';
+            
+            setTimeout(() => {
+                renderAllHymnsList(hymns);
+                hideLoader();
+            }, 50);
+        }
+
+        function filterHymnsList() {
+            const query = normalizeText(modalSearchBar.value);
+            if (hymns.length === 0) return;
+            const filteredHymns = hymns.filter(hymn => normalizeText(hymn.title).includes(query));
+            renderAllHymnsList(filteredHymns);
+        }
+
         let previouslyActiveLine = null;
+
         function updateLyrics() {
             if (currentHymnIndex === -1 || lyricsLineElements.length === 0) return;
             const hymn = hymns[currentHymnIndex];
-            if (isCastingMode) { singleLineText.classList.remove('visible'); requestAnimationFrame(() => { singleLineText.textContent = hymn.lyrics[currentLineIndex]; singleLineText.classList.add('visible'); }); } 
-            else { if (previouslyActiveLine && previouslyActiveLine !== lyricsLineElements[currentLineIndex]) { previouslyActiveLine.classList.remove('active'); } const currentLineElement = lyricsLineElements[currentLineIndex]; if (currentLineElement) { if (!currentLineElement.classList.contains('active')) { currentLineElement.classList.add('active'); currentLineElement.scrollIntoView({ behavior: 'smooth', block: 'center' }); } previouslyActiveLine = currentLineElement; } }
+            
+            if (isCastingMode) {
+                singleLineText.classList.remove('visible');
+                requestAnimationFrame(() => {
+                    singleLineText.textContent = hymn.lyrics[currentLineIndex];
+                    singleLineText.classList.add('visible');
+                });
+            } else {
+                if (previouslyActiveLine && previouslyActiveLine !== lyricsLineElements[currentLineIndex]) {
+                    previouslyActiveLine.classList.remove('active');
+                }
+
+                const currentLineElement = lyricsLineElements[currentLineIndex];
+                if (currentLineElement) {
+                    if (!currentLineElement.classList.contains('active')) {
+                        currentLineElement.classList.add('active');
+                        currentLineElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    previouslyActiveLine = currentLineElement;
+                }
+            }
         }
-        function resetLyrics() { currentLineIndex = 0; if (previouslyActiveLine) { previouslyActiveLine.classList.remove('active'); previouslyActiveLine = null; } updateLyrics(); }
-        function nextLine() { if (currentHymnIndex !== -1 && currentLineIndex < hymns[currentHymnIndex].lyrics.length - 1) { currentLineIndex++; updateLyrics(); } if (playlistModal.classList.contains('visible')) { renderPlaylist(); } if (allHymnsModal.classList.contains('visible')) { filterHymnsList(); } }
-        function previousLine() { if (currentHymnIndex !== -1 && currentLineIndex > 0) { currentLineIndex--; updateLyrics(); } if (playlistModal.classList.contains('visible')) { renderPlaylist(); } if (allHymnsModal.classList.contains('visible')) { filterHymnsList(); } }
-        function toggleFullscreenDisplay() { if (currentHymnIndex === -1) { modalTitle.textContent = "Uyarı"; modalMessage.textContent = "İlahiyi yansıtmak için lütfen önce bir ilahi seçin."; openModal('casting-modal'); return; } isCastingMode ? exitCastingMode() : enterCastingMode(); }
-        function enterCastingMode() { isCastingMode = true; document.body.classList.add('full-screen', 'casting-mode'); displayOnTvBtn.textContent = 'Ekranı Kapat'; displayOnTvBtn.classList.remove('bg-highlight-blue'); displayOnTvBtn.classList.add('bg-highlight-red'); singleLineDisplay.classList.remove('hidden'); updateLyrics(); if(!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { console.error(`Tam ekrana geçiş hatası: ${err.message} (${err.name})`); }); } }
-        function exitCastingMode() { isCastingMode = false; singleLineText.classList.remove('visible'); setTimeout(() => { document.body.classList.remove('full-screen', 'casting-mode'); displayOnTvBtn.textContent = 'İlahiyi Yansıt'; displayOnTvBtn.classList.remove('bg-highlight-red'); displayOnTvBtn.classList.add('bg-highlight-blue'); if (document.fullscreenElement) { document.exitFullscreen(); } closeModal('casting-modal'); singleLineDisplay.classList.add('hidden'); updateLyrics(); }, 150); }
-        function toggleInitialPageFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().then(() => { initialFullscreenBtn.textContent = 'Tam Ekrandan Çık'; if (currentHymnIndex !== -1) { welcomeMessage.classList.add('hidden'); hymnContent.classList.remove('hidden'); lyricsProviderContainer.style.display = 'block'; updateLyrics(); } }).catch(err => { console.error(`Tam ekrana geçiş hatası: ${err.message} (${err.name})`); }); } else { document.exitFullscreen().then(() => { initialFullscreenBtn.textContent = 'Ana Ekranı Tam Yap'; if (currentHymnIndex === -1) { welcomeMessage.classList.remove('hidden'); hymnContent.classList.add('hidden'); } if (currentHymnIndex !== -1 && !isCastingMode) { singleLineDisplay.classList.add('hidden'); updateLyrics(); } }); } }
-        function openModal(modalId) { document.getElementById(modalId).classList.add('visible'); }
+
+        function resetLyrics() {
+            currentLineIndex = 0;
+            if (previouslyActiveLine) {
+                previouslyActiveLine.classList.remove('active');
+                previouslyActiveLine = null;
+            }
+            updateLyrics();
+        }
+
+        function nextLine() {
+            if (currentHymnIndex !== -1 && currentLineIndex < hymns[currentHymnIndex].lyrics.length - 1) {
+                currentLineIndex++;
+                updateLyrics();
+            }
+            if (playlistModal.classList.contains('visible')) {
+                renderPlaylist();
+            }
+            if (allHymnsModal.classList.contains('visible')) {
+                filterHymnsList();
+            }
+        }
+
+        function previousLine() {
+            if (currentHymnIndex !== -1 && currentLineIndex > 0) {
+                currentLineIndex--;
+                updateLyrics();
+            }
+            if (playlistModal.classList.contains('visible')) {
+                renderPlaylist();
+            }
+            if (allHymnsModal.classList.contains('visible')) {
+                filterHymnsList();
+            }
+        }
+        
+        function toggleFullscreenDisplay() {
+            if (currentHymnIndex === -1) {
+                modalTitle.textContent = "Uyarı";
+                modalMessage.textContent = "İlahiyi yansıtmak için lütfen önce bir ilahi seçin.";
+                openModal('casting-modal');
+                return;
+            }
+            isCastingMode ? exitCastingMode() : enterCastingMode();
+        }
+
+        function enterCastingMode() {
+            isCastingMode = true;
+            document.body.classList.add('full-screen', 'casting-mode');
+            displayOnTvBtn.textContent = 'Ekranı Kapat';
+            displayOnTvBtn.classList.remove('bg-highlight-blue');
+            displayOnTvBtn.classList.add('bg-highlight-red');
+            
+            singleLineDisplay.classList.remove('hidden');
+            updateLyrics();
+            
+            if(!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Tam ekrana geçiş hatası: ${err.message} (${err.name})`);
+                });
+            }
+        }
+
+        function exitCastingMode() {
+            isCastingMode = false;
+            singleLineText.classList.remove('visible');
+            
+            setTimeout(() => {
+                document.body.classList.remove('full-screen', 'casting-mode');
+                displayOnTvBtn.textContent = 'İlahiyi Yansıt';
+                displayOnTvBtn.classList.remove('bg-highlight-red');
+                displayOnTvBtn.classList.add('bg-highlight-blue');
+                
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                }
+                
+                closeModal('casting-modal');
+                singleLineDisplay.classList.add('hidden');
+                updateLyrics();
+            }, 150);
+        }
+
+        function toggleInitialPageFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().then(() => {
+                    initialFullscreenBtn.textContent = 'Tam Ekrandan Çık';
+                    if (currentHymnIndex !== -1) {
+                        welcomeMessage.classList.add('hidden');
+                        hymnContent.classList.remove('hidden');
+                        lyricsProviderContainer.style.display = 'block';
+                        updateLyrics();
+                    }
+                }).catch(err => {
+                    console.error(`Tam ekrana geçiş hatası: ${err.message} (${err.name})`);
+                });
+            } else {
+                document.exitFullscreen().then(() => {
+                    initialFullscreenBtn.textContent = 'Ana Ekranı Tam Yap';
+                    if (currentHymnIndex === -1) {
+                        welcomeMessage.classList.remove('hidden');
+                        hymnContent.classList.add('hidden');
+                    }
+                    if (currentHymnIndex !== -1 && !isCastingMode) {
+                         singleLineDisplay.classList.add('hidden');
+                         updateLyrics();
+                    }
+                });
+            }
+        }
+        
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('visible');
+        }
+
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
-                if(modalId === 'guitar-tuner-modal' && isTunerActive) { stopTuner(); }
+                if(modalId === 'guitar-tuner-modal' && isTunerActive) {
+                    stopTuner();
+                }
                 // NEW: Stop Shepherd Mode if it's active when any modal is closed
-                if(isShepherdModeActive) { stopShepherdMode(); }
+                if(isShepherdModeActive) { 
+                    stopShepherdMode(); 
+                }
                 modal.style.pointerEvents = 'none';
                 modal.classList.remove('visible');
                 modal.style.pointerEvents = '';
             }
         }
-        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
-        const debouncedScrollHandler = debounce(() => { const isScrolledToBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 5); if (isScrolledToBottom && document.documentElement.scrollHeight > window.innerHeight) { goToTopBtn.classList.add('visible'); } else { goToTopBtn.classList.remove('visible'); } }, 100);
+        
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-        // ... (Event listeners are mostly the same) ...
-        document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement) { initialFullscreenBtn.textContent = 'Ana Ekranı Tam Yap'; if (isCastingMode) { exitCastingMode(); } if (currentHymnIndex === -1 && !isCastingMode) { welcomeMessage.classList.remove('hidden'); hymnContent.classList.add('hidden'); } } else { if (document.fullscreenElement === document.documentElement) { initialFullscreenBtn.textContent = 'Tam Ekrandan Çık'; } } });
+        const debouncedScrollHandler = debounce(() => {
+            const isScrolledToBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 5);
+            if (isScrolledToBottom && document.documentElement.scrollHeight > window.innerHeight) {
+                goToTopBtn.classList.add('visible');
+            } else {
+                goToTopBtn.classList.remove('visible');
+            }
+        }, 100);
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                initialFullscreenBtn.textContent = 'Ana Ekranı Tam Yap';
+                if (isCastingMode) {
+                    exitCastingMode();
+                }
+                if (currentHymnIndex === -1 && !isCastingMode) {
+                    welcomeMessage.classList.remove('hidden');
+                    hymnContent.classList.add('hidden');
+                }
+            } else {
+                if (document.fullscreenElement === document.documentElement) {
+                    initialFullscreenBtn.textContent = 'Tam Ekrandan Çık';
+                }
+            }
+        });
+
         window.addEventListener('scroll', debouncedScrollHandler);
-        document.addEventListener('keydown', (e) => { if (currentHymnIndex !== -1) { if (e.key === "ArrowRight") { e.preventDefault(); nextLine(); } else if (e.key === "ArrowLeft") { e.preventDefault(); previousLine(); } } });
+
+        document.addEventListener('keydown', (e) => {
+            if (currentHymnIndex !== -1) {
+                if (e.key === "ArrowRight") {
+                    e.preventDefault();
+                    nextLine();
+                } else if (e.key === "ArrowLeft") {
+                    e.preventDefault();
+                    previousLine();
+                }
+            }
+        });
+
         document.addEventListener('click', (e) => {
             const isClickInsideSearchBar = searchBar.contains(e.target) || suggestionsContainer.contains(e.target) || clearSearchBtn.contains(e.target);
             const isClickInsideAllHymnsModal = allHymnsModal.contains(e.target);
             const isClickInsidePlaylistModal = playlistModal.contains(e.target);
             const isClickInsideGuitarTunerModal = guitarTunerModal.contains(e.target);
-            if (!isClickInsideSearchBar) { suggestionsContainer.classList.add('hidden'); }
-            if (!isClickInsideAllHymnsModal && !showAllHymnsBtn.contains(e.target)) { closeModal('all-hymns-modal'); }
-            if (!isClickInsidePlaylistModal && !showPlaylistBtn.contains(e.target)) { closeModal('playlist-modal'); }
-            if (!isClickInsideGuitarTunerModal && !guitarTunerBtn.contains(e.target)) { closeModal('guitar-tuner-modal'); }
+
+            if (!isClickInsideSearchBar) {
+                suggestionsContainer.classList.add('hidden');
+            }
+            if (!isClickInsideAllHymnsModal && !showAllHymnsBtn.contains(e.target)) {
+                 closeModal('all-hymns-modal');
+            }
+            if (!isClickInsidePlaylistModal && !showPlaylistBtn.contains(e.target)) {
+                closeModal('playlist-modal');
+            }
+            if (!isClickInsideGuitarTunerModal && !guitarTunerBtn.contains(e.target)) {
+                closeModal('guitar-tuner-modal');
+            }
         });
-        document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
-        
+
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+
         // --- START: ADVANCED TUNER FUNCTIONS ---
-        function setTunerMode(mode) { tunerMode = mode; if (mode === 'auto') { autoModeBtn.classList.add('active'); manualModeBtn.classList.remove('active'); tunerStringSelectors.classList.add('hidden'); } else { manualModeBtn.classList.add('active'); autoModeBtn.classList.remove('active'); tunerStringSelectors.classList.remove('hidden'); } resetTunerDisplay(); }
+
+        function setTunerMode(mode) {
+            tunerMode = mode;
+            
+            if (mode === 'auto') {
+                autoModeBtn.classList.add('active');
+                manualModeBtn.classList.remove('active');
+                tunerStringSelectors.classList.add('hidden');
+            } else {
+                manualModeBtn.classList.add('active');
+                autoModeBtn.classList.remove('active');
+                tunerStringSelectors.classList.remove('hidden');
+            }
+            resetTunerDisplay();
+        }
+
         function initGuitarTuner() {
-            setTunerMode('auto');
+            setTunerMode('auto'); // Default to auto
+            
+            // Create string selection buttons
             tunerStringSelectors.innerHTML = '';
             guitarStrings.forEach((string, index) => {
                 const button = document.createElement('button');
                 button.className = 'tuner-string-btn';
-                button.innerHTML = `<div class="string-name">${string.note}</div><div class="string-detail">${string.name}</div>`;
+                button.innerHTML = `
+                    <div class="string-name">${string.note}</div>
+                    <div class="string-detail">${string.name}</div>
+                `;
                 button.dataset.index = index;
-                button.addEventListener('click', () => { currentStringIndex = index; document.querySelectorAll('.tuner-string-btn').forEach(btn => btn.classList.remove('active')); button.classList.add('active'); resetTunerDisplay(); });
+                button.addEventListener('click', () => {
+                    currentStringIndex = index;
+                    document.querySelectorAll('.tuner-string-btn').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    resetTunerDisplay();
+                });
                 tunerStringSelectors.appendChild(button);
             });
+            
             autoModeBtn.addEventListener('click', () => setTunerMode('auto'));
             manualModeBtn.addEventListener('click', () => setTunerMode('manual'));
         }
-        function openGuitarTunerModal(e) { e.stopPropagation(); openModal('guitar-tuner-modal'); if(!isTunerActive) { initGuitarTuner(); } }
+        
+        function openGuitarTunerModal(e) {
+            e.stopPropagation();
+            openModal('guitar-tuner-modal');
+            if(!isTunerActive) {
+                initGuitarTuner();
+            }
+        }
+
         function startTuner() {
-            if (isTunerActive) { stopTuner(); return; }
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { showNotification('Mikrofon erişimi desteklenmiyor.', 'bg-highlight-red'); return; }
+            if (isTunerActive) {
+                stopTuner();
+                return;
+            }
+            
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showNotification('Mikrofon erişimi desteklenmiyor.', 'bg-highlight-red');
+                return;
+            }
+            
             navigator.mediaDevices.getUserMedia({ audio: true, video: false })
             .then(function(stream) {
-                isTunerActive = true; startTunerBtn.textContent = "Durdur"; startTunerBtn.classList.add('stop');
+                isTunerActive = true;
+                startTunerBtn.textContent = "Durdur";
+                startTunerBtn.classList.add('stop');
+
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioContext.createAnalyser(); microphone = audioContext.createMediaStreamSource(stream);
-                lowPassFilter = audioContext.createBiquadFilter(); lowPassFilter.type = 'lowpass'; lowPassFilter.frequency.setValueAtTime(1000, audioContext.currentTime);
-                analyser.fftSize = 2048; microphone.connect(lowPassFilter); lowPassFilter.connect(analyser);
-                processAudio(); showNotification('Mikrofon bağlandı. Bir tel çalın.', 'bg-highlight-blue');
+                analyser = audioContext.createAnalyser();
+                microphone = audioContext.createMediaStreamSource(stream);
+                
+                lowPassFilter = audioContext.createBiquadFilter();
+                lowPassFilter.type = 'lowpass';
+                lowPassFilter.frequency.setValueAtTime(1000, audioContext.currentTime); // Cutoff high-freq noise
+                
+                analyser.fftSize = 2048;
+                microphone.connect(lowPassFilter);
+                lowPassFilter.connect(analyser);
+                
+                processAudio();
+                showNotification('Mikrofon bağlandı. Bir tel çalın.', 'bg-highlight-blue');
             })
-            .catch(function(err) { console.error('Mikrofon erişimi reddedildi:', err); showNotification('Mikrofon erişimi reddedildi.', 'bg-highlight-red'); });
+            .catch(function(err) {
+                console.error('Mikrofon erişimi reddedildi:', err);
+                showNotification('Mikrofon erişimi reddedildi.', 'bg-highlight-red');
+            });
         }
+
         function stopTuner() {
             if (!isTunerActive) return;
-            isTunerActive = false; startTunerBtn.textContent = "Başlat"; startTunerBtn.classList.remove('stop');
-            if (microphone) { microphone.mediaStream.getTracks().forEach(track => track.stop()); microphone.disconnect(); }
+            
+            isTunerActive = false;
+            startTunerBtn.textContent = "Başlat";
+            startTunerBtn.classList.remove('stop');
+
+            if (microphone) {
+                microphone.mediaStream.getTracks().forEach(track => track.stop());
+                microphone.disconnect();
+            }
             if(lowPassFilter) lowPassFilter.disconnect();
-            if (audioContext) { audioContext.close().then(() => { audioContext = null; microphone = null; analyser = null; lowPassFilter = null; }); }
+
+            if (audioContext) {
+                audioContext.close().then(() => {
+                    audioContext = null;
+                    microphone = null;
+                    analyser = null;
+                    lowPassFilter = null;
+                });
+            }
             resetTunerDisplay();
         }
-        function processAudio() { if (!isTunerActive || !analyser) return; const bufferSize = analyser.fftSize; const buffer = new Float32Array(bufferSize); analyser.getFloatTimeDomainData(buffer); const result = yinPitchDetection(buffer, audioContext.sampleRate); if (result.frequency) { updateTunerUI(result.frequency, result.clarity); } else { if(tunerMode === 'auto') resetTunerDisplay(); } requestAnimationFrame(processAudio); }
-        function yinPitchDetection(buffer, sampleRate) { const threshold = 0.15; const bufferSize = buffer.length; const yinBuffer = new Float32Array(bufferSize / 2); let period, pitch, clarity; for (let tau = 1; tau < yinBuffer.length; tau++) { for (let i = 0; i < yinBuffer.length; i++) { const delta = buffer[i] - buffer[i + tau]; yinBuffer[tau] += delta * delta; } } let runningSum = 0; yinBuffer[0] = 1; for (let tau = 1; tau < yinBuffer.length; tau++) { runningSum += yinBuffer[tau]; yinBuffer[tau] *= tau / runningSum; } for (let tau = 2; tau < yinBuffer.length; tau++) { if (yinBuffer[tau] < threshold) { while (tau + 1 < yinBuffer.length && yinBuffer[tau + 1] < yinBuffer[tau]) { tau++; } clarity = 1 - yinBuffer[tau]; const x0 = (tau - 1); const x2 = (tau + 1 < yinBuffer.length) ? (tau + 1) : tau; if (x0 >= 0 && x2 < yinBuffer.length) { const y0 = yinBuffer[x0]; const y1 = yinBuffer[tau]; const y2 = yinBuffer[x2]; const a = (y0 + y2 - 2 * y1) / 2; const b = (y2 - y0) / 2; if (a) { period = tau - b / (2 * a); } else { period = tau; } } else { period = tau; } break; } } if (period) { pitch = sampleRate / period; if (pitch > 50 && pitch < 1000) { return { frequency: pitch, clarity: clarity }; } } return { frequency: null, clarity: 0 }; }
-        function findClosestString(frequency) { return guitarStrings.reduce((prev, curr) => { return (Math.abs(curr.frequency - frequency) < Math.abs(prev.frequency - frequency) ? curr : prev); }); }
-        function resetTunerDisplay() { tunerNoteName.textContent = '-'; tunerFrequency.textContent = '-- Hz'; tunerStatusText.textContent = '...'; tunerStatusText.style.color = '#94a3b8'; tunerMeterFill.style.transform = 'translateX(0%)'; document.getElementById('tuner-string-indicator').classList.remove('in-tune'); tunerClarityFill.style.width = '0%'; }
+
+        function processAudio() {
+            if (!isTunerActive || !analyser) return;
+
+            const bufferSize = analyser.fftSize;
+            const buffer = new Float32Array(bufferSize);
+            analyser.getFloatTimeDomainData(buffer);
+
+            const result = yinPitchDetection(buffer, audioContext.sampleRate);
+            
+            if (result.frequency) {
+                updateTunerUI(result.frequency, result.clarity);
+            } else {
+                 if(tunerMode === 'auto') resetTunerDisplay();
+            }
+            
+            requestAnimationFrame(processAudio);
+        }
+
+        function yinPitchDetection(buffer, sampleRate) {
+            const threshold = 0.15; // Yin threshold
+            const bufferSize = buffer.length;
+            const yinBuffer = new Float32Array(bufferSize / 2);
+            let period, pitch, clarity;
+
+            // Step 2: Difference function
+            for (let tau = 1; tau < yinBuffer.length; tau++) {
+                for (let i = 0; i < yinBuffer.length; i++) {
+                    const delta = buffer[i] - buffer[i + tau];
+                    yinBuffer[tau] += delta * delta;
+                }
+            }
+
+            // Step 3: Cumulative mean normalized difference
+            let runningSum = 0;
+            yinBuffer[0] = 1;
+            for (let tau = 1; tau < yinBuffer.length; tau++) {
+                runningSum += yinBuffer[tau];
+                yinBuffer[tau] *= tau / runningSum;
+            }
+
+            // Step 4: Absolute threshold
+            for (let tau = 2; tau < yinBuffer.length; tau++) {
+                if (yinBuffer[tau] < threshold) {
+                    // Parabolic interpolation for better accuracy
+                    while (tau + 1 < yinBuffer.length && yinBuffer[tau + 1] < yinBuffer[tau]) {
+                        tau++;
+                    }
+                    clarity = 1 - yinBuffer[tau];
+                    const x0 = (tau - 1);
+                    const x2 = (tau + 1 < yinBuffer.length) ? (tau + 1) : tau;
+                    if (x0 >= 0 && x2 < yinBuffer.length) {
+                       const y0 = yinBuffer[x0];
+                       const y1 = yinBuffer[tau];
+                       const y2 = yinBuffer[x2];
+                       const a = (y0 + y2 - 2 * y1) / 2;
+                       const b = (y2 - y0) / 2;
+                       if (a) {
+                           period = tau - b / (2 * a);
+                       } else {
+                           period = tau;
+                       }
+                    } else {
+                        period = tau;
+                    }
+                    break;
+                }
+            }
+            
+            if (period) {
+                pitch = sampleRate / period;
+                 // Filter out unreasonable frequencies
+                if (pitch > 50 && pitch < 1000) {
+                     return { frequency: pitch, clarity: clarity };
+                }
+            }
+            
+            return { frequency: null, clarity: 0 };
+        }
+
+        function findClosestString(frequency) {
+            return guitarStrings.reduce((prev, curr) => {
+                return (Math.abs(curr.frequency - frequency) < Math.abs(prev.frequency - frequency) ? curr : prev);
+            });
+        }
+        
+        function resetTunerDisplay() {
+            tunerNoteName.textContent = '-';
+            tunerFrequency.textContent = '-- Hz';
+            tunerStatusText.textContent = '...';
+            tunerStatusText.style.color = '#94a3b8';
+            tunerMeterFill.style.transform = 'translateX(0%)';
+            document.getElementById('tuner-string-indicator').classList.remove('in-tune');
+            tunerClarityFill.style.width = '0%';
+        }
+
         function updateTunerUI(frequency, clarity) {
             if (!isTunerActive) return;
+
+            // Update clarity bar
             tunerClarityFill.style.width = `${Math.max(0, Math.min(100, clarity * 100))}%`;
-            if(clarity < 0.8) { return; }
+            
+            // Only update the rest of the UI if clarity is good enough
+            if(clarity < 0.8) {
+                return;
+            }
+
             let targetString;
-            if(tunerMode === 'auto'){ targetString = findClosestString(frequency); } else { targetString = guitarStrings[currentStringIndex]; }
+            if(tunerMode === 'auto'){
+                targetString = findClosestString(frequency);
+            } else {
+                targetString = guitarStrings[currentStringIndex];
+            }
+            
             const targetFrequency = targetString.frequency;
             const cents = 1200 * Math.log2(frequency / targetFrequency);
-            tunerNoteName.textContent = targetString.note; tunerFrequency.textContent = frequency.toFixed(1) + ' Hz';
+            
+            tunerNoteName.textContent = targetString.note;
+            tunerFrequency.textContent = frequency.toFixed(1) + ' Hz';
+            
             const meterPosition = Math.max(-50, Math.min(50, cents));
             tunerMeterFill.style.transform = `translateX(${meterPosition}%)`;
-            if (Math.abs(cents) < 5) { tunerStatusText.textContent = 'Mükemmel!'; tunerStatusText.style.color = '#4ade80'; document.getElementById('tuner-string-indicator').classList.add('in-tune'); } 
-            else if (cents < 0) { tunerStatusText.textContent = `Düşük (${Math.round(cents)}c)`; tunerStatusText.style.color = '#f87171'; document.getElementById('tuner-string-indicator').classList.remove('in-tune'); } 
-            else { tunerStatusText.textContent = `Yüksek (+${Math.round(cents)}c)`; tunerStatusText.style.color = '#f87171'; document.getElementById('tuner-string-indicator').classList.remove('in-tune'); }
+            
+            if (Math.abs(cents) < 5) {
+                tunerStatusText.textContent = 'Mükemmel!';
+                tunerStatusText.style.color = '#4ade80';
+                document.getElementById('tuner-string-indicator').classList.add('in-tune');
+            } else if (cents < 0) {
+                tunerStatusText.textContent = `Düşük (${Math.round(cents)}c)`;
+                tunerStatusText.style.color = '#f87171';
+                document.getElementById('tuner-string-indicator').classList.remove('in-tune');
+            } else {
+                tunerStatusText.textContent = `Yüksek (+${Math.round(cents)}c)`;
+                tunerStatusText.style.color = '#f87171';
+                document.getElementById('tuner-string-indicator').classList.remove('in-tune');
+            }
         }
+        
+        // --- END OF ADVANCED TUNER FUNCTIONS ---
 
         // --- NEW: START OF SHEPHERD MODE FUNCTIONS ---
         function toggleShepherdMode() {
@@ -833,68 +1934,109 @@
         }
         // --- END OF SHEPHERD MODE FUNCTIONS ---
 
-
-        // ... (All your playlist functions are unchanged) ...
         async function initializeApp() {
             showLoader();
+
             try {
                 const response = await fetch('hymns.json');
-                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 hymns = await response.json(); 
+
                 hymnCountSpan.textContent = hymns.length;
 
                 searchBar.addEventListener('input', handleSearch);
                 clearSearchBtn.addEventListener('click', clearSearch);
                 showAllHymnsBtn.addEventListener('click', openAllHymnsModal);
                 modalSearchBar.addEventListener('input', filterHymnsList);
+
                 showPlaylistBtn.addEventListener('click', openPlaylistModal);
                 generateShareLinkBtn.addEventListener('click', openShortenerService);
                 copyPlaylistLinkBtn.addEventListener('click', copyPlaylistLink);
                 clearPlaylistBtn.addEventListener('click', clearPlaylist);
+
                 guitarTunerBtn.addEventListener('click', openGuitarTunerModal);
                 startTunerBtn.addEventListener('click', startTuner);
                 
                 // NEW: Add event listener for the new button
                 shepherdModeBtn.addEventListener('click', toggleShepherdMode);
 
-                playlistNameInput.addEventListener('input', (e) => { userPlaylist.name = e.target.value; savePlaylist(); });
+                playlistNameInput.addEventListener('input', (e) => {
+                    userPlaylist.name = e.target.value;
+                    savePlaylist();
+                });
+
                 loadPlaylist();
+
             } catch (error) {
                 console.error("Hymns verileri yüklenirken bir hata oluştu:", error);
                 modalTitle.textContent = "Hata!";
                 modalMessage.textContent = "İlahi verileri yüklenemedi. Lütfen internet bağlantınızı kontrol edin veya daha sonra tekrar deneyin.";
                 openModal('casting-modal');
-            } finally { hideLoader(); }
+            } finally {
+                hideLoader();
+            }
         }
+
         document.addEventListener('DOMContentLoaded', initializeApp);
-        function savePlaylist() { localStorage.setItem('hymnPlaylist', JSON.stringify(userPlaylist)); updateUrlWithPlaylist(); }
+
+        function savePlaylist() {
+            localStorage.setItem('hymnPlaylist', JSON.stringify(userPlaylist));
+            updateUrlWithPlaylist();
+        }
+
         function loadPlaylist() {
             const hash = window.location.hash.substring(1);
             if (hash.startsWith('playlist=')) {
                 const playlistData = hash.substring('playlist='.length).split('|');
-                let playlistNameFromUrl = 'Yeni Çalma Listem'; let playlistTitles = [];
-                if (playlistData.length > 1) { playlistNameFromUrl = decodeURIComponent(playlistData[0]); playlistTitles = playlistData[1].split(',').map(decodeURIComponent); } 
-                else { playlistTitles = playlistData[0].split(',').map(decodeURIComponent); }
-                userPlaylist.name = playlistNameFromUrl; userPlaylist.hymns = [];
-                playlistTitles.forEach(title => { const hymn = hymns.find(h => h.title === title); if (hymn && !userPlaylist.hymns.includes(hymn.title)) { userPlaylist.hymns.push(hymn.title); } });
-                savePlaylist(); return;
+                let playlistNameFromUrl = 'Yeni Çalma Listem';
+                let playlistTitles = [];
+
+                if (playlistData.length > 1) {
+                    playlistNameFromUrl = decodeURIComponent(playlistData[0]);
+                    playlistTitles = playlistData[1].split(',').map(decodeURIComponent);
+                } else {
+                    playlistTitles = playlistData[0].split(',').map(decodeURIComponent);
+                }
+
+                userPlaylist.name = playlistNameFromUrl;
+                userPlaylist.hymns = [];
+                playlistTitles.forEach(title => {
+                    const hymn = hymns.find(h => h.title === title);
+                    if (hymn && !userPlaylist.hymns.includes(hymn.title)) {
+                        userPlaylist.hymns.push(hymn.title);
+                    }
+                });
+                savePlaylist();
+                return;
             }
+
             const storedPlaylist = localStorage.getItem('hymnPlaylist');
             if (storedPlaylist) {
                 const parsedPlaylist = JSON.parse(storedPlaylist);
-                if (parsedPlaylist && parsedPlaylist.hymns) { userPlaylist = parsedPlaylist; } 
-                else if (Array.isArray(parsedPlaylist)) { userPlaylist = { name: 'Eski Çalma Listem', hymns: parsedPlaylist }; }
-            } else { userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] }; }
+                if (parsedPlaylist && parsedPlaylist.hymns) {
+                    userPlaylist = parsedPlaylist;
+                } else if (Array.isArray(parsedPlaylist)) {
+                    userPlaylist = { name: 'Eski Çalma Listem', hymns: parsedPlaylist };
+                }
+            } else {
+                userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] };
+            }
             updateUrlWithPlaylist();
         }
+
         function updateUrlWithPlaylist() {
             const encodedTitles = userPlaylist.hymns.map(encodeURIComponent);
             const encodedName = encodeURIComponent(userPlaylist.name);
             const currentPathname = window.location.pathname;
             const basePath = currentPathname.endsWith('/') ? currentPathname : currentPathname + '/';
-            const fullUrl = `${window.location.origin}${basePath}#playlist=${encodedName}|${encodedTitles.join(',')}`;
+            const fullUrl = `${window.location.origin}${basePath}#playlist=${encodedName}|${encodedTitles.join(',')}`; 
+            
             if (userPlaylist.hymns.length > 0) {
-                if (window.location.hash !== `#playlist=${encodedName}|${encodedTitles.join(',')}`) { window.location.hash = `playlist=${encodedName}|${encodedTitles.join(',')}`; }
+                if (window.location.hash !== `#playlist=${encodedName}|${encodedTitles.join(',')}`) {
+                    window.location.hash = `playlist=${encodedName}|${encodedTitles.join(',')}`;
+                }
                 playlistShareLinkInput.value = fullUrl;
                 generateShareLinkBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
                 generateShareLinkBtn.classList.add('bg-highlight-blue', 'active:bg-blue-600');
@@ -903,7 +2045,9 @@
                 clearPlaylistBtn.classList.add('bg-highlight-red', 'active:bg-red-600');
                 clearPlaylistBtn.disabled = false;
             } else {
-                if (window.location.hash.startsWith('#playlist=')) { window.location.hash = ''; }
+                if (window.location.hash.startsWith('#playlist=')) {
+                    window.location.hash = '';
+                }
                 playlistShareLinkInput.value = '';
                 generateShareLinkBtn.classList.remove('bg-highlight-blue', 'active:bg-blue-600');
                 generateShareLinkBtn.classList.add('bg-gray-500', 'cursor-not-allowed');
@@ -913,51 +2057,145 @@
                 clearPlaylistBtn.disabled = true;
             }
         }
-        function openShortenerService() { if (userPlaylist.hymns.length === 0) { showNotification('Çalma listeniz boş, link kısaltılamaz.', 'bg-highlight-red'); return; } const longUrl = playlistShareLinkInput.value; const shortenerCreator = `https://is.gd/create.php?url=${encodeURIComponent(longUrl)}`; window.open(shortenerCreator, '_blank'); }
-        function clearPlaylist() { userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] }; savePlaylist(); renderPlaylist(); if (allHymnsModal.classList.contains('visible')) { filterHymnsList(); } showNotification('Çalma listesi temizlendi!', 'bg-highlight-red'); }
-        function addToPlaylist(hymnTitle) { if (!userPlaylist.hymns.includes(hymnTitle)) { userPlaylist.hymns.push(hymnTitle); savePlaylist(); } }
-        function removeFromPlaylist(hymnTitle) { userPlaylist.hymns = userPlaylist.hymns.filter(title => title !== hymnTitle); savePlaylist(); renderPlaylist(); }
+
+        function openShortenerService() { 
+            if (userPlaylist.hymns.length === 0) {
+                showNotification('Çalma listeniz boş, link kısaltılamaz.', 'bg-highlight-red');
+                return;
+            }
+
+            const longUrl = playlistShareLinkInput.value;
+            const shortenerCreator = `https://is.gd/create.php?url=${encodeURIComponent(longUrl)}`;
+            
+            window.open(shortenerCreator, '_blank');
+        }
+
+        function clearPlaylist() {
+            userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] };
+            savePlaylist();
+            renderPlaylist();
+            if (allHymnsModal.classList.contains('visible')) {
+                filterHymnsList(); 
+            }
+            showNotification('Çalma listesi temizlendi!', 'bg-highlight-red');
+        }
+
+        function addToPlaylist(hymnTitle) {
+            if (!userPlaylist.hymns.includes(hymnTitle)) {
+                userPlaylist.hymns.push(hymnTitle);
+                savePlaylist();
+            }
+        }
+
+        function removeFromPlaylist(hymnTitle) {
+            userPlaylist.hymns = userPlaylist.hymns.filter(title => title !== hymnTitle);
+            savePlaylist();
+            renderPlaylist();
+        }
+
         function renderPlaylist() {
-            playlistItemsContainer.innerHTML = ''; playlistNameInput.value = userPlaylist.name;
+            playlistItemsContainer.innerHTML = '';
+            playlistNameInput.value = userPlaylist.name;
+
             if (userPlaylist.hymns.length === 0) {
                 const emptyMessage = document.createElement('div');
                 emptyMessage.textContent = "Çalma listeniz boş. 'Veri Tabanı' kısmından ilahi ekleyebilirsiniz.";
                 emptyMessage.classList.add('text-text-subtle', 'text-center', 'p-4');
                 playlistItemsContainer.appendChild(emptyMessage);
                 playlistShareLinkInput.value = '';
-                generateShareLinkBtn.classList.add('bg-gray-500', 'cursor-not-allowed'); generateShareLinkBtn.disabled = true; 
-                clearPlaylistBtn.classList.add('bg-gray-500', 'cursor-not-allowed'); clearPlaylistBtn.disabled = true;
+                generateShareLinkBtn.classList.add('bg-gray-500', 'cursor-not-allowed');
+                generateShareLinkBtn.disabled = true; 
+                clearPlaylistBtn.classList.add('bg-gray-500', 'cursor-not-allowed');
+                clearPlaylistBtn.disabled = true;
             } else {
                 userPlaylist.hymns.forEach(hymnTitle => {
-                    const hymn = hymns.find(h => h.title === hymnTitle); if (!hymn) return;
+                    const hymn = hymns.find(h => h.title === hymnTitle);
+                    if (!hymn) return;
+
                     const listItem = document.createElement('div');
                     listItem.classList.add('p-2', 'sm:p-3', 'rounded-md', 'cursor-pointer', 'text-base', 'sm:text-lg', 'border-b', 'border-gray-700', 'last:border-b-0', 'flex', 'justify-between', 'items-center', 'active:bg-primary-bg', 'transition-colors');
-                    const hymnLink = document.createElement('span'); hymnLink.textContent = hymn.title; hymnLink.classList.add('flex-grow', 'mr-1.5', 'sm:mr-3', 'truncate');
-                    hymnLink.addEventListener('click', () => { const hymnIndex = hymns.findIndex(h => h.title === hymn.title); if (hymnIndex !== -1) { selectHymn(hymnIndex); closeModal('playlist-modal'); } });
+                    
+                    const hymnLink = document.createElement('span');
+                    hymnLink.textContent = hymn.title;
+                    hymnLink.classList.add('flex-grow', 'mr-1.5', 'sm:mr-3', 'truncate');
+                    hymnLink.addEventListener('click', () => {
+                        const hymnIndex = hymns.findIndex(h => h.title === hymn.title);
+                        if (hymnIndex !== -1) {
+                            selectHymn(hymnIndex);
+                            closeModal('playlist-modal');
+                        }
+                    });
                     listItem.appendChild(hymnLink);
+
                     const removeBtn = document.createElement('button');
                     removeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" /></svg>';
+                   
                     removeBtn.classList.add('bg-highlight-red', 'text-primary-bg', 'py-2', 'px-3', 'rounded-md', 'text-sm', 'transition-colors', 'active:bg-red-600', 'duration-300', 'flex', 'items-center', 'justify-center');
-                    removeBtn.addEventListener('click', (e) => { e.stopPropagation(); const titleToRemove = hymn.title; userPlaylist.hymns = userPlaylist.hymns.filter(title => title !== titleToRemove); savePlaylist(); renderPlaylist(); if (allHymnsModal.classList.contains('visible')) { filterHymnsList(); } showNotification('İlahi çalma listesinden çıkarıldı!', 'bg-highlight-red'); });
-                    listItem.appendChild(removeBtn); playlistItemsContainer.appendChild(listItem);
+                    removeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        
+                        const titleToRemove = hymn.title;
+                        userPlaylist.hymns = userPlaylist.hymns.filter(title => title !== titleToRemove);
+                        savePlaylist();
+                        renderPlaylist();
+                        if (allHymnsModal.classList.contains('visible')) {
+                            filterHymnsList(); 
+                        }
+                        showNotification('İlahi çalma listesinden çıkarıldı!', 'bg-highlight-red');
+                    });
+                    listItem.appendChild(removeBtn);
+                    playlistItemsContainer.appendChild(listItem);
                 });
-                generateShareLinkBtn.classList.remove('bg-gray-500', 'cursor-not-allowed'); generateShareLinkBtn.disabled = false; 
-                clearPlaylistBtn.classList.remove('bg-gray-500', 'cursor-not-allowed'); clearPlaylistBtn.disabled = false;
+                generateShareLinkBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
+                generateShareLinkBtn.disabled = false; 
+                clearPlaylistBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
+                clearPlaylistBtn.disabled = false;
                 updateUrlWithPlaylist();
             }
         }
-        function openPlaylistModal(e) { e.stopPropagation(); openModal('playlist-modal'); renderPlaylist(); }
-        function copyPlaylistLink() { if(!playlistShareLinkInput.value) return; playlistShareLinkInput.select(); document.execCommand('copy'); showNotification('Paylaşım linki kopyalandı!', 'bg-highlight-blue'); }
+
+        function openPlaylistModal(e) {
+            e.stopPropagation();
+            openModal('playlist-modal');
+            renderPlaylist();
+        }
+
+        function copyPlaylistLink() {
+            if(!playlistShareLinkInput.value) return;
+            playlistShareLinkInput.select();
+            document.execCommand('copy');
+            showNotification('Paylaşım linki kopyalandı!', 'bg-highlight-blue');
+        }
+
         function showNotification(message, bgColor) {
             const notification = document.createElement('div');
             notification.classList.add('fixed', 'bottom-4', 'right-4', 'p-3', 'rounded-lg', 'shadow-xl', 'text-white', bgColor, 'z-[250]', 'transition-all', 'duration-300', 'opacity-0', 'transform', 'translate-y-4', 'flex', 'items-center', 'gap-4');
-            const messageSpan = document.createElement('span'); messageSpan.textContent = message; notification.appendChild(messageSpan);
+            
+            const messageSpan = document.createElement('span');
+            messageSpan.textContent = message;
+            notification.appendChild(messageSpan);
+
             let removeTimeout;
-            const removeNotification = () => { clearTimeout(removeTimeout); notification.classList.remove('opacity-100', 'translate-y-0'); notification.classList.add('opacity-0', 'translate-y-4'); setTimeout(() => notification.remove(), 300); };
-            const closeBtn = document.createElement('button'); closeBtn.innerHTML = `<svg class="w-5 h-5 opacity-70 hover:opacity-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>`;
-            closeBtn.onclick = removeNotification; notification.appendChild(closeBtn);
+
+            const removeNotification = () => {
+                clearTimeout(removeTimeout);
+                notification.classList.remove('opacity-100', 'translate-y-0');
+                notification.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => notification.remove(), 300);
+            };
+
+            const closeBtn = document.createElement('button');
+            closeBtn.innerHTML = `<svg class="w-5 h-5 opacity-70 hover:opacity-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>`;
+            closeBtn.onclick = removeNotification;
+            notification.appendChild(closeBtn);
+
             document.body.appendChild(notification);
-            setTimeout(() => { notification.classList.remove('opacity-0', 'translate-y-4'); notification.classList.add('opacity-100', 'translate-y-0'); }, 10);
+
+            setTimeout(() => {
+                notification.classList.remove('opacity-0', 'translate-y-4');
+                notification.classList.add('opacity-100', 'translate-y-0');
+            }, 10);
+
             removeTimeout = setTimeout(removeNotification, 3000);
         }
     </script>
