@@ -2135,6 +2135,15 @@
                 showNotification('Lütfen önce bir ilahi seçin.', 'bg-highlight-red');
                 return;
             }
+
+            const currentShepherdSong = shepherdSongs.find(s => s.title === hymns[currentHymnIndex].title);
+            
+            // NEW: Check if the lyrics array is empty
+            if (!currentShepherdSong || !currentShepherdSong.lyrics || currentShepherdSong.lyrics.length === 0) {
+                showNotification('Bu ilahi için beste bulunmamaktadır.', 'bg-highlight-red');
+                return;
+            }
+
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                 showNotification('Mikrofon erişimi desteklenmiyor.', 'bg-highlight-red');
                 return;
@@ -2296,7 +2305,16 @@
 
         function updateShepherdDisplay(lineIndex) {
             const currentShepherdSong = shepherdSongs.find(s => s.title === hymns[currentHymnIndex].title);
-            if (!currentShepherdSong || !currentShepherdSong.lyrics[lineIndex]) {
+            
+            // NEW: Check if the lyrics array is empty and show message
+            if (!currentShepherdSong || !currentShepherdSong.lyrics || currentShepherdSong.lyrics.length === 0) {
+                shepherdChordDisplay.textContent = '--';
+                shepherdLyricDisplay.textContent = 'Bu ilahi için beste bulunmamaktadır.';
+                shepherdStatusMessage.textContent = "Beste yok";
+                return;
+            }
+
+            if (!currentShepherdSong.lyrics[lineIndex]) {
                  shepherdChordDisplay.textContent = '...';
                  shepherdLyricDisplay.textContent = 'İlahinin sonu.';
                 return;
