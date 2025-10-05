@@ -6,7 +6,6 @@
     <title>İlahi Prompter</title>
     <link rel="icon" href="https://raw.githubusercontent.com/Berahatiye/ilahi/refs/heads/main/logopng.webp">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- NEW: Load the Shepherd Mode data file -->
     <script src="shepherd_mode_data.js"></script>
     <script>
         tailwind.config = {
@@ -65,10 +64,6 @@
             .lyrics-line {
                 font-size: 1.5rem;
             }
-            #hymns-list > div {
-                font-size: 0.9rem;
-                padding: 0.4rem;
-            }
         }
 
         @media (max-width: 320px) {
@@ -76,25 +71,12 @@
                 font-size: 1.25rem;
                 padding: 0.3rem 0;
             }
-            .control-panel {
-                padding: 0.75rem;
-            }
-            #search-bar {
-                padding: 0.6rem;
-            }
-            #show-all-hymns-btn, #initial-fullscreen-btn, #display-on-tv-btn {
-                padding: 0.6rem 0.8rem;
-                font-size: 0.875rem;
-            }
-            .modal-content {
-                padding: 0.75rem;
-            }
-            .modal-content h3, .modal-content p {
+        }
+
+        @media (max-width: 250px) {
+            .lyrics-line {
                 font-size: 1rem;
-            }
-            .all-hymns-modal-list > div {
-                font-size: 0.8rem;
-                padding: 0.3rem;
+                padding: 0.2rem 0;
             }
         }
         
@@ -125,12 +107,14 @@
             margin-bottom: 1rem;
             width: 100%;
         }
+
         @media (min-width: 768px) {
             .lyrics-provider {
                 font-size: 0.8rem;
                 margin-top: 2.5rem;
             }
         }
+
         @media (min-width: 1024px) {
             .lyrics-provider {
                 font-size: 0.9rem;
@@ -174,6 +158,16 @@
         @media (max-width: 320px) {
             #hymn-title {
                 font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 250px) {
+            #hymn-title-container {
+                padding: 0.5rem;
+                gap: 0.5rem;
+            }
+            #hymn-title {
+                font-size: 0.7rem;
             }
         }
 
@@ -235,6 +229,7 @@
             transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
             will-change: opacity, transform;
         }
+
         #single-line-text.visible {
             opacity: 1;
             transform: scale(1);
@@ -248,10 +243,12 @@
         .lyrics-scroll-container::-webkit-scrollbar {
             width: 10px;
         }
+
         .lyrics-scroll-container::-webkit-scrollbar-track {
             background: #2d3748;
             border-radius: 5px;
         }
+
         .lyrics-scroll-container::-webkit-scrollbar-thumb {
             background: #4a5568;
             border-radius: 5px;
@@ -272,6 +269,7 @@
             visibility: hidden;
             pointer-events: none;
         }
+
         .modal-overlay.visible {
             opacity: 1;
             visibility: visible;
@@ -305,6 +303,14 @@
         @media (max-width: 320px) {
             .modal-content {
                 padding: 0.25rem;
+            }
+        }
+
+        @media (max-width: 250px) {
+            .modal-content {
+                padding: 0.5rem;
+                margin: 0.5rem;
+                border-radius: 0.5rem;
             }
         }
 
@@ -351,7 +357,6 @@
             justify-content: center;
             align-items: center;
             pointer-events: auto;
-            
             opacity: 0.1; 
             transition: opacity 0.3s ease-in-out;
         }
@@ -378,7 +383,6 @@
             backdrop-filter: blur(5px);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: all 0.2s ease-in-out;
-            
             opacity: 0.1;
         }
         
@@ -445,6 +449,13 @@
             }
         }
 
+        @media (max-width: 250px) {
+            .hymn-icon {
+                width: min(12vw, 1rem);
+                height: min(12vw, 1rem);
+            }
+        }
+
         @media (min-width: 768px) {
             .hymn-icon {
                 width: min(4vw, 2rem); 
@@ -475,6 +486,7 @@
             pointer-events: auto;
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
         }
+
         .loader-overlay.hidden {
             opacity: 0;
             visibility: hidden;
@@ -495,20 +507,225 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* --- START: TUNER STYLES --- */
+        #control-panel {
+            background-color: #1e293b;
+            padding: 1rem;
+            border-bottom: 1px solid #374151;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            transition: all 0.5s ease-in-out;
+            position: relative;
+            z-index: 10;
+        }
+
+        @media (max-width: 767px) {
+            #control-panel {
+                padding: 0.75rem;
+                gap: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #control-panel {
+                padding: 0.5rem;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 320px) {
+            #control-panel {
+                padding: 0.4rem;
+                gap: 0.4rem;
+            }
+        }
+
+        @media (max-width: 250px) {
+            #control-panel {
+                padding: 0.3rem;
+                gap: 0.3rem;
+            }
+        }
+
+        .control-panel-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .control-panel-logo img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #f5f5f7;
+        }
+
+        @media (max-width: 480px) {
+            .control-panel-logo img {
+                width: 60px;
+                height: 60px;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .control-panel-logo img {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 250px) {
+            .control-panel-logo img {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        .control-panel-search {
+            width: 100%;
+            position: relative;
+        }
+
+        .control-panel-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            #control-panel {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+            
+            .control-panel-logo {
+                width: auto;
+                justify-content: flex-start;
+            }
+            
+            .control-panel-search {
+                width: 33.333%;
+            }
+            
+            .control-panel-buttons {
+                width: auto;
+                flex-direction: row;
+                align-items: center;
+                gap: 0.5rem;
+            }
+        }
+
+        .button-row {
+            display: flex;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        @media (max-width: 250px) {
+            .button-row {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+        }
+
+        .control-button {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            min-height: 44px;
+        }
+
+        @media (max-width: 320px) {
+            .control-button {
+                padding: 0.4rem;
+                font-size: 0.7rem;
+                min-height: 40px;
+            }
+        }
+
+        @media (max-width: 250px) {
+            .control-button {
+                padding: 0.3rem;
+                font-size: 0.6rem;
+                min-height: 36px;
+                border-radius: 0.375rem;
+            }
+        }
+
+        .control-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        @media (max-width: 320px) {
+            .control-button svg {
+                width: 18px;
+                height: 18px;
+            }
+        }
+
+        @media (max-width: 250px) {
+            .control-button svg {
+                width: 16px;
+                height: 16px;
+            }
+        }
+
+        #search-bar {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            background-color: #0f172a;
+            color: #f8fafc;
+            border: 1px solid #4b5563;
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 480px) {
+            #search-bar {
+                padding: 0.6rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 320px) {
+            #search-bar {
+                padding: 0.5rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 250px) {
+            #search-bar {
+                padding: 0.4rem;
+                font-size: 0.7rem;
+                border-radius: 0.375rem;
+            }
+        }
+
         #guitar-tuner-modal .modal-content {
             max-height: 95vh;
-            padding: 0; /* Remove padding from modal-content */
-            overflow: hidden; /* Prevent modal itself from scrolling */
+            padding: 0;
+            overflow: hidden;
         }
 
         #guitar-tuner-modal .tuner-content-container {
             padding: 1rem;
-            overflow-y: auto; /* Allow this container to scroll */
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1rem; /* Add gap for consistent spacing */
+            gap: 1rem;
         }
         
         #tuner-mode-selector {
@@ -731,9 +948,7 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
-        /* --- END: TUNER STYLES --- */
 
-        /* --- START: SHEPHERD MODE STYLES --- */
         #shepherd-mode-display {
             display: none;
             flex-direction: column;
@@ -770,7 +985,6 @@
             font-size: clamp(0.875rem, 3vw, 1rem);
         }
         
-        /* NEW: Styles for detected chords */
         .chord-detected {
             color: #4ade80 !important;
             text-shadow: 0 0 10px rgba(74, 222, 128, 0.7);
@@ -786,9 +1000,7 @@
         .chord-waiting {
             color: #f97316 !important;
         }
-        /* --- END: SHEPHERD MODE STYLES --- */
 
-        /* --- START: SEARCH HELP STYLES --- */
         #search-help {
             position: absolute;
             top: 100%;
@@ -815,7 +1027,21 @@
                 padding: 0.5rem;
             }
         }
-        /* --- END: SEARCH HELP STYLES --- */
+
+        @media (max-width: 320px) {
+            #search-help {
+                font-size: 0.7rem;
+                padding: 0.4rem;
+            }
+        }
+
+        @media (max-width: 250px) {
+            #search-help {
+                font-size: 0.65rem;
+                padding: 0.3rem;
+                border-radius: 0.375rem;
+            }
+        }
     </style>
 </head>
 <body class="bg-primary-bg">
@@ -826,60 +1052,55 @@
 
     <div id="app-container" class="min-h-screen flex flex-col">
 
-        <div id="control-panel" class="control-panel bg-secondary-bg p-4 border-b border-gray-700 flex flex-col md:flex-row items-center justify-between transition-all duration-500 relative z-10">
-            
-            <h1 class="text-2xl md:text-3xl font-bold mb-4 md:mb-0">
-                <img src="https://raw.githubusercontent.com/Berahatiye/ilahi/refs/heads/main/logopng.webp" style="background-color: #f5f5f7;width: 90px;border-radius: 50%;" alt="İlahi Prompter Logo">
-            </h1>
+        <div id="control-panel" class="control-panel">
+            <div class="control-panel-logo">
+                <img src="https://raw.githubusercontent.com/Berahatiye/ilahi/refs/heads/main/logopng.webp" alt="İlahi Prompter Logo">
+            </div>
 
-            <div class="relative w-full mb-4 md:mb-0 md:w-1/3">
-                <input type="text" id="search-bar" placeholder="İlahi ara..." class="w-full p-2 pr-10 rounded-md bg-primary-bg text-text-light border border-gray-600 focus:outline-none focus:ring-2 focus:ring-highlight-blue">
+            <div class="control-panel-search">
+                <input type="text" id="search-bar" placeholder="İlahi ara..." class="w-full">
                 <button id="clear-search-btn" class="absolute inset-y-0 right-0 flex items-center pr-3 focus:outline-none" style="display:none;">
                     <svg class="h-5 w-5 text-text-subtle active:text-text-light" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
                     </svg>
                 </button>
                 
-                <!-- NEW: Search Help Container -->
                 <div id="search-help" class="hidden">
-                    İlahi aramak için klavyenizde en az üç tuşlama yapın, örnek: "Zülüf Dökülmüş Yüze"
+                    Sonuçları görmek için klavyenizde en az üç tuşlama yapın, <br>örnek: "Zülüf Dökülmüş Yüze"
                 </div>
                 
                 <div id="suggestions-container" class="absolute left-0 right-0 mt-1 bg-secondary-bg rounded-md shadow-lg hidden max-h-60 overflow-y-auto z-20">
                 </div>
             </div>
 
-            <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
-                
-                <div class="flex items-center space-x-2 w-full">
-                    <button id="show-all-hymns-btn" class="w-full md:w-auto bg-gray-700 active:bg-gray-600 text-text-light font-bold py-2 px-4 rounded-lg shadow-lg transition-colors">
-                        <svg style="margin-inline: auto;" xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#f5f5f7"><path d="M500.67-120q-43 1-108.17-6.5-65.16-7.5-125.67-26.33-60.5-18.84-103.66-50.17Q120-234.33 120-280q0 45.67 43.17 77 43.16 31.33 103.66 50.17Q327.34-134 392.5-126.5q65.17 7.5 108.17 6.5Zm-71-211.33q-40-2.34-74-7.34t-64.17-13q-30.17-8-56-18.5t-48.83-24.16q23 13.66 48.83 24.16t56 18.5q30.17 8 64.17 13t74 7.34ZM480-605q86 0 176.83-26.33 90.84-26.34 111.84-57.67Q747-720 656.5-746.67 566-773.33 480-773.33q-89 0-177.5 25.83T190.67-689q23.66 33 111.83 58.5T480-605Zm-28.33 417.33q8.66 18.34 21 35.34 12.33 17 28 32.33-43 1-108.17-6.5-65.16-7.5-125.67-26.33-60.5-18.84-103.66-50.17Q120-234.33 120-280v-408.67q0-29 30.17-56.33 30.16-27.33 80.16-48.67 50-21.33 115.17-33.83T480-840q66 0 130.17 13.17 64.16 13.16 115.5 35.16 51.33 22 82.83 49t31.5 55.34q0 27.66-30.83 54.66-30.84 27-81.5 47.67Q677-564.33 612.5-551.5 548-538.67 480-538.67q-81 0-156.33-17-75.34-17-137-49.33v137q48 33 118 50.67 70 17.66 145.66 20.66-7.33 13-12.33 29.5t-8.33 35.84q-80-4.34-138.17-20.34-58.17-16-104.83-42.66v117Q198-247 279.33-219.67q81.34 27.34 172.34 32ZM873.33-40 764-149.33q-21.33 15.66-46.33 22.5-25 6.83-51 6.83-72.34 0-122.84-50.5t-50.5-122.83q0-72.34 50.5-122.84t122.84-50.5q72.33 0 122.83 50.5T840-293.33q0 26-6.83 51.33-6.84 25.33-22.5 46L920-86.67 873.33-40ZM666.67-186.67q44.66 0 75.66-31t31-75.66q0-44.67-31-75.67t-75.66-31Q622-400 591-369t-31 75.67q0 44.66 31 75.66t75.67 31Z"/></svg>
+            <div class="control-panel-buttons">
+                <div class="button-row">
+                    <button id="show-all-hymns-btn" class="control-button bg-gray-700 active:bg-gray-600 text-text-light">
+                        <svg style="margin-inline: auto;" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#f5f5f7"><path d="M500.67-120q-43 1-108.17-6.5-65.16-7.5-125.67-26.33-60.5-18.84-103.66-50.17Q120-234.33 120-280q0 45.67 43.17 77 43.16 31.33 103.66 50.17Q327.34-134 392.5-126.5q65.17 7.5 108.17 6.5Zm-71-211.33q-40-2.34-74-7.34t-64.17-13q-30.17-8-56-18.5t-48.83-24.16q23 13.66 48.83 24.16t56 18.5q30.17 8 64.17 13t74 7.34ZM480-605q86 0 176.83-26.33 90.84-26.34 111.84-57.67Q747-720 656.5-746.67 566-773.33 480-773.33q-89 0-177.5 25.83T190.67-689q23.66 33 111.83 58.5T480-605Zm-28.33 417.33q8.66 18.34 21 35.34 12.33 17 28 32.33-43 1-108.17-6.5-65.16-7.5-125.67-26.33-60.5-18.84-103.66-50.17Q120-234.33 120-280v-408.67q0-29 30.17-56.33 30.16-27.33 80.16-48.67 50-21.33 115.17-33.83T480-840q66 0 130.17 13.17 64.16 13.16 115.5 35.16 51.33 22 82.83 49t31.5 55.34q0 27.66-30.83 54.66-30.84 27-81.5 47.67Q677-564.33 612.5-551.5 548-538.67 480-538.67q-81 0-156.33-17-75.34-17-137-49.33v137q48 33 118 50.67 70 17.66 145.66 20.66-7.33 13-12.33 29.5t-8.33 35.84q-80-4.34-138.17-20.34-58.17-16-104.83-42.66v117Q198-247 279.33-219.67q81.34 27.34 172.34 32ZM873.33-40 764-149.33q-21.33 15.66-46.33 22.5-25 6.83-51 6.83-72.34 0-122.84-50.5t-50.5-122.83q0-72.34 50.5-122.84t122.84-50.5q72.33 0 122.83 50.5T840-293.33q0 26-6.83 51.33-6.84 25.33-22.5 46L920-86.67 873.33-40ZM666.67-186.67q44.66 0 75.66-31t31-75.66q0-44.67-31-75.67t-75.66-31Q622-400 591-369t-31 75.67q0 44.66 31 75.66t75.67 31Z"/></svg>
                     </button>
-                    <button id="show-playlist-btn" class="w-full md:w-auto bg-green-600 active:bg-green-500 text-text-light font-bold py-2 px-4 rounded-lg shadow-lg transition-colors">
-                        <svg style="margin-inline: auto;" xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#f5f5f7"><path d="m612-550 141-142-28-28-113 113-57-57-28 29 85 85ZM120-160v-66.67h480V-160H120Zm519.93-286.67q-80.26 0-136.76-56.57-56.5-56.57-56.5-136.83 0-80.26 56.57-136.76 56.57-56.5 136.83-56.5 80.26 0 136.76 56.57 56.5 56.57 56.5 136.83 0 80.26-56.57 136.76-56.57 56.5-136.83 56.5ZM120-493.33V-560h258.67q5.88 18.21 13.44 34.77 7.56 16.56 17.22 31.9H120Zm0 166.66v-66.66h404.67q16.86 8.91 35.93 14.95 19.07 6.05 39.4 8.71v43H120Z"/></svg>
+                    <button id="show-playlist-btn" class="control-button bg-green-600 active:bg-green-500 text-text-light">
+                        <svg style="margin-inline: auto;" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#f5f5f7"><path d="m612-550 141-142-28-28-113 113-57-57-28 29 85 85ZM120-160v-66.67h480V-160H120Zm519.93-286.67q-80.26 0-136.76-56.57-56.5-56.57-56.5-136.83 0-80.26 56.57-136.76 56.57-56.5 136.83-56.5 80.26 0 136.76 56.57 56.5 56.57 56.5 136.83 0 80.26-56.57 136.76-56.57 56.5-136.83 56.5ZM120-493.33V-560h258.67q5.88 18.21 13.44 34.77 7.56 16.56 17.22 31.9H120Zm0 166.66v-66.66h404.67q16.86 8.91 35.93 14.95 19.07 6.05 39.4 8.71v43H120Z"/></svg>
                     </button>
-                    <button id="guitar-tuner-btn" class="w-full md:w-auto bg-purple-600 active:bg-purple-500 text-text-light font-bold py-2 px-4 rounded-lg shadow-lg transition-colors">
-                        <svg style="margin-inline: auto;" xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#f5f5f7"><path d="M395.33-120q-64 0-108.66-44.67Q242-209.33 242-273.33T286.67-382q44.66-44.67 108.66-44.67 26.34 0 47.84 7.17 21.5 7.17 38.83 20.17V-840h236v143.33H548.67v423.34q0 64-44.67 108.66Q459.33-120 395.33-120Z"/></svg>
-                    </button>
-                    <!-- NEW: Shepherd Mode Button -->
-                    <button id="shepherd-mode-btn" class="w-full md:w-auto bg-highlight-orange active:bg-orange-600 text-text-light font-bold py-2 px-4 rounded-lg shadow-lg transition-colors">
-                        <svg style="margin-inline: auto;" xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#f5f5f7"><path d="M480-120 216-248l43-43 221 129 221-129 43 43L480-120Zm0-213L216-461l43-43 221 129 221-129 43 43L480-333Zm0-214L216-675l43-43 221 129 221-129 43 43L480-547Z"/></svg>
+                    <button id="guitar-tuner-btn" class="control-button bg-purple-600 active:bg-purple-500 text-text-light">
+                        <svg style="margin-inline: auto;" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#f5f5f7"><path d="M395.33-120q-64 0-108.66-44.67Q242-209.33 242-273.33T286.67-382q44.66-44.67 108.66-44.67 26.34 0 47.84 7.17 21.5 7.17 38.83 20.17V-840h236v143.33H548.67v423.34q0 64-44.67 108.66Q459.33-120 395.33-120Z"/></svg>
                     </button>
                 </div>
-
+                
+                <div class="button-row">
+                    <button id="shepherd-mode-btn" class="control-button bg-highlight-orange active:bg-orange-600 text-text-light">
+                        <svg style="margin-inline: auto;" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#f5f5f7"><path d="M480-120 216-248l43-43 221 129 221-129 43 43L480-120Zm0-213L216-461l43-43 221 129 221-129 43 43L480-333Zm0-214L216-675l43-43 221 129 221-129 43 43L480-547Z"/></svg>
+                    </button>
+                    <button id="initial-fullscreen-btn" class="control-button bg-highlight-blue text-primary-bg">
+                        Tam Ekran
+                    </button>
+                    <button id="display-on-tv-btn" class="control-button bg-highlight-blue text-primary-bg">
+                        Yansıt
+                    </button>
+                </div>
             </div>
-            
-            <button id="initial-fullscreen-btn" class="bg-highlight-blue text-primary-bg font-bold py-2 px-4 rounded-lg shadow-lg mt-4 md:mt-0 transition-colors mr-4">
-                Ana Ekranı Tam Yap
-            </button>
-            <button id="display-on-tv-btn" class="bg-highlight-blue text-primary-bg font-bold py-2 px-4 rounded-lg shadow-lg mt-4 md:mt-0 transition-colors">
-                İlahiyi Yansıt
-            </button>
         </div>
 
-        <div id="lyrics-display" class="lyrics-display p-8 flex-grow flex flex-col items-center justify-center text-center duration-500" style="
-    transition-property: all;
-    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);">
+        <div id="lyrics-display" class="lyrics-display p-8 flex-grow flex flex-col items-center justify-center text-center duration-500">
             
             <div id="welcome-message" class="text-xl md:text-2xl text-text-subtle font-light max-w-2xl text-center">
                 <p class="mb-4">Toplamda: <span id="hymn-count">0</span> adet Türkçe ilahi <br>bulunmaktadır.</p>
@@ -907,7 +1128,6 @@
                 </div>
             </div>
 
-            <!-- NEW: Shepherd Mode Display -->
             <div id="shepherd-mode-display">
                 <div id="shepherd-chord-display">--</div>
                 <div id="shepherd-lyric-display">Çoban Modu için bir ilahi seçin ve modu başlatın.</div>
@@ -993,7 +1213,6 @@
         </div>
     </div>
 
-    <!-- Enhanced GuitarTuna Style Tuner Modal -->
     <div id="guitar-tuner-modal" class="modal-overlay">
         <div class="modal-content w-full max-w-md mx-auto flex flex-col bg-gray-900 rounded-xl">
             <div class="flex justify-between items-center p-4 border-b border-gray-700 bg-gray-800 flex-shrink-0">
@@ -1006,13 +1225,11 @@
             </div>
             
             <div class="tuner-content-container flex-grow">
-                <!-- Mode Selector -->
                 <div id="tuner-mode-selector">
                     <button id="auto-mode-btn" class="active">Otomatik</button>
                     <button id="manual-mode-btn">Manuel</button>
                 </div>
                 
-                <!-- Main Visual Display -->
                 <div id="tuner-visual-display" class="relative flex items-center justify-center">
                     <div id="tuner-peg" class="bg-gray-800 rounded-full border-4 border-gray-700 flex items-center justify-center shadow-xl">
                         <div id="tuner-string-indicator" class="bg-secondary-bg rounded-full">
@@ -1029,18 +1246,14 @@
                     </div>
                 </div>
 
-                <!-- Fine-tune Meter -->
                 <div id="tuner-meter-container">
                     <div id="tuner-meter-fill"></div>
                     <div id="tuner-meter-center"></div>
                 </div>
 
-                <!-- Manual String Selection (hidden by default) -->
                 <div id="tuner-string-selectors" class="hidden">
-                    <!-- Buttons will be generated by JS -->
                 </div>
                 
-                <!-- Start/Stop Controls -->
                 <div class="flex justify-center">
                     <button id="start-tuner-btn">
                         Başlat
@@ -1080,7 +1293,6 @@
         let userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] }; 
         let lyricsLineElements = [];
 
-        // NEW: Shepherd Mode variables
         let isShepherdModeActive = false;
         let currentShepherdLineIndex = 0;
         let lastDetectedNote = null;
@@ -1090,7 +1302,6 @@
         const clearSearchBtn = document.getElementById('clear-search-btn');
         const suggestionsContainer = document.getElementById('suggestions-container');
         const hymnTitleElement = document.getElementById('hymn-title');
-        const hymnTitleContainer = document.getElementById('hymn-title-container');
         const lyricsScrollContainer = document.getElementById('lyrics-scroll-container');
         const lyricsProviderContainer = document.getElementById('lyrics-provider-container');
         const singleLineDisplay = document.getElementById('single-line-display');
@@ -1118,7 +1329,6 @@
         const generateShareLinkBtn = document.getElementById('generate-share-link-btn');
         const clearPlaylistBtn = document.getElementById('clear-playlist-btn');
 
-        // Guitar tuner elements
         const guitarTunerBtn = document.getElementById('guitar-tuner-btn');
         const guitarTunerModal = document.getElementById('guitar-tuner-modal');
         const startTunerBtn = document.getElementById('start-tuner-btn');
@@ -1131,19 +1341,16 @@
         const tunerStringSelectors = document.getElementById('tuner-string-selectors');
         const tunerClarityFill = document.getElementById('tuner-clarity-fill');
 
-        // NEW: Shepherd Mode elements
         const shepherdModeBtn = document.getElementById('shepherd-mode-btn');
         const shepherdModeDisplay = document.getElementById('shepherd-mode-display');
         const shepherdChordDisplay = document.getElementById('shepherd-chord-display');
         const shepherdLyricDisplay = document.getElementById('shepherd-lyric-display');
         const shepherdStatusMessage = document.getElementById('shepherd-status-message');
 
-        // NEW: Search Help element
         const searchHelp = document.getElementById('search-help');
 
         const loaderOverlay = document.getElementById('loader-overlay');
 
-        // Guitar tuner variables
         let audioContext = null;
         let analyser = null;
         let microphone = null;
@@ -1161,8 +1368,8 @@
             { note: 'E', frequency: 329.63, name: '1. Tel (İnce Mi)' }
         ];
 
-        // NEW: A mapping of frequencies to note names for chord detection.
         const noteStrings = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+        
         function frequencyToNote(frequency) {
             if (frequency <= 0) return null;
             const noteNum = 12 * (Math.log(frequency / 440) / Math.log(2));
@@ -1199,7 +1406,6 @@
             return normalized.trim();
         }
 
-        // NEW: Function to show/hide search help
         function updateSearchHelpVisibility() {
             if (searchBar.value.length < 3 && document.activeElement === searchBar) {
                 searchHelp.classList.add('visible');
@@ -1236,7 +1442,6 @@
             
             setTimeout(() => {
                 currentHymnIndex = index;
-                // NEW: Reset Shepherd Mode when a new hymn is selected
                 if (isShepherdModeActive) {
                     currentShepherdLineIndex = 0;
                     updateShepherdDisplay(0);
@@ -1258,7 +1463,6 @@
 
             welcomeMessage.classList.add('hidden');
             hymnContent.classList.remove('hidden');
-            // NEW: Hide shepherd mode display when rendering normal lyrics
             shepherdModeDisplay.style.display = 'none';
 
             hymn.lyrics.forEach((line, index) => {
@@ -1291,7 +1495,6 @@
                 suggestionsContainer.classList.add('hidden');
             }
             
-            // NEW: Update search help visibility
             updateSearchHelpVisibility();
         }
 
@@ -1537,7 +1740,6 @@
                 if(modalId === 'guitar-tuner-modal' && isTunerActive) {
                     stopTuner();
                 }
-                // NEW: Stop Shepherd Mode if it's active when any modal is closed
                 if(isShepherdModeActive) {
                     stopShepherdMode();
                 }
@@ -1616,8 +1818,6 @@
             e.preventDefault();
         });
 
-        // --- START: ADVANCED TUNER FUNCTIONS ---
-
         function setTunerMode(mode) {
             tunerMode = mode;
             
@@ -1634,9 +1834,8 @@
         }
 
         function initGuitarTuner() {
-            setTunerMode('auto'); // Default to auto
+            setTunerMode('auto');
             
-            // Create string selection buttons
             tunerStringSelectors.innerHTML = '';
             guitarStrings.forEach((string, index) => {
                 const button = document.createElement('button');
@@ -1690,7 +1889,7 @@
                 
                 lowPassFilter = audioContext.createBiquadFilter();
                 lowPassFilter.type = 'lowpass';
-                lowPassFilter.frequency.setValueAtTime(1000, audioContext.currentTime); // Cutoff high-freq noise
+                lowPassFilter.frequency.setValueAtTime(1000, audioContext.currentTime);
                 
                 analyser.fftSize = 2048;
                 microphone.connect(lowPassFilter);
@@ -1748,12 +1947,11 @@
         }
 
         function yinPitchDetection(buffer, sampleRate) {
-            const threshold = 0.15; // Yin threshold
+            const threshold = 0.15;
             const bufferSize = buffer.length;
             const yinBuffer = new Float32Array(bufferSize / 2);
             let period, pitch, clarity;
 
-            // Step 2: Difference function
             for (let tau = 1; tau < yinBuffer.length; tau++) {
                 for (let i = 0; i < yinBuffer.length; i++) {
                     const delta = buffer[i] - buffer[i + tau];
@@ -1761,7 +1959,6 @@
                 }
             }
 
-            // Step 3: Cumulative mean normalized difference
             let runningSum = 0;
             yinBuffer[0] = 1;
             for (let tau = 1; tau < yinBuffer.length; tau++) {
@@ -1769,10 +1966,8 @@
                 yinBuffer[tau] *= tau / runningSum;
             }
 
-            // Step 4: Absolute threshold
             for (let tau = 2; tau < yinBuffer.length; tau++) {
                 if (yinBuffer[tau] < threshold) {
-                    // Parabolic interpolation for better accuracy
                     while (tau + 1 < yinBuffer.length && yinBuffer[tau + 1] < yinBuffer[tau]) {
                         tau++;
                     }
@@ -1799,7 +1994,6 @@
             
             if (period) {
                 pitch = sampleRate / period;
-                 // Filter out unreasonable frequencies
                 if (pitch > 50 && pitch < 1000) {
                      return { frequency: pitch, clarity: clarity };
                 }
@@ -1827,10 +2021,8 @@
         function updateTunerUI(frequency, clarity) {
             if (!isTunerActive) return;
 
-            // Update clarity bar
             tunerClarityFill.style.width = `${Math.max(0, Math.min(100, clarity * 100))}%`;
             
-            // Only update the rest of the UI if clarity is good enough
             if(clarity < 0.8) {
                 return;
             }
@@ -1866,9 +2058,6 @@
             }
         }
         
-        // --- END OF ADVANCED TUNER FUNCTIONS ---
-
-        // --- START OF SHEPHERD MODE FUNCTIONS ---
         function toggleShepherdMode() {
             if (isShepherdModeActive) {
                 stopShepherdMode();
@@ -1892,7 +2081,6 @@
                 isShepherdModeActive = true;
                 currentShepherdLineIndex = 0;
                 
-                // Update UI
                 welcomeMessage.classList.add('hidden');
                 hymnContent.classList.add('hidden');
                 shepherdModeDisplay.style.display = 'flex';
@@ -1900,9 +2088,8 @@
                 shepherdModeBtn.classList.add('bg-highlight-red');
                 shepherdModeBtn.classList.remove('bg-highlight-orange');
 
-                updateShepherdDisplay(0); // Show the first line initially
+                updateShepherdDisplay(0);
 
-                // Start audio processing
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioContext.createAnalyser();
                 microphone = audioContext.createMediaStreamSource(stream);
@@ -1926,7 +2113,6 @@
             if (!isShepherdModeActive) return;
             isShepherdModeActive = false;
             
-            // Stop audio processing
             if (microphone) {
                 microphone.mediaStream.getTracks().forEach(track => track.stop());
                 microphone.disconnect();
@@ -1938,12 +2124,10 @@
                 });
             }
             
-            // Update UI
             shepherdStatusMessage.textContent = "Dinleme modu kapalı.";
             shepherdModeBtn.classList.remove('bg-highlight-red');
             shepherdModeBtn.classList.add('bg-highlight-orange');
 
-            // Show normal lyrics view if a hymn is selected
             if (currentHymnIndex !== -1) {
                 hymnContent.classList.remove('hidden');
                 shepherdModeDisplay.style.display = 'none';
@@ -1963,20 +2147,19 @@
 
             const result = yinPitchDetection(buffer, audioContext.sampleRate);
             
-            if (result.frequency && result.clarity > 0.92) { // Higher clarity threshold
+            if (result.frequency && result.clarity > 0.92) {
                 const note = frequencyToNote(result.frequency);
                 
-                // Debounce note detection: only act if the same note is heard for a moment
                 if (note && note !== lastDetectedNote) {
                     lastDetectedNote = note;
                     clearTimeout(noteDetectionTimeout);
                     noteDetectionTimeout = setTimeout(() => {
                         console.log('Detected stable note:', note);
                         matchChordAndAdvance(note);
-                    }, 150); // requires the note to be stable for 150ms
+                    }, 150);
                 }
             } else {
-                lastDetectedNote = null; // Reset if clarity is low
+                lastDetectedNote = null;
             }
             
             requestAnimationFrame(processAudioForShepherd);
@@ -1987,7 +2170,6 @@
             const currentShepherdSong = shepherdSongs.find(s => s.title === hymns[currentHymnIndex].title);
             if (!currentShepherdSong) return;
 
-            // Check if we're at the end
             if (currentShepherdLineIndex >= currentShepherdSong.lyrics.length) {
                 shepherdChordDisplay.textContent = 'SON';
                 shepherdLyricDisplay.textContent = 'İlahi sona erdi';
@@ -1996,18 +2178,13 @@
 
             const currentLine = currentShepherdSong.lyrics[currentShepherdLineIndex];
             
-            // NEW: Highlight the chord when detected
             shepherdChordDisplay.textContent = currentLine.chord;
             shepherdChordDisplay.classList.remove('chord-detected', 'chord-waiting');
             shepherdChordDisplay.classList.add('chord-detected');
             
-            // Check if the detected note matches the chord
-            // Simple matching: check if the chord contains the note (e.g., "Am" contains "A")
             if (currentLine.chord.toUpperCase().includes(detectedNote)) {
-                // Chord matched! Advance to next line
                 currentShepherdLineIndex++;
                 
-                // Update display with next line
                 if (currentShepherdLineIndex < currentShepherdSong.lyrics.length) {
                     const nextLine = currentShepherdSong.lyrics[currentShepherdLineIndex];
                     shepherdChordDisplay.textContent = nextLine.chord;
@@ -2016,23 +2193,19 @@
                     shepherdChordDisplay.classList.add('chord-waiting');
                     shepherdStatusMessage.textContent = `Doğru akor çalındı: ${detectedNote}`;
                     
-                    // Reset the detection after a short time
                     setTimeout(() => {
                         if (isShepherdModeActive) {
                             shepherdStatusMessage.textContent = "Dinleniyor...";
                         }
                     }, 2000);
                 } else {
-                    // End of song
                     shepherdChordDisplay.textContent = 'SON';
                     shepherdLyricDisplay.textContent = 'İlahi sona erdi';
                     shepherdStatusMessage.textContent = 'Tebrikler! İlahiyi tamamladınız.';
                 }
             } else {
-                // Wrong chord played
                 shepherdStatusMessage.textContent = `Beklenen: ${currentLine.chord}, Çalınan: ${detectedNote}`;
                 
-                // Reset the status message after a short time
                 setTimeout(() => {
                     if (isShepherdModeActive) {
                         shepherdStatusMessage.textContent = "Dinleniyor...";
@@ -2055,7 +2228,6 @@
             shepherdChordDisplay.classList.remove('chord-detected');
             shepherdChordDisplay.classList.add('chord-waiting');
         }
-        // --- END OF SHEPHERD MODE FUNCTIONS ---
 
         async function initializeApp() {
             showLoader();
@@ -2088,7 +2260,6 @@
                 guitarTunerBtn.addEventListener('click', openGuitarTunerModal);
                 startTunerBtn.addEventListener('click', startTuner);
                 
-                // NEW: Add event listener for the new button
                 shepherdModeBtn.addEventListener('click', toggleShepherdMode);
 
                 playlistNameInput.addEventListener('input', (e) => {
