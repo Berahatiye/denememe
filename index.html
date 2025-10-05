@@ -6,7 +6,8 @@
     <title>İlahi Prompter</title>
     <link rel="icon" href="https://raw.githubusercontent.com/Berahatiye/ilahi/refs/heads/main/logopng.webp">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- NEW: Load the Shepherd Mode data file -->
+    <!-- NEW: This file contains the data for Shepherd Mode. -->
+    <!-- Make sure you have a 'shepherd_mode_data.js' file with the 'shepherdSongs' variable. -->
     <script src="shepherd_mode_data.js"></script>
     <script>
         tailwind.config = {
@@ -366,6 +367,68 @@
                 border-radius: 0.5rem;
             }
         }
+        
+        @media (max-height: 320px) {
+            .playlist-modal .modal-content {
+                max-height: 100%;
+                padding: 0.5rem; 
+            }
+            .playlist-modal .modal-content .flex.justify-between.items-center {
+                padding: 0.5rem 0.5rem; 
+            }
+            .playlist-modal .modal-content h2 {
+                font-size: 1rem; 
+            }
+            .playlist-modal .modal-content div.p-1.sm\:p-2.md\:p-4:first-of-type {
+                 padding: 0.5rem 0.5rem; 
+            }
+            .playlist-modal label {
+                font-size: 0.7rem; 
+                margin-bottom: 0.2rem; 
+            }
+            .playlist-modal input {
+                font-size: 0.7rem; 
+                padding: 0.2rem 0.4rem; 
+            }
+            .playlist-modal .all-hymns-modal-list {
+                max-height: 6rem; 
+                min-height: 4.5rem; 
+                padding: 0.2rem 0.5rem; 
+                margin-top: 0.4rem; 
+            }
+            .playlist-modal .all-hymns-modal-list > div {
+                padding: 0.3rem; 
+                font-size: 0.8rem; 
+                line-height: 1.3; 
+                margin-bottom: 0.2rem; 
+            }
+            .playlist-modal .all-hymns-modal-list > div .flex-grow {
+                 margin-right: 0.5rem; 
+            }
+            .playlist-modal button {
+                font-size: 0.8rem; 
+                padding: 0.4rem 0.6rem; 
+            }
+            .playlist-modal #copy-playlist-link-btn svg,
+            .playlist-modal .all-hymns-modal-list button svg {
+                height: 18px; 
+                width: 18px;
+            }
+            .playlist-modal .p-1.sm\:p-2.md\:p-4.border-t.border-gray-700.flex.flex-col.sm\:flex-row {
+                 padding: 0.5rem 0.5rem; 
+                 margin-top: 0.4rem; 
+                 space-y: 0.4rem; 
+            }
+            .playlist-modal .p-1.sm\:p-2.md\:p-4.border-t.border-gray-700.mt-1.sm\:mt-2 {
+                padding: 0.5rem 0.5rem; 
+                margin-top: 0.4rem; 
+            }
+            .playlist-modal #generate-share-link-btn,
+            .playlist-modal #clear-playlist-btn {
+                height: auto;
+            }
+        }
+
 
         @media (min-width: 640px) {
             .modal-content {
@@ -897,7 +960,6 @@
             }
         }
         
-        /* NEW: Styles for detected chords */
         .chord-detected {
             color: #4ade80 !important;
             text-shadow: 0 0 10px rgba(74, 222, 128, 0.7);
@@ -1082,7 +1144,6 @@
                         </svg>
                     </button>
                     
-                    <!-- NEW: Search Help Container -->
                     <div id="search-help" class="hidden">
                         İlahi aramak için klavyenizde en az üç tuşlama yapın, örnek: "Zülüf Dökülmüş Yüze"
                     </div>
@@ -1108,7 +1169,6 @@
                         <svg style="margin-inline: auto;" xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#f5f5f7"><path d="M395.33-120q-64 0-108.66-44.67Q242-209.33 242-273.33T286.67-382q44.66-44.67 108.66-44.67 26.34 0 47.84 7.17 21.5 7.17 38.83 20.17V-840h236v143.33H548.67v423.34q0 64-44.67 108.66Q459.33-120 395.33-120Z"/></svg>
                     </button>
                 </div>
-                <!-- NEW: Shepherd Mode Button -->
                 <div class="control-button">
                     <button id="shepherd-mode-btn" class="w-full bg-highlight-orange active:bg-orange-600 text-text-light font-bold py-2 px-4 rounded-lg shadow-lg transition-colors">
                         <svg style="margin-inline: auto;" xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#f5f5f7"><path d="M480-120 216-248l43-43 221 129 221-129 43 43L480-120Zm0-213L216-461l43-43 221 129 221-129 43 43L480-333Zm0-214L216-675l43-43 221 129 221-129 43 43L480-547Z"/></svg>
@@ -1160,7 +1220,6 @@
                 </div>
             </div>
 
-            <!-- NEW: Shepherd Mode Display -->
             <div id="shepherd-mode-display">
                 <div id="shepherd-chord-display">--</div>
                 <div id="shepherd-lyric-display">Çoban Modu için bir ilahi seçin ve modu başlatın.</div>
@@ -1246,7 +1305,6 @@
         </div>
     </div>
 
-    <!-- Enhanced GuitarTuna Style Tuner Modal -->
     <div id="guitar-tuner-modal" class="modal-overlay">
         <div class="modal-content w-full max-w-md mx-auto flex flex-col bg-gray-900 rounded-xl">
             <div class="flex justify-between items-center p-4 border-b border-gray-700 bg-gray-800 flex-shrink-0">
@@ -1259,13 +1317,11 @@
             </div>
             
             <div class="tuner-content-container flex-grow">
-                <!-- Mode Selector -->
                 <div id="tuner-mode-selector">
                     <button id="auto-mode-btn" class="active">Otomatik</button>
                     <button id="manual-mode-btn">Manuel</button>
                 </div>
                 
-                <!-- Main Visual Display -->
                 <div id="tuner-visual-display" class="relative flex items-center justify-center">
                     <div id="tuner-peg" class="bg-gray-800 rounded-full border-4 border-gray-700 flex items-center justify-center shadow-xl">
                         <div id="tuner-string-indicator" class="bg-secondary-bg rounded-full">
@@ -1282,18 +1338,14 @@
                     </div>
                 </div>
 
-                <!-- Fine-tune Meter -->
                 <div id="tuner-meter-container">
                     <div id="tuner-meter-fill"></div>
                     <div id="tuner-meter-center"></div>
                 </div>
 
-                <!-- Manual String Selection (hidden by default) -->
                 <div id="tuner-string-selectors" class="hidden">
-                    <!-- Buttons will be generated by JS -->
                 </div>
                 
-                <!-- Start/Stop Controls -->
                 <div class="flex justify-center">
                     <button id="start-tuner-btn">
                         Başlat
@@ -1333,7 +1385,12 @@
         let userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] }; 
         let lyricsLineElements = [];
 
-        // NEW: Shepherd Mode variables
+        // Shepherd Mode variables
+        // The 'shepherdSongs' variable should be populated by the 'shepherd_mode_data.js' file.
+        // If that file is not available, we define it as an empty array to prevent errors.
+        if (typeof shepherdSongs === 'undefined') {
+            var shepherdSongs = [];
+        }
         let isShepherdModeActive = false;
         let currentShepherdLineIndex = 0;
         let lastDetectedNote = null;
@@ -1371,7 +1428,6 @@
         const generateShareLinkBtn = document.getElementById('generate-share-link-btn');
         const clearPlaylistBtn = document.getElementById('clear-playlist-btn');
 
-        // Guitar tuner elements
         const guitarTunerBtn = document.getElementById('guitar-tuner-btn');
         const guitarTunerModal = document.getElementById('guitar-tuner-modal');
         const startTunerBtn = document.getElementById('start-tuner-btn');
@@ -1384,19 +1440,16 @@
         const tunerStringSelectors = document.getElementById('tuner-string-selectors');
         const tunerClarityFill = document.getElementById('tuner-clarity-fill');
 
-        // NEW: Shepherd Mode elements
         const shepherdModeBtn = document.getElementById('shepherd-mode-btn');
         const shepherdModeDisplay = document.getElementById('shepherd-mode-display');
         const shepherdChordDisplay = document.getElementById('shepherd-chord-display');
         const shepherdLyricDisplay = document.getElementById('shepherd-lyric-display');
         const shepherdStatusMessage = document.getElementById('shepherd-status-message');
 
-        // NEW: Search Help element
         const searchHelp = document.getElementById('search-help');
 
         const loaderOverlay = document.getElementById('loader-overlay');
 
-        // Guitar tuner variables
         let audioContext = null;
         let analyser = null;
         let microphone = null;
@@ -1414,7 +1467,6 @@
             { note: 'E', frequency: 329.63, name: '1. Tel (İnce Mi)' }
         ];
 
-        // NEW: A mapping of frequencies to note names for chord detection.
         const noteStrings = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
         function frequencyToNote(frequency) {
             if (frequency <= 0) return null;
@@ -1452,7 +1504,6 @@
             return normalized.trim();
         }
 
-        // NEW: Function to show/hide search help
         function updateSearchHelpVisibility() {
             if (searchBar.value.length < 3 && document.activeElement === searchBar) {
                 searchHelp.classList.add('visible');
@@ -1489,7 +1540,6 @@
             
             setTimeout(() => {
                 currentHymnIndex = index;
-                // NEW: Reset Shepherd Mode when a new hymn is selected
                 if (isShepherdModeActive) {
                     currentShepherdLineIndex = 0;
                     updateShepherdDisplay(0);
@@ -1511,7 +1561,6 @@
 
             welcomeMessage.classList.add('hidden');
             hymnContent.classList.remove('hidden');
-            // NEW: Hide shepherd mode display when rendering normal lyrics
             shepherdModeDisplay.style.display = 'none';
 
             hymn.lyrics.forEach((line, index) => {
@@ -1544,7 +1593,6 @@
                 suggestionsContainer.classList.add('hidden');
             }
             
-            // NEW: Update search help visibility
             updateSearchHelpVisibility();
         }
 
@@ -1790,7 +1838,6 @@
                 if(modalId === 'guitar-tuner-modal' && isTunerActive) {
                     stopTuner();
                 }
-                // NEW: Stop Shepherd Mode if it's active when any modal is closed
                 if(isShepherdModeActive) {
                     stopShepherdMode();
                 }
@@ -1869,8 +1916,6 @@
             e.preventDefault();
         });
 
-        // --- START: ADVANCED TUNER FUNCTIONS ---
-
         function setTunerMode(mode) {
             tunerMode = mode;
             
@@ -1887,9 +1932,8 @@
         }
 
         function initGuitarTuner() {
-            setTunerMode('auto'); // Default to auto
+            setTunerMode('auto');
             
-            // Create string selection buttons
             tunerStringSelectors.innerHTML = '';
             guitarStrings.forEach((string, index) => {
                 const button = document.createElement('button');
@@ -1943,7 +1987,7 @@
                 
                 lowPassFilter = audioContext.createBiquadFilter();
                 lowPassFilter.type = 'lowpass';
-                lowPassFilter.frequency.setValueAtTime(1000, audioContext.currentTime); // Cutoff high-freq noise
+                lowPassFilter.frequency.setValueAtTime(1000, audioContext.currentTime);
                 
                 analyser.fftSize = 2048;
                 microphone.connect(lowPassFilter);
@@ -2001,12 +2045,11 @@
         }
 
         function yinPitchDetection(buffer, sampleRate) {
-            const threshold = 0.15; // Yin threshold
+            const threshold = 0.15;
             const bufferSize = buffer.length;
             const yinBuffer = new Float32Array(bufferSize / 2);
             let period, pitch, clarity;
 
-            // Step 2: Difference function
             for (let tau = 1; tau < yinBuffer.length; tau++) {
                 for (let i = 0; i < yinBuffer.length; i++) {
                     const delta = buffer[i] - buffer[i + tau];
@@ -2014,7 +2057,6 @@
                 }
             }
 
-            // Step 3: Cumulative mean normalized difference
             let runningSum = 0;
             yinBuffer[0] = 1;
             for (let tau = 1; tau < yinBuffer.length; tau++) {
@@ -2022,10 +2064,8 @@
                 yinBuffer[tau] *= tau / runningSum;
             }
 
-            // Step 4: Absolute threshold
             for (let tau = 2; tau < yinBuffer.length; tau++) {
                 if (yinBuffer[tau] < threshold) {
-                    // Parabolic interpolation for better accuracy
                     while (tau + 1 < yinBuffer.length && yinBuffer[tau + 1] < yinBuffer[tau]) {
                         tau++;
                     }
@@ -2052,7 +2092,6 @@
             
             if (period) {
                 pitch = sampleRate / period;
-                 // Filter out unreasonable frequencies
                 if (pitch > 50 && pitch < 1000) {
                      return { frequency: pitch, clarity: clarity };
                 }
@@ -2080,10 +2119,8 @@
         function updateTunerUI(frequency, clarity) {
             if (!isTunerActive) return;
 
-            // Update clarity bar
             tunerClarityFill.style.width = `${Math.max(0, Math.min(100, clarity * 100))}%`;
             
-            // Only update the rest of the UI if clarity is good enough
             if(clarity < 0.8) {
                 return;
             }
@@ -2119,9 +2156,6 @@
             }
         }
         
-        // --- END OF ADVANCED TUNER FUNCTIONS ---
-
-        // --- START OF SHEPHERD MODE FUNCTIONS ---
         function toggleShepherdMode() {
             if (isShepherdModeActive) {
                 stopShepherdMode();
@@ -2138,7 +2172,6 @@
 
             const currentShepherdSong = shepherdSongs.find(s => s.title === hymns[currentHymnIndex].title);
             
-            // NEW: Check if the lyrics array is empty
             if (!currentShepherdSong || !currentShepherdSong.lyrics || currentShepherdSong.lyrics.length === 0) {
                 showNotification('Bu ilahi için beste bulunmamaktadır.', 'bg-highlight-red');
                 return;
@@ -2154,7 +2187,6 @@
                 isShepherdModeActive = true;
                 currentShepherdLineIndex = 0;
                 
-                // Update UI
                 welcomeMessage.classList.add('hidden');
                 hymnContent.classList.add('hidden');
                 shepherdModeDisplay.style.display = 'flex';
@@ -2162,9 +2194,8 @@
                 shepherdModeBtn.classList.add('bg-highlight-red');
                 shepherdModeBtn.classList.remove('bg-highlight-orange');
 
-                updateShepherdDisplay(0); // Show the first line initially
+                updateShepherdDisplay(0);
 
-                // Start audio processing
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioContext.createAnalyser();
                 microphone = audioContext.createMediaStreamSource(stream);
@@ -2188,7 +2219,6 @@
             if (!isShepherdModeActive) return;
             isShepherdModeActive = false;
             
-            // Stop audio processing
             if (microphone) {
                 microphone.mediaStream.getTracks().forEach(track => track.stop());
                 microphone.disconnect();
@@ -2200,12 +2230,10 @@
                 });
             }
             
-            // Update UI
             shepherdStatusMessage.textContent = "Dinleme modu kapalı.";
             shepherdModeBtn.classList.remove('bg-highlight-red');
             shepherdModeBtn.classList.add('bg-highlight-orange');
 
-            // Show normal lyrics view if a hymn is selected
             if (currentHymnIndex !== -1) {
                 hymnContent.classList.remove('hidden');
                 shepherdModeDisplay.style.display = 'none';
@@ -2225,20 +2253,19 @@
 
             const result = yinPitchDetection(buffer, audioContext.sampleRate);
             
-            if (result.frequency && result.clarity > 0.92) { // Higher clarity threshold
+            if (result.frequency && result.clarity > 0.92) {
                 const note = frequencyToNote(result.frequency);
                 
-                // Debounce note detection: only act if the same note is heard for a moment
                 if (note && note !== lastDetectedNote) {
                     lastDetectedNote = note;
                     clearTimeout(noteDetectionTimeout);
                     noteDetectionTimeout = setTimeout(() => {
                         console.log('Detected stable note:', note);
                         matchChordAndAdvance(note);
-                    }, 150); // requires the note to be stable for 150ms
+                    }, 150);
                 }
             } else {
-                lastDetectedNote = null; // Reset if clarity is low
+                lastDetectedNote = null;
             }
             
             requestAnimationFrame(processAudioForShepherd);
@@ -2249,7 +2276,6 @@
             const currentShepherdSong = shepherdSongs.find(s => s.title === hymns[currentHymnIndex].title);
             if (!currentShepherdSong) return;
 
-            // Check if we're at the end
             if (currentShepherdLineIndex >= currentShepherdSong.lyrics.length) {
                 shepherdChordDisplay.textContent = 'SON';
                 shepherdLyricDisplay.textContent = 'İlahi sona erdi';
@@ -2258,18 +2284,13 @@
 
             const currentLine = currentShepherdSong.lyrics[currentShepherdLineIndex];
             
-            // NEW: Highlight the chord when detected
             shepherdChordDisplay.textContent = currentLine.chord;
             shepherdChordDisplay.classList.remove('chord-detected', 'chord-waiting');
             shepherdChordDisplay.classList.add('chord-detected');
             
-            // Check if the detected note matches the chord
-            // Simple matching: check if the chord contains the note (e.g., "Am" contains "A")
             if (currentLine.chord.toUpperCase().includes(detectedNote)) {
-                // Chord matched! Advance to next line
                 currentShepherdLineIndex++;
                 
-                // Update display with next line
                 if (currentShepherdLineIndex < currentShepherdSong.lyrics.length) {
                     const nextLine = currentShepherdSong.lyrics[currentShepherdLineIndex];
                     shepherdChordDisplay.textContent = nextLine.chord;
@@ -2278,23 +2299,19 @@
                     shepherdChordDisplay.classList.add('chord-waiting');
                     shepherdStatusMessage.textContent = `Doğru akor çalındı: ${detectedNote}`;
                     
-                    // Reset the detection after a short time
                     setTimeout(() => {
                         if (isShepherdModeActive) {
                             shepherdStatusMessage.textContent = "Dinleniyor...";
                         }
                     }, 2000);
                 } else {
-                    // End of song
                     shepherdChordDisplay.textContent = 'SON';
                     shepherdLyricDisplay.textContent = 'İlahi sona erdi';
                     shepherdStatusMessage.textContent = 'Tebrikler! İlahiyi tamamladınız.';
                 }
             } else {
-                // Wrong chord played
                 shepherdStatusMessage.textContent = `Beklenen: ${currentLine.chord}, Çalınan: ${detectedNote}`;
                 
-                // Reset the status message after a short time
                 setTimeout(() => {
                     if (isShepherdModeActive) {
                         shepherdStatusMessage.textContent = "Dinleniyor...";
@@ -2306,7 +2323,6 @@
         function updateShepherdDisplay(lineIndex) {
             const currentShepherdSong = shepherdSongs.find(s => s.title === hymns[currentHymnIndex].title);
             
-            // NEW: Check if the lyrics array is empty and show message
             if (!currentShepherdSong || !currentShepherdSong.lyrics || currentShepherdSong.lyrics.length === 0) {
                 shepherdChordDisplay.textContent = '--';
                 shepherdLyricDisplay.textContent = 'Bu ilahi için beste bulunmamaktadır.';
@@ -2326,7 +2342,6 @@
             shepherdChordDisplay.classList.remove('chord-detected');
             shepherdChordDisplay.classList.add('chord-waiting');
         }
-        // --- END OF SHEPHERD MODE FUNCTIONS ---
 
         async function initializeApp() {
             showLoader();
@@ -2350,6 +2365,8 @@
                 clearSearchBtn.addEventListener('click', clearSearch);
                 showAllHymnsBtn.addEventListener('click', openAllHymnsModal);
                 modalSearchBar.addEventListener('input', filterHymnsList);
+                displayOnTvBtn.addEventListener('click', toggleFullscreenDisplay);
+                initialFullscreenBtn.addEventListener('click', toggleInitialPageFullscreen);
 
                 showPlaylistBtn.addEventListener('click', openPlaylistModal);
                 generateShareLinkBtn.addEventListener('click', openShortenerService);
@@ -2359,7 +2376,6 @@
                 guitarTunerBtn.addEventListener('click', openGuitarTunerModal);
                 startTunerBtn.addEventListener('click', startTuner);
                 
-                // NEW: Add event listener for the new button
                 shepherdModeBtn.addEventListener('click', toggleShepherdMode);
 
                 playlistNameInput.addEventListener('input', (e) => {
@@ -2435,7 +2451,7 @@
             
             if (userPlaylist.hymns.length > 0) {
                 if (window.location.hash !== `#playlist=${encodedName}|${encodedTitles.join(',')}`) {
-                    window.location.hash = `playlist=${encodedName}|${encodedTitles.join(',')}`;
+                    window.history.replaceState(null, '', `#playlist=${encodedName}|${encodedTitles.join(',')}`);
                 }
                 playlistShareLinkInput.value = fullUrl;
                 generateShareLinkBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
@@ -2446,7 +2462,7 @@
                 clearPlaylistBtn.disabled = false;
             } else {
                 if (window.location.hash.startsWith('#playlist=')) {
-                    window.location.hash = '';
+                     window.history.replaceState(null, '', ' ');
                 }
                 playlistShareLinkInput.value = '';
                 generateShareLinkBtn.classList.remove('bg-highlight-blue', 'active:bg-blue-600');
