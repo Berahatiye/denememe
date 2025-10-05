@@ -742,23 +742,32 @@
             gap: 1.5rem;
             width: 100%;
             height: 100%;
+            padding: 1rem;
+            text-align: center;
         }
+        
         #shepherd-chord-display {
             font-size: clamp(3rem, 15vw, 6rem);
             font-weight: 800;
             color: #f97316;
             line-height: 1;
+            transition: all 0.3s ease-in-out;
         }
+        
         #shepherd-lyric-display {
             font-size: clamp(1.5rem, 7vw, 2.5rem);
             font-weight: 500;
             color: #f8fafc;
             line-height: 1.2;
             padding: 0 1rem;
+            max-width: 100%;
+            word-wrap: break-word;
         }
+        
         #shepherd-status-message {
             color: #94a3b8;
             font-style: italic;
+            font-size: clamp(0.875rem, 3vw, 1rem);
         }
         
         /* NEW: Styles for detected chords */
@@ -778,6 +787,35 @@
             color: #f97316 !important;
         }
         /* --- END: SHEPHERD MODE STYLES --- */
+
+        /* --- START: SEARCH HELP STYLES --- */
+        #search-help {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 0.25rem;
+            background-color: #1e293b;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            font-size: 0.875rem;
+            color: #94a3b8;
+            z-index: 20;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+        
+        #search-help.visible {
+            display: block;
+        }
+        
+        @media (max-width: 480px) {
+            #search-help {
+                font-size: 0.75rem;
+                padding: 0.5rem;
+            }
+        }
+        /* --- END: SEARCH HELP STYLES --- */
     </style>
 </head>
 <body class="bg-primary-bg">
@@ -801,6 +839,12 @@
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
                     </svg>
                 </button>
+                
+                <!-- NEW: Search Help Container -->
+                <div id="search-help" class="hidden">
+                    İlahi aramak için klavyenizde en az üç tuşlama yapın, örnek: "Zülüf Dökülmüş Yüze"
+                </div>
+                
                 <div id="suggestions-container" class="absolute left-0 right-0 mt-1 bg-secondary-bg rounded-md shadow-lg hidden max-h-60 overflow-y-auto z-20">
                 </div>
             </div>
@@ -1094,6 +1138,9 @@
         const shepherdLyricDisplay = document.getElementById('shepherd-lyric-display');
         const shepherdStatusMessage = document.getElementById('shepherd-status-message');
 
+        // NEW: Search Help element
+        const searchHelp = document.getElementById('search-help');
+
         const loaderOverlay = document.getElementById('loader-overlay');
 
         // Guitar tuner variables
@@ -1152,6 +1199,15 @@
             return normalized.trim();
         }
 
+        // NEW: Function to show/hide search help
+        function updateSearchHelpVisibility() {
+            if (searchBar.value.length < 3 && document.activeElement === searchBar) {
+                searchHelp.classList.add('visible');
+            } else {
+                searchHelp.classList.remove('visible');
+            }
+        }
+
         function renderSuggestions(hymnList) {
             suggestionsContainer.innerHTML = '';
             if (hymnList.length > 0) {
@@ -1165,6 +1221,7 @@
                         suggestionsContainer.classList.add('hidden');
                         searchBar.value = '';
                         clearSearchBtn.style.display = 'none';
+                        searchHelp.classList.remove('visible');
                     });
                     suggestionsContainer.appendChild(suggestionDiv);
                 });
@@ -1233,11 +1290,15 @@
                 clearSearchBtn.style.display = 'none';
                 suggestionsContainer.classList.add('hidden');
             }
+            
+            // NEW: Update search help visibility
+            updateSearchHelpVisibility();
         }
 
         function clearSearch() {
             searchBar.value = '';
             handleSearch();
+            searchHelp.classList.remove('visible');
         }
 
         function renderAllHymnsList(hymnList) {
@@ -1531,13 +1592,14 @@
         });
 
         document.addEventListener('click', (e) => {
-            const isClickInsideSearchBar = searchBar.contains(e.target) || suggestionsContainer.contains(e.target) || clearSearchBtn.contains(e.target);
+            const isClickInsideSearchBar = searchBar.contains(e.target) || suggestionsContainer.contains(e.target) || clearSearchBtn.contains(e.target) || searchHelp.contains(e.target);
             const isClickInsideAllHymnsModal = allHymnsModal.contains(e.target);
             const isClickInsidePlaylistModal = playlistModal.contains(e.target);
             const isClickInsideGuitarTunerModal = guitarTunerModal.contains(e.target);
 
             if (!isClickInsideSearchBar) {
                 suggestionsContainer.classList.add('hidden');
+                searchHelp.classList.remove('visible');
             }
             if (!isClickInsideAllHymnsModal && !showAllHymnsBtn.contains(e.target)) {
                  closeModal('all-hymns-modal');
@@ -2008,6 +2070,12 @@
                 hymnCountSpan.textContent = hymns.length;
 
                 searchBar.addEventListener('input', handleSearch);
+                searchBar.addEventListener('focus', updateSearchHelpVisibility);
+                searchBar.addEventListener('blur', () => {
+                    setTimeout(() => {
+                        searchHelp.classList.remove('visible');
+                    }, 200);
+                });
                 clearSearchBtn.addEventListener('click', clearSearch);
                 showAllHymnsBtn.addEventListener('click', openAllHymnsModal);
                 modalSearchBar.addEventListener('input', filterHymnsList);
