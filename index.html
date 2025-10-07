@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -1422,16 +1423,6 @@
             return noteStrings[Math.round(noteNum + 69) % 12];
         }
 
-        // NEW: Function to extract root note from chord (e.g., "Am" -> "A", "C#m" -> "C#")
-        function getRootNote(chord) {
-            if (!chord) return null;
-            let root = chord[0];
-            if (chord.length > 1 && (chord[1] === '#' || chord[1] === 'b')) {
-                root += chord[1];
-            }
-            return root;
-        }
-
         function debounce(func, delay) {
             let timeout;
             return function(...args) {
@@ -2243,34 +2234,74 @@
                     lastDetectedNote = note;
                     clearTimeout(noteDetectionTimeout);
                     noteDetectionTimeout = setTimeout(() => {
-                        // Now we check if the detected note matches the current chord's root note
-                        const currentShepherdSong = shepherdSongs.find(s => s.title === hymns[currentHymnIndex].title);
-                        if (!currentShepherdSong) return;
-
-                        const currentLine = currentShepherdSong.lyrics[currentShepherdLineIndex];
-                        if (!currentLine) return; // End of song
-
-                        const currentChordRoot = getRootNote(currentLine.chord);
-                        if (currentChordRoot && currentChordRoot.toUpperCase() === note) {
-                            // Correct note played, advance
-                            currentShepherdLineIndex++;
-                            updateShepherdDisplay(currentShepherdLineIndex);
-                            // Reset the detected note so we don't trigger again immediately
-                            lastDetectedNote = null;
-                        } else {
-                            // Wrong note, maybe show a message?
-                            shepherdStatusMessage.textContent = `Beklenen: ${currentChordRoot}, Çalınan: ${note}`;
-                            setTimeout(() => {
-                                if (isShepherdModeActive) {
-                                    shepherdStatusMessage.textContent = "Dinleniyor...";
-                                }
-                            }, 2000);
-                        }
-                    }, 150);
+                        console.log('Detected stable note:', note);
+                        matchChordAndAdvance(note);
+                    }, 150); // requires the note to be stable for 150ms
                 }
+            } else {
+                lastDetectedNote = null; // Reset if clarity is low
             }
             
             requestAnimationFrame(processAudioForShepherd);
+        }
+
+        function matchChordAndAdvance(detectedNote) {
+            if (!isShepherdModeActive || currentHymnIndex === -1) return;
+            const currentShepherdSong = shepherdSongs.find(s => s.title === hymns[currentHymnIndex].title);
+            if (!currentShepherdSong) return;
+
+            // Check if we're at the end
+            if (currentShepherdLineIndex >= currentShepherdSong.lyrics.length) {
+                shepherdChordDisplay.textContent = 'SON';
+                shepherdLyricDisplay.textContent = 'İlahi sona erdi';
+                return;
+            }
+
+            const currentLine = currentShepherdSong.lyrics[currentShepherdLineIndex];
+            
+            // NEW: Highlight the chord when detected
+            shepherdChordDisplay.textContent = currentLine.chord;
+            shepherdChordDisplay.classList.remove('chord-detected', 'chord-waiting');
+            shepherdChordDisplay.classList.add('chord-detected');
+            
+            // Check if the detected note matches the chord
+            // Simple matching: check if the chord contains the note (e.g., "Am" contains "A")
+            if (currentLine.chord.toUpperCase().includes(detectedNote)) {
+                // Chord matched! Advance to next line
+                currentShepherdLineIndex++;
+                
+                // Update display with next line
+                if (currentShepherdLineIndex < currentShepherdSong.lyrics.length) {
+                    const nextLine = currentShepherdSong.lyrics[currentShepherdLineIndex];
+                    shepherdChordDisplay.textContent = nextLine.chord;
+                    shepherdLyricDisplay.textContent = nextLine.line;
+                    shepherdChordDisplay.classList.remove('chord-detected');
+                    shepherdChordDisplay.classList.add('chord-waiting');
+                    shepherdStatusMessage.textContent = `Doğru akor çalındı: ${detectedNote}`;
+                    
+                    // Reset the detection after a short time
+                    setTimeout(() => {
+                        if (isShepherdModeActive) {
+                            shepherdStatusMessage.textContent = "Dinleniyor...";
+                        }
+                    }, 2000);
+                } else {
+                    // End of song
+                    shepherdChordDisplay.textContent = 'SON';
+                    shepherdLyricDisplay.textContent = 'İlahi sona erdi';
+                    shepherdStatusMessage.textContent = 'Tebrikler! İlahiyi tamamladınız.';
+                }
+            } else {
+                // Wrong chord played
+                shepherdStatusMessage.textContent = `Beklenen: ${currentLine.chord}, Çalınan: ${detectedNote}`;
+                
+                // Reset the status message after a short time
+                setTimeout(() => {
+                    if (isShepherdModeActive) {
+                        shepherdStatusMessage.textContent = "Dinleniyor...";
+                    }
+                }, 2000);
+            }
         }
 
         function updateShepherdDisplay(lineIndex) {
@@ -2284,20 +2315,17 @@
                 return;
             }
 
-            if (lineIndex >= currentShepherdSong.lyrics.length) {
-                // End of song
-                shepherdChordDisplay.textContent = 'SON';
-                shepherdLyricDisplay.textContent = 'İlahi sona erdi';
-                shepherdStatusMessage.textContent = 'Tebrikler! İlahiyi tamamladınız.';
+            if (!currentShepherdSong.lyrics[lineIndex]) {
+                 shepherdChordDisplay.textContent = '...';
+                 shepherdLyricDisplay.textContent = 'İlahinin sonu.';
                 return;
-            }
+            };
 
             const lineData = currentShepherdSong.lyrics[lineIndex];
             shepherdChordDisplay.textContent = lineData.chord;
             shepherdLyricDisplay.textContent = lineData.line;
             shepherdChordDisplay.classList.remove('chord-detected');
             shepherdChordDisplay.classList.add('chord-waiting');
-            shepherdStatusMessage.textContent = "Dinleniyor...";
         }
         // --- END OF SHEPHERD MODE FUNCTIONS ---
 
