@@ -7,7 +7,7 @@
     <link rel="icon" href="https://raw.githubusercontent.com/Berahatiye/ilahi/refs/heads/main/logopng.webp">
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Load the Shepherd Mode data file -->
-    <script src="shepherd_mode_data.js"></script>
+    <script src="shepherd_mode_datanew.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -2136,9 +2136,10 @@
                 return;
             }
 
-            const currentShepherdSong = shepherdSongs.find(s => s.title === hymns[currentHymnIndex].title);
+            const currentHymnTitle = hymns[currentHymnIndex].title;
+            const currentShepherdSong = shepherdSongs.find(s => s.title === currentHymnTitle);
             
-            // NEW: Check if the lyrics array is empty
+            // Check if the shepherd song exists and has lyrics
             if (!currentShepherdSong || !currentShepherdSong.lyrics || currentShepherdSong.lyrics.length === 0) {
                 showNotification('Bu ilahi için beste bulunmamaktadır.', 'bg-highlight-red');
                 return;
@@ -2246,7 +2247,9 @@
 
         function matchChordAndAdvance(detectedNote) {
             if (!isShepherdModeActive || currentHymnIndex === -1) return;
-            const currentShepherdSong = shepherdSongs.find(s => s.title === hymns[currentHymnIndex].title);
+            
+            const currentHymnTitle = hymns[currentHymnIndex].title;
+            const currentShepherdSong = shepherdSongs.find(s => s.title === currentHymnTitle);
             if (!currentShepherdSong) return;
 
             // Check if we're at the end
@@ -2259,20 +2262,26 @@
             const currentLine = currentShepherdSong.lyrics[currentShepherdLineIndex];
             
             // NEW: Highlight the chord when detected
-            shepherdChordDisplay.textContent = currentLine.chord;
+            shepherdChordDisplay.textContent = currentLine.chord.join(' / ');
             shepherdChordDisplay.classList.remove('chord-detected', 'chord-waiting');
             shepherdChordDisplay.classList.add('chord-detected');
             
-            // Check if the detected note matches the chord
-            // Simple matching: check if the chord contains the note (e.g., "Am" contains "A")
-            if (currentLine.chord.toUpperCase().includes(detectedNote)) {
+            // Check if the detected note matches any chord in the current line
+            const chords = currentLine.chord;
+            const hasMatchingChord = chords.some(chord => {
+                // Extract root note from chord (handle basic chords like "C", "Am", "G7", etc.)
+                const rootNote = extractRootNote(chord);
+                return rootNote.toUpperCase() === detectedNote;
+            });
+
+            if (hasMatchingChord) {
                 // Chord matched! Advance to next line
                 currentShepherdLineIndex++;
                 
                 // Update display with next line
                 if (currentShepherdLineIndex < currentShepherdSong.lyrics.length) {
                     const nextLine = currentShepherdSong.lyrics[currentShepherdLineIndex];
-                    shepherdChordDisplay.textContent = nextLine.chord;
+                    shepherdChordDisplay.textContent = nextLine.chord.join(' / ');
                     shepherdLyricDisplay.textContent = nextLine.line;
                     shepherdChordDisplay.classList.remove('chord-detected');
                     shepherdChordDisplay.classList.add('chord-waiting');
@@ -2292,7 +2301,7 @@
                 }
             } else {
                 // Wrong chord played
-                shepherdStatusMessage.textContent = `Beklenen: ${currentLine.chord}, Çalınan: ${detectedNote}`;
+                shepherdStatusMessage.textContent = `Beklenen: ${currentLine.chord.join(' / ')}, Çalınan: ${detectedNote}`;
                 
                 // Reset the status message after a short time
                 setTimeout(() => {
@@ -2303,10 +2312,20 @@
             }
         }
 
+        // Helper function to extract root note from chord
+        function extractRootNote(chord) {
+            // Handle basic chords: C, Cm, C7, Cm7, C#m, etc.
+            if (chord.length > 1 && (chord[1] === '#' || chord[1] === 'b')) {
+                return chord.substring(0, 2); // Return first two characters for sharp/flat chords
+            }
+            return chord[0]; // Return first character for simple chords
+        }
+
         function updateShepherdDisplay(lineIndex) {
-            const currentShepherdSong = shepherdSongs.find(s => s.title === hymns[currentHymnIndex].title);
+            const currentHymnTitle = hymns[currentHymnIndex].title;
+            const currentShepherdSong = shepherdSongs.find(s => s.title === currentHymnTitle);
             
-            // NEW: Check if the lyrics array is empty and show message
+            // Check if the shepherd song exists and has lyrics
             if (!currentShepherdSong || !currentShepherdSong.lyrics || currentShepherdSong.lyrics.length === 0) {
                 shepherdChordDisplay.textContent = '--';
                 shepherdLyricDisplay.textContent = 'Bu ilahi için beste bulunmamaktadır.';
@@ -2321,7 +2340,7 @@
             };
 
             const lineData = currentShepherdSong.lyrics[lineIndex];
-            shepherdChordDisplay.textContent = lineData.chord;
+            shepherdChordDisplay.textContent = lineData.chord.join(' / ');
             shepherdLyricDisplay.textContent = lineData.line;
             shepherdChordDisplay.classList.remove('chord-detected');
             shepherdChordDisplay.classList.add('chord-waiting');
