@@ -27,7 +27,7 @@
         }
     </script>
     <style>
-        /* Existing styles remain the same */
+        /* Prevents text selection */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
 
         html {
@@ -269,11 +269,13 @@
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
+            transition: opacity 0.3s ease-in-out, visibility 0s 0.3s linear;
         }
         .modal-overlay.visible {
             opacity: 1;
             visibility: visible;
             pointer-events: auto;
+            transition: opacity 0.3s ease-in-out;
         }
 
         .modal-content {
@@ -345,11 +347,11 @@
             position: fixed;
             top: 0;
             height: 100vh;
+            width: 30%; /* Make tap area larger */
             display: flex;
             justify-content: center;
             align-items: center;
             pointer-events: auto;
-            
             opacity: 0.1; 
             transition: opacity 0.3s ease-in-out;
         }
@@ -376,7 +378,6 @@
             backdrop-filter: blur(5px);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: all 0.2s ease-in-out;
-            
             opacity: 0.1;
         }
         
@@ -471,12 +472,13 @@
             opacity: 1;
             visibility: visible;
             pointer-events: auto;
-            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            transition: opacity 0.3s ease-in-out, visibility 0s linear;
         }
         .loader-overlay.hidden {
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
+            transition: opacity 0.3s ease-in-out, visibility 0s 0.3s linear;
         }
 
         .loader {
@@ -1312,67 +1314,10 @@
     </div>
 
     <script>
-        // Include the shepherd mode data directly in the HTML
-        const shepherdSongs = [
-            // ... (the entire shepherd_mode_data.js content would be here)
-            // For brevity, I'll include just a few examples
-            {
-                "title": "10,000 Neden",
-                "author": "Jonas Myrin, Matt Redman",
-                "key": "E",
-                "lyrics": [
-                    {
-                        "section": "C1",
-                        "chord": ["D", "G", "D"],
-                        "line": "RAB'be övgüler sun"
-                    },
-                    {
-                        "section": "C1",
-                        "chord": ["A", "Bm"],
-                        "line": "Ey gönlüm"
-                    },
-                    {
-                        "section": "C1",
-                        "chord": ["D", "Asus4", "A"],
-                        "line": "Yücelt Kutsal adını____"
-                    },
-                    {
-                        "section": "C1",
-                        "chord": ["G", "Bm"],
-                        "line": "Hamdet tüm gücünle"
-                    },
-                    {
-                        "section": "C1",
-                        "chord": ["G", "A", "Bm"],
-                        "line": "ey gönlüm"
-                    },
-                    {
-                        "section": "C1",
-                        "chord": ["G", "A", "D"],
-                        "line": "Yücelt kutsal adını"
-                    }
-                ]
-            },
-            {
-                "title": "102.Mezmur",
-                "author": "Eren Atik",
-                "key": "Em",
-                "lyrics": [
-                    {
-                        "section": "V1",
-                        "chord": ["Em", "Am"],
-                        "line": "Ya RAB, (benim) duamı işit,"
-                    },
-                    {
-                        "section": "V1",
-                        "chord": ["Am", "C", "D", "Em"],
-                        "line": "Yakarışım sana erişsin."
-                    }
-                ]
-            }
-        ];
-
+        // Global variables for data
         let hymns = []; 
+        let shepherdSongs = [];
+
         let currentHymnIndex = -1;
         let currentLineIndex = 0;
         let isCastingMode = false;
@@ -1454,7 +1399,6 @@
         let audioContext = null;
         let analyser = null;
         let microphone = null;
-        let javascriptNode = null;
         let isTunerActive = false;
         let tunerMode = 'auto'; // 'auto' or 'manual'
         let currentStringIndex = 0; // For manual mode
@@ -1495,7 +1439,7 @@
             normalized = normalized.replace(/ş/g, 's');
             normalized = normalized.replace(/ü/g, 'u');
             normalized = normalized.replace(/i̇/g, 'i');
-            normalized = normalized.replace(/[^a-z0.9]/g, '');
+            normalized = normalized.replace(/[^a-z0-9]/g, '');
             return normalized.trim();
         }
 
@@ -1563,7 +1507,7 @@
         function handleSearch() {
             const query = normalizeText(searchBar.value);
         
-            if (hymns.length > 0 && query.length >= 3) {
+            if (hymns.length > 0 && query.length >= 2) {
                 clearSearchBtn.style.display = 'flex';
                 const filteredHymns = hymns.filter(hymn =>
                     normalizeText(hymn.title).includes(query)
@@ -1609,7 +1553,7 @@
                         playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>';
                         playlistButton.classList.add('bg-green-600', 'text-primary-bg', 'active:bg-green-500');
                     } else {
-                        playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/ssvg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>';
+                        playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>';
                         playlistButton.classList.add('bg-highlight-blue', 'text-primary-bg', 'active:bg-blue-600');
                     }
                     
@@ -1819,9 +1763,7 @@
                 if(modalId === 'shepherd-mode-modal' && isShepherdModeActive) {
                     stopShepherdMode();
                 }
-                modal.style.pointerEvents = 'none';
                 modal.classList.remove('visible');
-                modal.style.pointerEvents = '';
             }
         }
         
@@ -1859,7 +1801,7 @@
 
         document.addEventListener('keydown', (e) => {
             if (currentHymnIndex !== -1) {
-                if (e.key === "ArrowRight") {
+                if (e.key === "ArrowRight" || e.key === " ") { // Added spacebar
                     e.preventDefault();
                     nextLine();
                 } else if (e.key === "ArrowLeft") {
@@ -1870,28 +1812,23 @@
         });
 
         document.addEventListener('click', (e) => {
-            const isClickInsideSearchBar = searchBar.contains(e.target) || suggestionsContainer.contains(e.target) || clearSearchBtn.contains(e.target);
-            const isClickInsideAllHymnsModal = allHymnsModal.contains(e.target);
-            const isClickInsidePlaylistModal = playlistModal.contains(e.target);
-            const isClickInsideGuitarTunerModal = guitarTunerModal.contains(e.target);
-            const isClickInsideShepherdModeModal = shepherdModeModal.contains(e.target);
-
-            if (!isClickInsideSearchBar) {
+            if (!searchBar.contains(e.target) && !suggestionsContainer.contains(e.target)) {
                 suggestionsContainer.classList.add('hidden');
             }
-            if (!isClickInsideAllHymnsModal && !showAllHymnsBtn.contains(e.target)) {
+            if (allHymnsModal.classList.contains('visible') && !allHymnsModal.querySelector('.modal-content').contains(e.target) && !showAllHymnsBtn.contains(e.target)) {
                  closeModal('all-hymns-modal');
             }
-            if (!isClickInsidePlaylistModal && !showPlaylistBtn.contains(e.target)) {
+            if (playlistModal.classList.contains('visible') && !playlistModal.querySelector('.modal-content').contains(e.target) && !showPlaylistBtn.contains(e.target)) {
                 closeModal('playlist-modal');
             }
-            if (!isClickInsideGuitarTunerModal && !guitarTunerBtn.contains(e.target)) {
+            if (guitarTunerModal.classList.contains('visible') && !guitarTunerModal.querySelector('.modal-content').contains(e.target) && !guitarTunerBtn.contains(e.target)) {
                 closeModal('guitar-tuner-modal');
             }
-            if (!isClickInsideShepherdModeModal && !shepherdModeBtn.contains(e.target)) {
+            if (shepherdModeModal.classList.contains('visible') && !shepherdModeModal.querySelector('.modal-content').contains(e.target) && !shepherdModeBtn.contains(e.target)) {
                 closeModal('shepherd-mode-modal');
             }
         });
+
 
         document.addEventListener('contextmenu', (e) => {
             e.preventDefault();
@@ -1899,7 +1836,6 @@
 
         // --- START: SHEPHERD MODE FUNCTIONS ---
         function initShepherdMode() {
-            // Populate song selector
             shepherdSongSelect.innerHTML = '<option value="">Bir şarkı seçin...</option>';
             shepherdSongs.forEach((song, index) => {
                 const option = document.createElement('option');
@@ -1908,7 +1844,6 @@
                 shepherdSongSelect.appendChild(option);
             });
             
-            // Set up event listeners
             shepherdSongSelect.addEventListener('change', (e) => {
                 currentSongIndex = parseInt(e.target.value);
                 if (currentSongIndex >= 0) {
@@ -1954,7 +1889,7 @@
         function openShepherdModeModal(e) {
             e.stopPropagation();
             openModal('shepherd-mode-modal');
-            if(!isShepherdModeActive) {
+            if(shepherdSongSelect.options.length <= 1) { // Only init if not already populated
                 initShepherdMode();
             }
         }
@@ -2009,11 +1944,9 @@
             const currentChordData = song.lyrics[currentChordIndex];
             
             if (currentChordData) {
-                // Get the current chord (first chord in the array for this line)
                 const chord = currentChordData.chord[0] || '-';
                 currentChord.textContent = chord;
                 
-                // Get the next chord
                 let nextChordData = null;
                 if (currentChordIndex < song.lyrics.length - 1) {
                     nextChordData = song.lyrics[currentChordIndex + 1];
@@ -2021,14 +1954,11 @@
                 const nextChordValue = nextChordData ? nextChordData.chord[0] || '-' : '-';
                 nextChord.textContent = nextChordValue;
                 
-                // Update lyrics
                 currentLyrics.textContent = currentChordData.line;
                 
-                // Update progress
                 const progress = ((currentChordIndex + 1) / song.lyrics.length) * 100;
                 shepherdProgressFill.style.width = `${progress}%`;
                 
-                // Highlight current chord
                 currentChord.classList.add('highlight');
                 setTimeout(() => {
                     currentChord.classList.remove('highlight');
@@ -2048,7 +1978,6 @@
                     restartShepherdInterval();
                 }
             } else {
-                // End of song
                 showNotification('Şarkı sona erdi.', 'bg-highlight-blue');
                 stopShepherdMode();
             }
@@ -2100,9 +2029,8 @@
         }
 
         function initGuitarTuner() {
-            setTunerMode('auto'); // Default to auto
+            setTunerMode('auto');
             
-            // Create string selection buttons
             tunerStringSelectors.innerHTML = '';
             guitarStrings.forEach((string, index) => {
                 const button = document.createElement('button');
@@ -2128,7 +2056,7 @@
         function openGuitarTunerModal(e) {
             e.stopPropagation();
             openModal('guitar-tuner-modal');
-            if(!isTunerActive) {
+            if(tunerStringSelectors.children.length === 0) {
                 initGuitarTuner();
             }
         }
@@ -2156,7 +2084,7 @@
                 
                 lowPassFilter = audioContext.createBiquadFilter();
                 lowPassFilter.type = 'lowpass';
-                lowPassFilter.frequency.setValueAtTime(1000, audioContext.currentTime); // Cutoff high-freq noise
+                lowPassFilter.frequency.setValueAtTime(1000, audioContext.currentTime);
                 
                 analyser.fftSize = 2048;
                 microphone.connect(lowPassFilter);
@@ -2214,12 +2142,11 @@
         }
 
         function yinPitchDetection(buffer, sampleRate) {
-            const threshold = 0.15; // Yin threshold
+            const threshold = 0.15;
             const bufferSize = buffer.length;
             const yinBuffer = new Float32Array(bufferSize / 2);
             let period, pitch, clarity;
 
-            // Step 2: Difference function
             for (let tau = 1; tau < yinBuffer.length; tau++) {
                 for (let i = 0; i < yinBuffer.length; i++) {
                     const delta = buffer[i] - buffer[i + tau];
@@ -2227,18 +2154,16 @@
                 }
             }
 
-            // Step 3: Cumulative mean normalized difference
             let runningSum = 0;
             yinBuffer[0] = 1;
             for (let tau = 1; tau < yinBuffer.length; tau++) {
                 runningSum += yinBuffer[tau];
+                if (runningSum === 0) continue;
                 yinBuffer[tau] *= tau / runningSum;
             }
 
-            // Step 4: Absolute threshold
             for (let tau = 2; tau < yinBuffer.length; tau++) {
                 if (yinBuffer[tau] < threshold) {
-                    // Parabolic interpolation for better accuracy
                     while (tau + 1 < yinBuffer.length && yinBuffer[tau + 1] < yinBuffer[tau]) {
                         tau++;
                     }
@@ -2265,7 +2190,6 @@
             
             if (period) {
                 pitch = sampleRate / period;
-                 // Filter out unreasonable frequencies
                 if (pitch > 50 && pitch < 1000) {
                      return { frequency: pitch, clarity: clarity };
                 }
@@ -2293,10 +2217,8 @@
         function updateTunerUI(frequency, clarity) {
             if (!isTunerActive) return;
 
-            // Update clarity bar
             tunerClarityFill.style.width = `${Math.max(0, Math.min(100, clarity * 100))}%`;
             
-            // Only update the rest of the UI if clarity is good enough
             if(clarity < 0.8) {
                 return;
             }
@@ -2337,15 +2259,29 @@
         async function initializeApp() {
             showLoader();
 
+            const hymnsURL = 'https://raw.githubusercontent.com/Berahatiye/ilahi/main/hymns.json';
+            const shepherdURL = 'https://raw.githubusercontent.com/Berahatiye/ilahi/main/shepherd_mode_data.json';
+
             try {
-                const response = await fetch('hymns.json');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                // Fetch both files in parallel for speed
+                const [hymnsResponse, shepherdResponse] = await Promise.all([
+                    fetch(hymnsURL),
+                    fetch(shepherdURL)
+                ]);
+
+                if (!hymnsResponse.ok) {
+                    throw new Error(`HTTP error for hymns! status: ${hymnsResponse.status}`);
                 }
-                hymns = await response.json(); 
+                 if (!shepherdResponse.ok) {
+                    throw new Error(`HTTP error for shepherd data! status: ${shepherdResponse.status}`);
+                }
+
+                hymns = await hymnsResponse.json(); 
+                shepherdSongs = await shepherdResponse.json();
 
                 hymnCountSpan.textContent = hymns.length;
 
+                // Set up event listeners after data is loaded
                 searchBar.addEventListener('input', handleSearch);
                 clearSearchBtn.addEventListener('click', clearSearch);
                 showAllHymnsBtn.addEventListener('click', openAllHymnsModal);
@@ -2369,9 +2305,9 @@
                 loadPlaylist();
 
             } catch (error) {
-                console.error("Hymns verileri yüklenirken bir hata oluştu:", error);
+                console.error("Data loading error:", error);
                 modalTitle.textContent = "Hata!";
-                modalMessage.textContent = "İlahi verileri yüklenemedi. Lütfen internet bağlantınızı kontrol edin veya daha sonra tekrar deneyin.";
+                modalMessage.textContent = "Veriler yüklenemedi. İnternet bağlantınızı kontrol edin veya daha sonra tekrar deneyin.";
                 openModal('casting-modal');
             } finally {
                 hideLoader();
@@ -2388,36 +2324,44 @@
         function loadPlaylist() {
             const hash = window.location.hash.substring(1);
             if (hash.startsWith('playlist=')) {
-                const playlistData = hash.substring('playlist='.length).split('|');
-                let playlistNameFromUrl = 'Yeni Çalma Listem';
-                let playlistTitles = [];
+                try {
+                    const playlistData = hash.substring('playlist='.length).split('|');
+                    let playlistNameFromUrl = 'Yeni Çalma Listem';
+                    let playlistTitles = [];
 
-                if (playlistData.length > 1) {
-                    playlistNameFromUrl = decodeURIComponent(playlistData[0]);
-                    playlistTitles = playlistData[1].split(',').map(decodeURIComponent);
-                } else {
-                    playlistTitles = playlistData[0].split(',').map(decodeURIComponent);
-                }
-
-                userPlaylist.name = playlistNameFromUrl;
-                userPlaylist.hymns = [];
-                playlistTitles.forEach(title => {
-                    const hymn = hymns.find(h => h.title === title);
-                    if (hymn && !userPlaylist.hymns.includes(hymn.title)) {
-                        userPlaylist.hymns.push(hymn.title);
+                    if (playlistData.length > 1) {
+                        playlistNameFromUrl = decodeURIComponent(playlistData[0]);
+                        playlistTitles = playlistData[1].split(',').map(decodeURIComponent);
+                    } else {
+                        playlistTitles = playlistData[0].split(',').map(decodeURIComponent);
                     }
-                });
-                savePlaylist();
-                return;
+
+                    userPlaylist.name = playlistNameFromUrl;
+                    userPlaylist.hymns = [];
+                    playlistTitles.forEach(title => {
+                        const hymn = hymns.find(h => h.title === title);
+                        if (hymn && !userPlaylist.hymns.includes(hymn.title)) {
+                            userPlaylist.hymns.push(hymn.title);
+                        }
+                    });
+                    savePlaylist();
+                    return;
+                } catch (e) {
+                    console.error("Error parsing playlist from URL:", e);
+                }
             }
 
             const storedPlaylist = localStorage.getItem('hymnPlaylist');
             if (storedPlaylist) {
-                const parsedPlaylist = JSON.parse(storedPlaylist);
-                if (parsedPlaylist && parsedPlaylist.hymns) {
-                    userPlaylist = parsedPlaylist;
-                } else if (Array.isArray(parsedPlaylist)) {
-                    userPlaylist = { name: 'Eski Çalma Listem', hymns: parsedPlaylist };
+                try {
+                    const parsedPlaylist = JSON.parse(storedPlaylist);
+                    if (parsedPlaylist && parsedPlaylist.hymns) {
+                        userPlaylist = parsedPlaylist;
+                    } else if (Array.isArray(parsedPlaylist)) { // Legacy support
+                        userPlaylist = { name: 'Eski Çalma Listem', hymns: parsedPlaylist };
+                    }
+                } catch(e) {
+                     userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] };
                 }
             } else {
                 userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] };
@@ -2428,15 +2372,13 @@
         function updateUrlWithPlaylist() {
             const encodedTitles = userPlaylist.hymns.map(encodeURIComponent);
             const encodedName = encodeURIComponent(userPlaylist.name);
-            const currentPathname = window.location.pathname;
-            const basePath = currentPathname.endsWith('/') ? currentPathname : currentPathname + '/';
-            const fullUrl = `${window.location.origin}${basePath}#playlist=${encodedName}|${encodedTitles.join(',')}`; 
+            const newHash = `playlist=${encodedName}|${encodedTitles.join(',')}`;
             
             if (userPlaylist.hymns.length > 0) {
-                if (window.location.hash !== `#playlist=${encodedName}|${encodedTitles.join(',')}`) {
-                    window.location.hash = `playlist=${encodedName}|${encodedTitles.join(',')}`;
+                 if (window.location.hash !== `#${newHash}`) {
+                    history.replaceState(null, null, `#${newHash}`);
                 }
-                playlistShareLinkInput.value = fullUrl;
+                playlistShareLinkInput.value = window.location.href;
                 generateShareLinkBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
                 generateShareLinkBtn.classList.add('bg-highlight-blue', 'active:bg-blue-600');
                 generateShareLinkBtn.disabled = false;
@@ -2445,7 +2387,7 @@
                 clearPlaylistBtn.disabled = false;
             } else {
                 if (window.location.hash.startsWith('#playlist=')) {
-                    window.location.hash = '';
+                     history.replaceState(null, null, ' ');
                 }
                 playlistShareLinkInput.value = '';
                 generateShareLinkBtn.classList.remove('bg-highlight-blue', 'active:bg-blue-600');
