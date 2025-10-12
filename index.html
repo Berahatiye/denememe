@@ -2285,8 +2285,8 @@
          * @returns {Promise<[Array, Array]>} A promise that resolves with the hymns and shepherd data.
          */
         async function loadAllData() {
-            const hymnsURL = 'https://raw.githubusercontent.com/Berahatiye/denememe/main/hymns.json';
-            const shepherdURL = 'https://raw.githubusercontent.com/Berahatiye/denememe/main/shepherd_mode_data.json';
+            const hymnsURL = 'https://github.com/Berahatiye/denememe/raw/refs/heads/main/hymns.json';
+            const shepherdURL = 'https://github.com/Berahatiye/denememe/raw/refs/heads/main/shepherd_mode_data.js';
             
             // Use Promise.all to fetch both files concurrently
             const [hymnsResponse, shepherdResponse] = await Promise.all([
