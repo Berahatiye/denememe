@@ -7,7 +7,7 @@
     <link rel="icon" href="https://raw.githubusercontent.com/Berahatiye/ilahi/refs/heads/main/logopng.webp">
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Load the Shepherd Mode data file -->
-    <script src="shepherd_mode_data.js"></script>
+    <script src="shepherd_mode_datanew.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -849,29 +849,62 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 1.5rem;
+            gap: 2rem;
             width: 100%;
             height: 100%;
-            padding: 1rem;
+            padding: 2rem;
             text-align: center;
         }
         
-        #shepherd-chord-display {
-            font-size: clamp(3rem, 15vw, 6rem);
-            font-weight: 800;
+        .shepherd-chords-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+        }
+        
+        #shepherd-current-chord {
+            font-size: clamp(4rem, 20vw, 8rem);
+            font-weight: 900;
             color: #f97316;
             line-height: 1;
+            text-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
             transition: all 0.3s ease-in-out;
+            min-height: 1.2em;
+        }
+        
+        #shepherd-next-chord {
+            font-size: clamp(2rem, 10vw, 4rem);
+            font-weight: 700;
+            color: #94a3b8;
+            line-height: 1;
+            opacity: 0.7;
+            min-height: 1.2em;
+        }
+        
+        .shepherd-next-label {
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            color: #64748b;
+            margin-bottom: 0.5rem;
         }
         
         #shepherd-lyric-display {
             font-size: clamp(1.5rem, 7vw, 2.5rem);
             font-weight: 500;
             color: #f8fafc;
-            line-height: 1.2;
+            line-height: 1.4;
             padding: 0 1rem;
             max-width: 100%;
             word-wrap: break-word;
+            min-height: 1.4em;
+        }
+        
+        #shepherd-section-display {
+            font-size: clamp(1rem, 4vw, 1.25rem);
+            color: #a5b4fc;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
         
         #shepherd-status-message {
@@ -880,27 +913,9 @@
             font-size: clamp(0.875rem, 3vw, 1rem);
         }
         
-        @media (max-width: 250px) {
-            #shepherd-mode-display {
-                padding: 0.5rem;
-                gap: 0.75rem;
-            }
-            #shepherd-chord-display {
-                font-size: 1.5rem;
-            }
-            #shepherd-lyric-display {
-                font-size: 1rem;
-                padding: 0 0.5rem;
-            }
-            #shepherd-status-message {
-                font-size: 0.7rem;
-            }
-        }
-        
-        /* NEW: Styles for detected chords */
         .chord-detected {
             color: #4ade80 !important;
-            text-shadow: 0 0 10px rgba(74, 222, 128, 0.7);
+            text-shadow: 0 0 20px rgba(74, 222, 128, 0.7) !important;
             animation: chordPulse 0.5s ease-in-out;
         }
         
@@ -912,6 +927,26 @@
         
         .chord-waiting {
             color: #f97316 !important;
+        }
+        
+        @media (max-width: 250px) {
+            #shepherd-mode-display {
+                padding: 0.5rem;
+                gap: 0.75rem;
+            }
+            #shepherd-current-chord {
+                font-size: 2rem;
+            }
+            #shepherd-next-chord {
+                font-size: 1.5rem;
+            }
+            #shepherd-lyric-display {
+                font-size: 1rem;
+                padding: 0 0.5rem;
+            }
+            #shepherd-status-message {
+                font-size: 0.7rem;
+            }
         }
         /* --- END: SHEPHERD MODE STYLES --- */
 
@@ -1160,9 +1195,14 @@
                 </div>
             </div>
 
-            <!-- NEW: Shepherd Mode Display -->
+            <!-- NEW: Enhanced Shepherd Mode Display -->
             <div id="shepherd-mode-display">
-                <div id="shepherd-chord-display">--</div>
+                <div id="shepherd-section-display"></div>
+                <div class="shepherd-chords-container">
+                    <div id="shepherd-current-chord">--</div>
+                    <div class="shepherd-next-label">Sonraki Akor:</div>
+                    <div id="shepherd-next-chord">--</div>
+                </div>
                 <div id="shepherd-lyric-display">Çoban Modu için bir ilahi seçin ve modu başlatın.</div>
                 <p id="shepherd-status-message">Dinleme modu kapalı.</p>
             </div>
@@ -1333,9 +1373,10 @@
         let userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] }; 
         let lyricsLineElements = [];
 
-        // NEW: Shepherd Mode variables
+        // NEW: Enhanced Shepherd Mode variables
         let isShepherdModeActive = false;
-        let currentShepherdLineIndex = 0;
+        let currentShepherdStepIndex = 0;
+        let shepherdSteps = [];
         let lastDetectedNote = null;
         let noteDetectionTimeout = null;
 
@@ -1384,11 +1425,13 @@
         const tunerStringSelectors = document.getElementById('tuner-string-selectors');
         const tunerClarityFill = document.getElementById('tuner-clarity-fill');
 
-        // NEW: Shepherd Mode elements
+        // NEW: Enhanced Shepherd Mode elements
         const shepherdModeBtn = document.getElementById('shepherd-mode-btn');
         const shepherdModeDisplay = document.getElementById('shepherd-mode-display');
-        const shepherdChordDisplay = document.getElementById('shepherd-chord-display');
+        const shepherdCurrentChord = document.getElementById('shepherd-current-chord');
+        const shepherdNextChord = document.getElementById('shepherd-next-chord');
         const shepherdLyricDisplay = document.getElementById('shepherd-lyric-display');
+        const shepherdSectionDisplay = document.getElementById('shepherd-section-display');
         const shepherdStatusMessage = document.getElementById('shepherd-status-message');
 
         // NEW: Search Help element
@@ -1491,8 +1534,7 @@
                 currentHymnIndex = index;
                 // NEW: Reset Shepherd Mode when a new hymn is selected
                 if (isShepherdModeActive) {
-                    currentShepherdLineIndex = 0;
-                    updateShepherdDisplay(0);
+                    stopShepherdMode();
                 }
                 renderHymn();
                 resetLyrics();
@@ -2121,13 +2163,34 @@
         
         // --- END OF ADVANCED TUNER FUNCTIONS ---
 
-        // --- START OF SHEPHERD MODE FUNCTIONS ---
+        // --- START OF ENHANCED SHEPHERD MODE FUNCTIONS ---
         function toggleShepherdMode() {
             if (isShepherdModeActive) {
                 stopShepherdMode();
             } else {
                 startShepherdMode();
             }
+        }
+        
+        function parseShepherdSong(song) {
+            const steps = [];
+            
+            if (!song || !song.lyrics) return steps;
+            
+            song.lyrics.forEach(line => {
+                // Split chord progression into individual chords
+                const chords = line.chord.split(' ');
+                
+                chords.forEach(chord => {
+                    steps.push({
+                        chord: chord,
+                        line: line.line,
+                        section: line.section
+                    });
+                });
+            });
+            
+            return steps;
         }
         
         function startShepherdMode() {
@@ -2160,7 +2223,10 @@
             navigator.mediaDevices.getUserMedia({ audio: true, video: false })
             .then(stream => {
                 isShepherdModeActive = true;
-                currentShepherdLineIndex = 0;
+                currentShepherdStepIndex = 0;
+                
+                // Parse the song into individual chord steps
+                shepherdSteps = parseShepherdSong(currentShepherdSong);
                 
                 // Update UI
                 welcomeMessage.classList.add('hidden');
@@ -2170,7 +2236,7 @@
                 shepherdModeBtn.classList.add('bg-highlight-red');
                 shepherdModeBtn.classList.remove('bg-highlight-orange');
 
-                updateShepherdDisplay(0); // Show the first line initially
+                updateShepherdDisplay(); // Show the first step initially
 
                 // Start audio processing
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -2224,6 +2290,29 @@
             showNotification('Çoban Modu durduruldu.', 'bg-highlight-red');
         }
 
+        function updateShepherdDisplay() {
+            if (!isShepherdModeActive || shepherdSteps.length === 0) return;
+            
+            const currentStep = shepherdSteps[currentShepherdStepIndex];
+            
+            // Update current chord display
+            shepherdCurrentChord.textContent = currentStep.chord;
+            shepherdCurrentChord.classList.remove('chord-detected', 'chord-waiting');
+            shepherdCurrentChord.classList.add('chord-waiting');
+            
+            // Update next chord display
+            if (currentShepherdStepIndex + 1 < shepherdSteps.length) {
+                const nextStep = shepherdSteps[currentShepherdStepIndex + 1];
+                shepherdNextChord.textContent = nextStep.chord;
+            } else {
+                shepherdNextChord.textContent = 'SON';
+            }
+            
+            // Update lyric and section displays
+            shepherdLyricDisplay.textContent = currentStep.line;
+            shepherdSectionDisplay.textContent = currentStep.section || '';
+        }
+
         function processAudioForShepherd() {
             if (!isShepherdModeActive || !analyser) return;
 
@@ -2253,62 +2342,65 @@
         }
 
         function matchChordAndAdvance(detectedNote) {
-            if (!isShepherdModeActive || currentHymnIndex === -1) return;
+            if (!isShepherdModeActive || shepherdSteps.length === 0) return;
             
-            const currentHymnTitle = hymns[currentHymnIndex].title;
-            const currentShepherdSong = shepherdSongs.find(s => s.title === currentHymnTitle);
-            if (!currentShepherdSong) return;
-
+            const currentStep = shepherdSteps[currentShepherdStepIndex];
+            
             // Check if we're at the end
-            if (currentShepherdLineIndex >= currentShepherdSong.lyrics.length) {
-                shepherdChordDisplay.textContent = 'SON';
+            if (currentShepherdStepIndex >= shepherdSteps.length) {
+                shepherdCurrentChord.textContent = 'SON';
+                shepherdNextChord.textContent = '--';
                 shepherdLyricDisplay.textContent = 'İlahi sona erdi';
                 return;
             }
 
-            const currentLine = currentShepherdSong.lyrics[currentShepherdLineIndex];
+            // Extract root note from current chord
+            const expectedRoot = extractRootNote(currentStep.chord);
             
-            // NEW: Highlight the chord when detected
-            shepherdChordDisplay.textContent = currentLine.chord.join(' / ');
-            shepherdChordDisplay.classList.remove('chord-detected', 'chord-waiting');
-            shepherdChordDisplay.classList.add('chord-detected');
-            
-            // Check if the detected note matches any chord in the current line
-            const chords = currentLine.chord;
-            const hasMatchingChord = chords.some(chord => {
-                // Extract root note from chord (handle basic chords like "C", "Am", "G7", etc.)
-                const rootNote = extractRootNote(chord);
-                return rootNote.toUpperCase() === detectedNote;
-            });
-
-            if (hasMatchingChord) {
-                // Chord matched! Advance to next line
-                currentShepherdLineIndex++;
+            // Check if the detected note matches the expected root note
+            if (expectedRoot.toUpperCase() === detectedNote) {
+                // Chord matched! Advance to next step
+                currentShepherdStepIndex++;
                 
-                // Update display with next line
-                if (currentShepherdLineIndex < currentShepherdSong.lyrics.length) {
-                    const nextLine = currentShepherdSong.lyrics[currentShepherdLineIndex];
-                    shepherdChordDisplay.textContent = nextLine.chord.join(' / ');
-                    shepherdLyricDisplay.textContent = nextLine.line;
-                    shepherdChordDisplay.classList.remove('chord-detected');
-                    shepherdChordDisplay.classList.add('chord-waiting');
+                // Highlight the detected chord
+                shepherdCurrentChord.classList.remove('chord-waiting');
+                shepherdCurrentChord.classList.add('chord-detected');
+                
+                // Update display with next step
+                if (currentShepherdStepIndex < shepherdSteps.length) {
+                    const nextStep = shepherdSteps[currentShepherdStepIndex];
+                    shepherdCurrentChord.textContent = nextStep.chord;
+                    shepherdLyricDisplay.textContent = nextStep.line;
+                    shepherdSectionDisplay.textContent = nextStep.section || '';
+                    
+                    // Show next chord if available
+                    if (currentShepherdStepIndex + 1 < shepherdSteps.length) {
+                        const nextNextStep = shepherdSteps[currentShepherdStepIndex + 1];
+                        shepherdNextChord.textContent = nextNextStep.chord;
+                    } else {
+                        shepherdNextChord.textContent = 'SON';
+                    }
+                    
                     shepherdStatusMessage.textContent = `Doğru akor çalındı: ${detectedNote}`;
                     
                     // Reset the detection after a short time
                     setTimeout(() => {
                         if (isShepherdModeActive) {
+                            shepherdCurrentChord.classList.remove('chord-detected');
+                            shepherdCurrentChord.classList.add('chord-waiting');
                             shepherdStatusMessage.textContent = "Dinleniyor...";
                         }
                     }, 2000);
                 } else {
                     // End of song
-                    shepherdChordDisplay.textContent = 'SON';
+                    shepherdCurrentChord.textContent = 'SON';
+                    shepherdNextChord.textContent = '--';
                     shepherdLyricDisplay.textContent = 'İlahi sona erdi';
                     shepherdStatusMessage.textContent = 'Tebrikler! İlahiyi tamamladınız.';
                 }
             } else {
                 // Wrong chord played
-                shepherdStatusMessage.textContent = `Beklenen: ${currentLine.chord.join(' / ')}, Çalınan: ${detectedNote}`;
+                shepherdStatusMessage.textContent = `Beklenen: ${expectedRoot}, Çalınan: ${detectedNote}`;
                 
                 // Reset the status message after a short time
                 setTimeout(() => {
@@ -2327,32 +2419,7 @@
             }
             return chord[0]; // Return first character for simple chords
         }
-
-        function updateShepherdDisplay(lineIndex) {
-            const currentHymnTitle = hymns[currentHymnIndex].title;
-            const currentShepherdSong = shepherdSongs.find(s => s.title === currentHymnTitle);
-            
-            // Check if the shepherd song exists and has lyrics
-            if (!currentShepherdSong || !currentShepherdSong.lyrics || currentShepherdSong.lyrics.length === 0) {
-                shepherdChordDisplay.textContent = '--';
-                shepherdLyricDisplay.textContent = 'Bu ilahi için beste bulunmamaktadır.';
-                shepherdStatusMessage.textContent = "Beste yok";
-                return;
-            }
-
-            if (!currentShepherdSong.lyrics[lineIndex]) {
-                 shepherdChordDisplay.textContent = '...';
-                 shepherdLyricDisplay.textContent = 'İlahinin sonu.';
-                return;
-            };
-
-            const lineData = currentShepherdSong.lyrics[lineIndex];
-            shepherdChordDisplay.textContent = lineData.chord.join(' / ');
-            shepherdLyricDisplay.textContent = lineData.line;
-            shepherdChordDisplay.classList.remove('chord-detected');
-            shepherdChordDisplay.classList.add('chord-waiting');
-        }
-        // --- END OF SHEPHERD MODE FUNCTIONS ---
+        // --- END OF ENHANCED SHEPHERD MODE FUNCTIONS ---
 
         async function initializeApp() {
             showLoader();
