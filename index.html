@@ -7,7 +7,7 @@
     <link rel="icon" href="https://raw.githubusercontent.com/Berahatiye/ilahi/refs/heads/main/logopng.webp">
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Load the Shepherd Mode data file -->
-    <script src="shepherd_mode_data.js"></script>
+    <script src="shepherd_mode_datanew.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -1380,6 +1380,12 @@
         let lastDetectedNote = null;
         let noteDetectionTimeout = null;
 
+        // Separate audio context for shepherd mode
+        let shepherdAudioContext = null;
+        let shepherdAnalyser = null;
+        let shepherdMicrophone = null;
+        let shepherdAudioStream = null;
+
         const searchBar = document.getElementById('search-bar');
         const clearSearchBtn = document.getElementById('clear-search-btn');
         const suggestionsContainer = document.getElementById('suggestions-container');
@@ -2220,10 +2226,20 @@
                 return;
             }
 
-            navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+            // Show permission request notification
+            showNotification('Mikrofon erişimi isteniyor...', 'bg-highlight-blue');
+
+            navigator.mediaDevices.getUserMedia({ 
+                audio: { 
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: false
+                } 
+            })
             .then(stream => {
                 isShepherdModeActive = true;
                 currentShepherdStepIndex = 0;
+                shepherdAudioStream = stream;
                 
                 // Parse the song into individual chord steps
                 shepherdSteps = parseShepherdSong(currentShepherdSong);
@@ -2238,23 +2254,36 @@
 
                 updateShepherdDisplay(); // Show the first step initially
 
-                // Start audio processing
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioContext.createAnalyser();
-                microphone = audioContext.createMediaStreamSource(stream);
-                lowPassFilter = audioContext.createBiquadFilter();
-                lowPassFilter.type = 'lowpass';
-                lowPassFilter.frequency.setValueAtTime(1000, audioContext.currentTime);
-                analyser.fftSize = 2048;
-                microphone.connect(lowPassFilter);
-                lowPassFilter.connect(analyser);
+                // Create separate audio context for shepherd mode
+                shepherdAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+                shepherdAnalyser = shepherdAudioContext.createAnalyser();
+                shepherdMicrophone = shepherdAudioContext.createMediaStreamSource(stream);
                 
+                // Configure analyser for better pitch detection
+                shepherdAnalyser.fftSize = 4096;
+                shepherdAnalyser.smoothingTimeConstant = 0.8;
+                
+                // Connect microphone to analyser
+                shepherdMicrophone.connect(shepherdAnalyser);
+                
+                // Start audio processing
                 processAudioForShepherd();
-                showNotification('Çoban Modu başlatıldı.', 'bg-highlight-green');
+                showNotification('Çoban Modu başlatıldı. Akor çalmaya başlayın!', 'bg-highlight-green');
             })
             .catch(err => {
                 console.error('Mikrofon erişimi reddedildi:', err);
-                showNotification('Mikrofon erişimi reddedildi.', 'bg-highlight-red');
+                let errorMessage = 'Mikrofon erişimi reddedildi.';
+                
+                if (err.name === 'NotAllowedError') {
+                    errorMessage = 'Mikrofon erişimi izni verilmedi. Lütfen tarayıcı ayarlarından mikrofon erişimine izin verin.';
+                } else if (err.name === 'NotFoundError') {
+                    errorMessage = 'Mikrofon bulunamadı. Lütfen bir mikrofon bağladığınızdan emin olun.';
+                } else if (err.name === 'NotSupportedError') {
+                    errorMessage = 'Tarayıcınız mikrofon erişimini desteklemiyor.';
+                }
+                
+                showNotification(errorMessage, 'bg-highlight-red');
+                shepherdStatusMessage.textContent = "Mikrofon erişimi yok";
             });
         }
 
@@ -2263,14 +2292,20 @@
             isShepherdModeActive = false;
             
             // Stop audio processing
-            if (microphone) {
-                microphone.mediaStream.getTracks().forEach(track => track.stop());
-                microphone.disconnect();
+            if (shepherdAudioStream) {
+                shepherdAudioStream.getTracks().forEach(track => track.stop());
+                shepherdAudioStream = null;
             }
-            if(lowPassFilter) lowPassFilter.disconnect();
-            if (audioContext) {
-                audioContext.close().then(() => {
-                    audioContext = null; microphone = null; analyser = null; lowPassFilter = null;
+            
+            if (shepherdMicrophone) {
+                shepherdMicrophone.disconnect();
+                shepherdMicrophone = null;
+            }
+            
+            if (shepherdAudioContext) {
+                shepherdAudioContext.close().then(() => {
+                    shepherdAudioContext = null;
+                    shepherdAnalyser = null;
                 });
             }
             
@@ -2314,15 +2349,15 @@
         }
 
         function processAudioForShepherd() {
-            if (!isShepherdModeActive || !analyser) return;
+            if (!isShepherdModeActive || !shepherdAnalyser) return;
 
-            const bufferSize = analyser.fftSize;
+            const bufferSize = shepherdAnalyser.fftSize;
             const buffer = new Float32Array(bufferSize);
-            analyser.getFloatTimeDomainData(buffer);
+            shepherdAnalyser.getFloatTimeDomainData(buffer);
 
-            const result = yinPitchDetection(buffer, audioContext.sampleRate);
+            const result = yinPitchDetection(buffer, shepherdAudioContext.sampleRate);
             
-            if (result.frequency && result.clarity > 0.92) { // Higher clarity threshold
+            if (result.frequency && result.clarity > 0.85) { // Slightly lower clarity threshold
                 const note = frequencyToNote(result.frequency);
                 
                 // Debounce note detection: only act if the same note is heard for a moment
@@ -2330,9 +2365,9 @@
                     lastDetectedNote = note;
                     clearTimeout(noteDetectionTimeout);
                     noteDetectionTimeout = setTimeout(() => {
-                        console.log('Detected stable note:', note);
+                        console.log('Detected stable note:', note, 'Frequency:', result.frequency);
                         matchChordAndAdvance(note);
-                    }, 150); // requires the note to be stable for 150ms
+                    }, 200); // requires the note to be stable for 200ms
                 }
             } else {
                 lastDetectedNote = null; // Reset if clarity is low
