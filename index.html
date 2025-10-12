@@ -2137,6 +2137,13 @@
             }
 
             const currentHymnTitle = hymns[currentHymnIndex].title;
+            
+            // Check if shepherdSongs is available
+            if (typeof shepherdSongs === 'undefined') {
+                showNotification('Shepherd modu verileri yüklenemedi. Lütfen sayfayı yenileyin.', 'bg-highlight-red');
+                return;
+            }
+            
             const currentShepherdSong = shepherdSongs.find(s => s.title === currentHymnTitle);
             
             // Check if the shepherd song exists and has lyrics
@@ -2378,7 +2385,7 @@
                 guitarTunerBtn.addEventListener('click', openGuitarTunerModal);
                 startTunerBtn.addEventListener('click', startTuner);
                 
-                // NEW: Add event listener for the new button
+                // NEW: Add event listener for the new button - FIXED: Added proper event listener
                 shepherdModeBtn.addEventListener('click', toggleShepherdMode);
                 
                 initialFullscreenBtn.addEventListener('click', toggleInitialPageFullscreen);
