@@ -1979,13 +1979,33 @@
                 return;
             }
             
-            navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+            // Show permission request notification
+            showNotification('Mikrofon erişimi isteniyor...', 'bg-highlight-blue');
+            
+            // Request microphone access with simpler constraints for better compatibility
+            navigator.mediaDevices.getUserMedia({ 
+                audio: {
+                    echoCancellation: false,
+                    noiseSuppression: false,
+                    autoGainControl: false,
+                    sampleRate: 44100
+                }
+            })
             .then(function(stream) {
                 isTunerActive = true;
                 startTunerBtn.textContent = "Durdur";
                 startTunerBtn.classList.add('stop');
 
+                // Create audio context
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Resume audio context for mobile compatibility
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume().then(() => {
+                        console.log('AudioContext resumed successfully');
+                    });
+                }
+                
                 analyser = audioContext.createAnalyser();
                 microphone = audioContext.createMediaStreamSource(stream);
                 
@@ -2002,7 +2022,17 @@
             })
             .catch(function(err) {
                 console.error('Mikrofon erişimi reddedildi:', err);
-                showNotification('Mikrofon erişimi reddedildi.', 'bg-highlight-red');
+                let errorMessage = 'Mikrofon erişimi reddedildi.';
+                
+                if (err.name === 'NotAllowedError') {
+                    errorMessage = 'Mikrofon erişimi izni verilmedi. Lütfen tarayıcı ayarlarından mikrofon erişimine izin verin.';
+                } else if (err.name === 'NotFoundError') {
+                    errorMessage = 'Mikrofon bulunamadı. Lütfen bir mikrofon bağladığınızdan emin olun.';
+                } else if (err.name === 'NotSupportedError') {
+                    errorMessage = 'Tarayıcınız mikrofon erişimini desteklemiyor.';
+                }
+                
+                showNotification(errorMessage, 'bg-highlight-red');
             });
         }
 
@@ -2229,12 +2259,14 @@
             // Show permission request notification
             showNotification('Mikrofon erişimi isteniyor...', 'bg-highlight-blue');
 
+            // Request microphone access with simpler constraints for better compatibility
             navigator.mediaDevices.getUserMedia({ 
-                audio: { 
-                    echoCancellation: true,
-                    noiseSuppression: true,
-                    autoGainControl: false
-                } 
+                audio: {
+                    echoCancellation: false,
+                    noiseSuppression: false,
+                    autoGainControl: false,
+                    sampleRate: 44100
+                }
             })
             .then(stream => {
                 isShepherdModeActive = true;
@@ -2256,6 +2288,14 @@
 
                 // Create separate audio context for shepherd mode
                 shepherdAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Resume audio context for mobile compatibility
+                if (shepherdAudioContext.state === 'suspended') {
+                    shepherdAudioContext.resume().then(() => {
+                        console.log('Shepherd AudioContext resumed successfully');
+                    });
+                }
+                
                 shepherdAnalyser = shepherdAudioContext.createAnalyser();
                 shepherdMicrophone = shepherdAudioContext.createMediaStreamSource(stream);
                 
