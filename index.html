@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>İlahi Prompter</title>
-    <link rel="icon" href="https://raw.githubusercontent.com/Berahatiye/ilahi/refs/heads/main/logopng.webp">
+    <link rel="icon" href="https://raw.githubusercontent.com/Berahatiye/ilahi/main/logopng.webp">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -991,7 +991,7 @@
         <div id="control-panel" class="control-panel bg-secondary-bg p-4 border-b border-gray-700 flex flex-col md:flex-row items-center justify-between transition-all duration-500 relative z-10">
             
             <h1 class="text-2xl md:text-3xl font-bold mb-4 md:mb-0">
-                <img src="https://raw.githubusercontent.com/Berahatiye/ilahi/refs/heads/main/logopng.webp" style="background-color: #f5f5f7;width: 90px;border-radius: 50%;" alt="İlahi Prompter Logo">
+                <img src="https://raw.githubusercontent.com/Berahatiye/ilahi/main/logopng.webp" style="background-color: #f5f5f7;width: 90px;border-radius: 50%;" alt="İlahi Prompter Logo">
             </h1>
 
             <div class="relative w-full mb-4 md:mb-0 md:w-1/3">
@@ -2256,65 +2256,89 @@
         
         // --- END OF ADVANCED TUNER FUNCTIONS ---
 
-        async function initializeApp() {
+        /**
+         * Initializes the entire application.
+         * This function is now the single entry point.
+         */
+        function startApp() {
             showLoader();
-
-            const hymnsURL = 'https://raw.githubusercontent.com/Berahatiye/ilahi/main/hymns.json';
-            const shepherdURL = 'https://raw.githubusercontent.com/Berahatiye/ilahi/main/shepherd_mode_data.json';
-
-            try {
-                // Fetch both files in parallel for speed
-                const [hymnsResponse, shepherdResponse] = await Promise.all([
-                    fetch(hymnsURL),
-                    fetch(shepherdURL)
-                ]);
-
-                if (!hymnsResponse.ok) {
-                    throw new Error(`HTTP error for hymns! status: ${hymnsResponse.status}`);
-                }
-                 if (!shepherdResponse.ok) {
-                    throw new Error(`HTTP error for shepherd data! status: ${shepherdResponse.status}`);
-                }
-
-                hymns = await hymnsResponse.json(); 
-                shepherdSongs = await shepherdResponse.json();
-
-                hymnCountSpan.textContent = hymns.length;
-
-                // Set up event listeners after data is loaded
-                searchBar.addEventListener('input', handleSearch);
-                clearSearchBtn.addEventListener('click', clearSearch);
-                showAllHymnsBtn.addEventListener('click', openAllHymnsModal);
-                modalSearchBar.addEventListener('input', filterHymnsList);
-
-                showPlaylistBtn.addEventListener('click', openPlaylistModal);
-                generateShareLinkBtn.addEventListener('click', openShortenerService);
-                copyPlaylistLinkBtn.addEventListener('click', copyPlaylistLink);
-                clearPlaylistBtn.addEventListener('click', clearPlaylist);
-
-                guitarTunerBtn.addEventListener('click', openGuitarTunerModal);
-                startTunerBtn.addEventListener('click', startTuner);
-
-                shepherdModeBtn.addEventListener('click', openShepherdModeModal);
-
-                playlistNameInput.addEventListener('input', (e) => {
-                    userPlaylist.name = e.target.value;
-                    savePlaylist();
+            loadAllData()
+                .then(([hymnsData, shepherdData]) => {
+                    hymns = hymnsData;
+                    shepherdSongs = shepherdData;
+                    initializeApp(); // This function now only sets up the UI and event listeners
+                })
+                .catch(error => {
+                    console.error("Fatal error loading data:", error);
+                    modalTitle.textContent = "Yükleme Hatası!";
+                    modalMessage.textContent = "Gerekli veriler yüklenemedi. Lütfen internet bağlantınızı kontrol edip sayfayı yenileyin.";
+                    openModal('casting-modal');
+                })
+                .finally(() => {
+                    hideLoader();
                 });
-
-                loadPlaylist();
-
-            } catch (error) {
-                console.error("Data loading error:", error);
-                modalTitle.textContent = "Hata!";
-                modalMessage.textContent = "Veriler yüklenemedi. İnternet bağlantınızı kontrol edin veya daha sonra tekrar deneyin.";
-                openModal('casting-modal');
-            } finally {
-                hideLoader();
-            }
         }
 
-        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        /**
+         * Fetches all required JSON data from GitHub.
+         * @returns {Promise<[Array, Array]>} A promise that resolves with the hymns and shepherd data.
+         */
+        async function loadAllData() {
+            const hymnsURL = 'https://raw.githubusercontent.com/Berahatiye/ilahi/main/hymns.json';
+            const shepherdURL = 'https://raw.githubusercontent.com/Berahatiye/ilahi/main/shepherd_mode_data.json';
+            
+            // Use Promise.all to fetch both files concurrently
+            const [hymnsResponse, shepherdResponse] = await Promise.all([
+                fetch(hymnsURL),
+                fetch(shepherdURL)
+            ]);
+
+            if (!hymnsResponse.ok) {
+                throw new Error(`HTTP error for hymns.json! status: ${hymnsResponse.status}`);
+            }
+            if (!shepherdResponse.ok) {
+                throw new Error(`HTTP error for shepherd_mode_data.json! status: ${shepherdResponse.status}`);
+            }
+
+            const hymnsData = await hymnsResponse.json();
+            const shepherdData = await shepherdResponse.json();
+            
+            return [hymnsData, shepherdData];
+        }
+
+
+        /**
+         * Sets up UI elements and event listeners AFTER data has been loaded.
+         */
+        function initializeApp() {
+            hymnCountSpan.textContent = hymns.length;
+
+            searchBar.addEventListener('input', handleSearch);
+            clearSearchBtn.addEventListener('click', clearSearch);
+            showAllHymnsBtn.addEventListener('click', openAllHymnsModal);
+            modalSearchBar.addEventListener('input', filterHymnsList);
+
+            showPlaylistBtn.addEventListener('click', openPlaylistModal);
+            generateShareLinkBtn.addEventListener('click', openShortenerService);
+            copyPlaylistLinkBtn.addEventListener('click', copyPlaylistLink);
+            clearPlaylistBtn.addEventListener('click', clearPlaylist);
+
+            guitarTunerBtn.addEventListener('click', openGuitarTunerModal);
+            startTunerBtn.addEventListener('click', startTuner);
+
+            shepherdModeBtn.addEventListener('click', openShepherdModeModal);
+
+            playlistNameInput.addEventListener('input', (e) => {
+                userPlaylist.name = e.target.value;
+                savePlaylist();
+            });
+
+            loadPlaylist(); // Load any saved or URL-based playlist
+        }
+
+        // Start the application when the DOM is ready
+        document.addEventListener('DOMContentLoaded', startApp);
 
         function savePlaylist() {
             localStorage.setItem('hymnPlaylist', JSON.stringify(userPlaylist));
