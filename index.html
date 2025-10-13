@@ -1454,6 +1454,7 @@
         let isTunerActive = false;
         let tunerMode = 'auto';
         let currentStringIndex = 0;
+        let tunerAudioStream = null;
 
         const guitarStrings = [
             { note: 'E', frequency: 82.41, name: '6. Tel (Kalın Mi)' },
@@ -1970,6 +1971,10 @@
         }
 
         function startTuner() {
+            if (isShepherdModeActive) {
+                stopShepherdMode();
+            }
+
             if (isTunerActive) {
                 stopTuner();
                 return;
@@ -1983,24 +1988,27 @@
             // Show permission request notification
             showNotification('Mikrofon erişimi isteniyor...', 'bg-highlight-blue');
             
+            // Create audio context *before* asking for permission, within the user gesture.
+            if (!audioContext || audioContext.state === 'closed') {
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                } catch(e) {
+                     showNotification('AudioContext oluşturulamadı.', 'bg-highlight-red');
+                     return;
+                }
+            }
+            // Resume it, which is safe to do even if it's already running.
+            audioContext.resume();
+            
             // Request microphone access with simpler constraints for better compatibility
             navigator.mediaDevices.getUserMedia({ 
                 audio: true
             })
             .then(function(stream) {
                 isTunerActive = true;
+                tunerAudioStream = stream; // Keep a reference to the stream to stop it later
                 startTunerBtn.textContent = "Durdur";
                 startTunerBtn.classList.add('stop');
-
-                // Create audio context
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // Resume audio context for mobile compatibility
-                if (audioContext.state === 'suspended') {
-                    audioContext.resume().then(() => {
-                        console.log('AudioContext resumed successfully');
-                    });
-                }
                 
                 analyser = audioContext.createAnalyser();
                 microphone = audioContext.createMediaStreamSource(stream);
@@ -2039,13 +2047,15 @@
             startTunerBtn.textContent = "Başlat";
             startTunerBtn.classList.remove('stop');
 
-            if (microphone) {
-                microphone.mediaStream.getTracks().forEach(track => track.stop());
-                microphone.disconnect();
+            if (tunerAudioStream) {
+                tunerAudioStream.getTracks().forEach(track => track.stop());
+                tunerAudioStream = null;
             }
-            if(lowPassFilter) lowPassFilter.disconnect();
+            if (microphone) microphone.disconnect();
+            if (lowPassFilter) lowPassFilter.disconnect();
+            if (analyser) analyser.disconnect();
 
-            if (audioContext) {
+            if (audioContext && audioContext.state !== 'closed') {
                 audioContext.close().then(() => {
                     audioContext = null;
                     microphone = null;
@@ -2226,6 +2236,23 @@
         }
         
         function startShepherdMode() {
+            // First, ensure no other audio source is active.
+            if (isTunerActive) {
+                stopTuner();
+            }
+
+            // Create/resume AudioContext immediately on user gesture.
+            if (!shepherdAudioContext || shepherdAudioContext.state === 'closed') {
+                try {
+                    shepherdAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    showNotification('Tarayıcınız AudioContext\'i desteklemiyor.', 'bg-highlight-red');
+                    console.error("AudioContext could not be created:", e);
+                    return;
+                }
+            }
+            shepherdAudioContext.resume();
+
             if (currentHymnIndex === -1) {
                 showNotification('Lütfen önce bir ilahi seçin.', 'bg-highlight-red');
                 return;
@@ -2280,16 +2307,6 @@
                     updateShepherdDisplay();
                 }
 
-                // Create separate audio context for shepherd mode
-                shepherdAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // Resume audio context for mobile compatibility
-                if (shepherdAudioContext.state === 'suspended') {
-                    shepherdAudioContext.resume().then(() => {
-                        console.log('Shepherd AudioContext resumed successfully');
-                    });
-                }
-                
                 shepherdAnalyser = shepherdAudioContext.createAnalyser();
                 shepherdMicrophone = shepherdAudioContext.createMediaStreamSource(stream);
                 
