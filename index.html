@@ -1379,6 +1379,7 @@
         let shepherdSteps = [];
         let lastDetectedNote = null;
         let noteDetectionTimeout = null;
+        let shepherdAnimationFrameId = null;
 
         // Separate audio context for shepherd mode
         let shepherdAudioContext = null;
@@ -2256,7 +2257,11 @@
 
             // Request microphone access with simpler constraints for better compatibility
             navigator.mediaDevices.getUserMedia({ 
-                audio: true
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: false
+                }
             })
             .then(stream => {
                 isShepherdModeActive = true;
@@ -2330,6 +2335,11 @@
             isShepherdModeActive = false;
             
             // Stop audio processing
+            if (shepherdAnimationFrameId) {
+                cancelAnimationFrame(shepherdAnimationFrameId);
+                shepherdAnimationFrameId = null;
+            }
+            
             if (shepherdAudioStream) {
                 shepherdAudioStream.getTracks().forEach(track => track.stop());
                 shepherdAudioStream = null;
@@ -2340,11 +2350,21 @@
                 shepherdMicrophone = null;
             }
             
+            if (shepherdAnalyser) {
+                shepherdAnalyser.disconnect();
+                shepherdAnalyser = null;
+            }
+            
             if (shepherdAudioContext) {
                 shepherdAudioContext.close().then(() => {
                     shepherdAudioContext = null;
-                    shepherdAnalyser = null;
                 });
+            }
+            
+            // Clear any pending timeouts
+            if (noteDetectionTimeout) {
+                clearTimeout(noteDetectionTimeout);
+                noteDetectionTimeout = null;
             }
             
             // Update UI
@@ -2412,7 +2432,7 @@
                 lastDetectedNote = null; // Reset if clarity is low
             }
             
-            requestAnimationFrame(processAudioForShepherd);
+            shepherdAnimationFrameId = requestAnimationFrame(processAudioForShepherd);
         }
 
         function matchChordAndAdvance(detectedNote) {
