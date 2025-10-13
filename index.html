@@ -2221,11 +2221,13 @@
                 const chords = line.chord.split(' ');
                 
                 chords.forEach(chord => {
-                    steps.push({
-                        chord: chord,
-                        line: line.line,
-                        section: line.section
-                    });
+                    if (chord && chord.trim() !== '') {
+                        steps.push({
+                            chord: chord.trim(),
+                            line: line.line,
+                            section: line.section || ''
+                        });
+                    }
                 });
             });
             
@@ -2250,7 +2252,7 @@
             
             // Check if the shepherd song exists and has lyrics
             if (!currentShepherdSong || !currentShepherdSong.lyrics || currentShepherdSong.lyrics.length === 0) {
-                showNotification('Bu ilahi için beste bulunmamaktadır.', 'bg-highlight-red');
+                showNotification('Bu ilahi için akor verisi bulunmamaktadır.', 'bg-highlight-red');
                 return;
             }
 
@@ -2268,14 +2270,19 @@
 
             if (shepherdSteps.length > 0) {
                 updateShepherdDisplay();
+                showNotification('Çoban Modu başlatıldı. Akorları görmek için ilerleyin!', 'bg-highlight-green');
+            } else {
+                showNotification('Bu ilahi için akor verisi bulunamadı.', 'bg-highlight-red');
+                stopShepherdMode();
             }
-
-            showNotification('Çoban Modu başlatıldı. Akorları görmek için ilerleyin!', 'bg-highlight-green');
         }
 
         function stopShepherdMode() {
             if (!isShepherdModeActive) return;
+            
             isShepherdModeActive = false;
+            currentShepherdStepIndex = 0;
+            shepherdSteps = [];
 
             // Update UI
             shepherdStatusMessage.textContent = "Çoban Modu Kapalı";
@@ -2299,10 +2306,16 @@
             
             const currentStep = shepherdSteps[currentShepherdStepIndex];
             
-            // Update current chord display
+            if (!currentStep) return;
+            
+            // Update current chord display with animation
             shepherdCurrentChord.textContent = currentStep.chord;
             shepherdCurrentChord.classList.remove('chord-detected', 'chord-waiting');
-            shepherdCurrentChord.classList.add('chord-waiting');
+            
+            // Add a small delay before adding the animation class
+            setTimeout(() => {
+                shepherdCurrentChord.classList.add('chord-detected');
+            }, 10);
             
             // Update next chord display
             if (currentShepherdStepIndex + 1 < shepherdSteps.length) {
@@ -2313,8 +2326,25 @@
             }
             
             // Update lyric and section displays
-            shepherdLyricDisplay.textContent = currentStep.line;
+            shepherdLyricDisplay.textContent = currentStep.line || '';
             shepherdSectionDisplay.textContent = currentStep.section || '';
+            
+            // Update status message
+            shepherdStatusMessage.textContent = `${currentShepherdStepIndex + 1}/${shepherdSteps.length}`;
+        }
+
+        function nextShepherdStep() {
+            if (isShepherdModeActive && currentShepherdStepIndex < shepherdSteps.length - 1) {
+                currentShepherdStepIndex++;
+                updateShepherdDisplay();
+            }
+        }
+
+        function previousShepherdStep() {
+            if (isShepherdModeActive && currentShepherdStepIndex > 0) {
+                currentShepherdStepIndex--;
+                updateShepherdDisplay();
+            }
         }
         // --- END OF ENHANCED SHEPHERD MODE FUNCTIONS ---
 
