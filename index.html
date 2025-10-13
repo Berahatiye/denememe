@@ -2257,11 +2257,7 @@
 
             // Request microphone access with simpler constraints for better compatibility
             navigator.mediaDevices.getUserMedia({ 
-                audio: {
-                    echoCancellation: true,
-                    noiseSuppression: true,
-                    autoGainControl: false
-                }
+                audio: true
             })
             .then(stream => {
                 isShepherdModeActive = true;
