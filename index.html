@@ -1984,12 +1984,7 @@
             
             // Request microphone access with simpler constraints for better compatibility
             navigator.mediaDevices.getUserMedia({ 
-                audio: {
-                    echoCancellation: false,
-                    noiseSuppression: false,
-                    autoGainControl: false,
-                    sampleRate: 44100
-                }
+                audio: true
             })
             .then(function(stream) {
                 isTunerActive = true;
@@ -2261,12 +2256,7 @@
 
             // Request microphone access with simpler constraints for better compatibility
             navigator.mediaDevices.getUserMedia({ 
-                audio: {
-                    echoCancellation: false,
-                    noiseSuppression: false,
-                    autoGainControl: false,
-                    sampleRate: 44100
-                }
+                audio: true
             })
             .then(stream => {
                 isShepherdModeActive = true;
@@ -2276,7 +2266,7 @@
                 // Parse the song into individual chord steps
                 shepherdSteps = parseShepherdSong(currentShepherdSong);
                 
-                // Update UI
+                // Update UI - Show shepherd mode display
                 welcomeMessage.classList.add('hidden');
                 hymnContent.classList.add('hidden');
                 shepherdModeDisplay.style.display = 'flex';
@@ -2284,7 +2274,10 @@
                 shepherdModeBtn.classList.add('bg-highlight-red');
                 shepherdModeBtn.classList.remove('bg-highlight-orange');
 
-                updateShepherdDisplay(); // Show the first step initially
+                // Initialize shepherd display with the first step
+                if (shepherdSteps.length > 0) {
+                    updateShepherdDisplay();
+                }
 
                 // Create separate audio context for shepherd mode
                 shepherdAudioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -2324,6 +2317,11 @@
                 
                 showNotification(errorMessage, 'bg-highlight-red');
                 shepherdStatusMessage.textContent = "Mikrofon erişimi yok";
+                
+                // Reset shepherd mode state
+                isShepherdModeActive = false;
+                shepherdModeBtn.classList.remove('bg-highlight-red');
+                shepherdModeBtn.classList.add('bg-highlight-orange');
             });
         }
 
@@ -2360,6 +2358,7 @@
                 shepherdModeDisplay.style.display = 'none';
             } else {
                 welcomeMessage.classList.remove('hidden');
+                shepherdModeDisplay.style.display = 'none';
             }
             
             showNotification('Çoban Modu durduruldu.', 'bg-highlight-red');
