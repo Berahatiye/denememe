@@ -1204,7 +1204,7 @@
                     <div id="shepherd-next-chord">--</div>
                 </div>
                 <div id="shepherd-lyric-display">Çoban Modu için bir ilahi seçin ve modu başlatın.</div>
-                <p id="shepherd-status-message">Dinleme modu kapalı.</p>
+                <p id="shepherd-status-message">Çoban Modu Aktif</p>
             </div>
         </div>
     </div>
@@ -1377,15 +1377,6 @@
         let isShepherdModeActive = false;
         let currentShepherdStepIndex = 0;
         let shepherdSteps = [];
-        let lastDetectedNote = null;
-        let noteDetectionTimeout = null;
-        let shepherdAnimationFrameId = null;
-
-        // Separate audio context for shepherd mode
-        let shepherdAudioContext = null;
-        let shepherdAnalyser = null;
-        let shepherdMicrophone = null;
-        let shepherdAudioStream = null;
 
         const searchBar = document.getElementById('search-bar');
         const clearSearchBtn = document.getElementById('clear-search-btn');
@@ -1464,14 +1455,6 @@
             { note: 'B', frequency: 246.94, name: '2. Tel (Si)' },
             { note: 'E', frequency: 329.63, name: '1. Tel (İnce Mi)' }
         ];
-
-        // NEW: A mapping of frequencies to note names for chord detection.
-        const noteStrings = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-        function frequencyToNote(frequency) {
-            if (frequency <= 0) return null;
-            const noteNum = 12 * (Math.log(frequency / 440) / Math.log(2));
-            return noteStrings[Math.round(noteNum + 69) % 12];
-        }
 
         function debounce(func, delay) {
             let timeout;
@@ -1730,9 +1713,16 @@
         }
 
         function nextLine() {
-            if (currentHymnIndex !== -1 && currentLineIndex < hymns[currentHymnIndex].lyrics.length - 1) {
-                currentLineIndex++;
-                updateLyrics();
+            if (isShepherdModeActive) {
+                if (currentShepherdStepIndex < shepherdSteps.length - 1) {
+                    currentShepherdStepIndex++;
+                    updateShepherdDisplay();
+                }
+            } else {
+                if (currentHymnIndex !== -1 && currentLineIndex < hymns[currentHymnIndex].lyrics.length - 1) {
+                    currentLineIndex++;
+                    updateLyrics();
+                }
             }
             if (playlistModal.classList.contains('visible')) {
                 renderPlaylist();
@@ -1743,9 +1733,16 @@
         }
 
         function previousLine() {
-            if (currentHymnIndex !== -1 && currentLineIndex > 0) {
-                currentLineIndex--;
-                updateLyrics();
+            if (isShepherdModeActive) {
+                if (currentShepherdStepIndex > 0) {
+                    currentShepherdStepIndex--;
+                    updateShepherdDisplay();
+                }
+            } else {
+                if (currentHymnIndex !== -1 && currentLineIndex > 0) {
+                    currentLineIndex--;
+                    updateLyrics();
+                }
             }
             if (playlistModal.classList.contains('visible')) {
                 renderPlaylist();
@@ -1883,7 +1880,7 @@
         window.addEventListener('scroll', debouncedScrollHandler);
 
         document.addEventListener('keydown', (e) => {
-            if (currentHymnIndex !== -1) {
+            if (currentHymnIndex !== -1 || isShepherdModeActive) {
                 if (e.key === "ArrowRight") {
                     e.preventDefault();
                     nextLine();
@@ -2236,23 +2233,6 @@
         }
         
         function startShepherdMode() {
-            // First, ensure no other audio source is active.
-            if (isTunerActive) {
-                stopTuner();
-            }
-
-            // Create/resume AudioContext immediately on user gesture.
-            if (!shepherdAudioContext || shepherdAudioContext.state === 'closed') {
-                try {
-                    shepherdAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-                } catch (e) {
-                    showNotification('Tarayıcınız AudioContext\'i desteklemiyor.', 'bg-highlight-red');
-                    console.error("AudioContext could not be created:", e);
-                    return;
-                }
-            }
-            shepherdAudioContext.resume();
-
             if (currentHymnIndex === -1) {
                 showNotification('Lütfen önce bir ilahi seçin.', 'bg-highlight-red');
                 return;
@@ -2274,114 +2254,31 @@
                 return;
             }
 
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                showNotification('Mikrofon erişimi desteklenmiyor.', 'bg-highlight-red');
-                return;
+            isShepherdModeActive = true;
+            currentShepherdStepIndex = 0;
+            shepherdSteps = parseShepherdSong(currentShepherdSong);
+
+            // Update UI - Show shepherd mode display
+            welcomeMessage.classList.add('hidden');
+            hymnContent.classList.add('hidden');
+            shepherdModeDisplay.style.display = 'flex';
+            shepherdStatusMessage.textContent = "Çoban Modu Aktif";
+            shepherdModeBtn.classList.add('bg-highlight-red');
+            shepherdModeBtn.classList.remove('bg-highlight-orange');
+
+            if (shepherdSteps.length > 0) {
+                updateShepherdDisplay();
             }
 
-            // Show permission request notification
-            showNotification('Mikrofon erişimi isteniyor...', 'bg-highlight-blue');
-
-            // Request microphone access with simpler constraints for better compatibility
-            navigator.mediaDevices.getUserMedia({ 
-                audio: true
-            })
-            .then(stream => {
-                isShepherdModeActive = true;
-                currentShepherdStepIndex = 0;
-                shepherdAudioStream = stream;
-                
-                // Parse the song into individual chord steps
-                shepherdSteps = parseShepherdSong(currentShepherdSong);
-                
-                // Update UI - Show shepherd mode display
-                welcomeMessage.classList.add('hidden');
-                hymnContent.classList.add('hidden');
-                shepherdModeDisplay.style.display = 'flex';
-                shepherdStatusMessage.textContent = "Dinleniyor...";
-                shepherdModeBtn.classList.add('bg-highlight-red');
-                shepherdModeBtn.classList.remove('bg-highlight-orange');
-
-                // Initialize shepherd display with the first step
-                if (shepherdSteps.length > 0) {
-                    updateShepherdDisplay();
-                }
-
-                shepherdAnalyser = shepherdAudioContext.createAnalyser();
-                shepherdMicrophone = shepherdAudioContext.createMediaStreamSource(stream);
-                
-                // Configure analyser for better pitch detection
-                shepherdAnalyser.fftSize = 4096;
-                shepherdAnalyser.smoothingTimeConstant = 0.8;
-                
-                // Connect microphone to analyser
-                shepherdMicrophone.connect(shepherdAnalyser);
-                
-                // Start audio processing
-                processAudioForShepherd();
-                showNotification('Çoban Modu başlatıldı. Akor çalmaya başlayın!', 'bg-highlight-green');
-            })
-            .catch(err => {
-                console.error('Mikrofon erişimi reddedildi:', err);
-                let errorMessage = 'Mikrofon erişimi reddedildi.';
-                
-                if (err.name === 'NotAllowedError') {
-                    errorMessage = 'Mikrofon erişimi izni verilmedi. Lütfen tarayıcı ayarlarından mikrofon erişimine izin verin.';
-                } else if (err.name === 'NotFoundError') {
-                    errorMessage = 'Mikrofon bulunamadı. Lütfen bir mikrofon bağladığınızdan emin olun.';
-                } else if (err.name === 'NotSupportedError') {
-                    errorMessage = 'Tarayıcınız mikrofon erişimini desteklemiyor.';
-                }
-                
-                showNotification(errorMessage, 'bg-highlight-red');
-                shepherdStatusMessage.textContent = "Mikrofon erişimi yok";
-                
-                // Reset shepherd mode state
-                isShepherdModeActive = false;
-                shepherdModeBtn.classList.remove('bg-highlight-red');
-                shepherdModeBtn.classList.add('bg-highlight-orange');
-            });
+            showNotification('Çoban Modu başlatıldı. Akorları görmek için ilerleyin!', 'bg-highlight-green');
         }
 
         function stopShepherdMode() {
             if (!isShepherdModeActive) return;
             isShepherdModeActive = false;
-            
-            // Stop audio processing
-            if (shepherdAnimationFrameId) {
-                cancelAnimationFrame(shepherdAnimationFrameId);
-                shepherdAnimationFrameId = null;
-            }
-            
-            if (shepherdAudioStream) {
-                shepherdAudioStream.getTracks().forEach(track => track.stop());
-                shepherdAudioStream = null;
-            }
-            
-            if (shepherdMicrophone) {
-                shepherdMicrophone.disconnect();
-                shepherdMicrophone = null;
-            }
-            
-            if (shepherdAnalyser) {
-                shepherdAnalyser.disconnect();
-                shepherdAnalyser = null;
-            }
-            
-            if (shepherdAudioContext) {
-                shepherdAudioContext.close().then(() => {
-                    shepherdAudioContext = null;
-                });
-            }
-            
-            // Clear any pending timeouts
-            if (noteDetectionTimeout) {
-                clearTimeout(noteDetectionTimeout);
-                noteDetectionTimeout = null;
-            }
-            
+
             // Update UI
-            shepherdStatusMessage.textContent = "Dinleme modu kapalı.";
+            shepherdStatusMessage.textContent = "Çoban Modu Kapalı";
             shepherdModeBtn.classList.remove('bg-highlight-red');
             shepherdModeBtn.classList.add('bg-highlight-orange');
 
@@ -2393,7 +2290,7 @@
                 welcomeMessage.classList.remove('hidden');
                 shepherdModeDisplay.style.display = 'none';
             }
-            
+
             showNotification('Çoban Modu durduruldu.', 'bg-highlight-red');
         }
 
@@ -2418,113 +2315,6 @@
             // Update lyric and section displays
             shepherdLyricDisplay.textContent = currentStep.line;
             shepherdSectionDisplay.textContent = currentStep.section || '';
-        }
-
-        function processAudioForShepherd() {
-            if (!isShepherdModeActive || !shepherdAnalyser) return;
-
-            const bufferSize = shepherdAnalyser.fftSize;
-            const buffer = new Float32Array(bufferSize);
-            shepherdAnalyser.getFloatTimeDomainData(buffer);
-
-            const result = yinPitchDetection(buffer, shepherdAudioContext.sampleRate);
-            
-            if (result.frequency && result.clarity > 0.85) { // Slightly lower clarity threshold
-                const note = frequencyToNote(result.frequency);
-                
-                // Debounce note detection: only act if the same note is heard for a moment
-                if (note && note !== lastDetectedNote) {
-                    lastDetectedNote = note;
-                    clearTimeout(noteDetectionTimeout);
-                    noteDetectionTimeout = setTimeout(() => {
-                        console.log('Detected stable note:', note, 'Frequency:', result.frequency);
-                        matchChordAndAdvance(note);
-                    }, 200); // requires the note to be stable for 200ms
-                }
-            } else {
-                lastDetectedNote = null; // Reset if clarity is low
-            }
-            
-            shepherdAnimationFrameId = requestAnimationFrame(processAudioForShepherd);
-        }
-
-        function matchChordAndAdvance(detectedNote) {
-            if (!isShepherdModeActive || shepherdSteps.length === 0) return;
-            
-            const currentStep = shepherdSteps[currentShepherdStepIndex];
-            
-            // Check if we're at the end
-            if (currentShepherdStepIndex >= shepherdSteps.length) {
-                shepherdCurrentChord.textContent = 'SON';
-                shepherdNextChord.textContent = '--';
-                shepherdLyricDisplay.textContent = 'İlahi sona erdi';
-                return;
-            }
-
-            // Extract root note from current chord
-            const expectedRoot = extractRootNote(currentStep.chord);
-            
-            // Check if the detected note matches the expected root note
-            if (expectedRoot.toUpperCase() === detectedNote) {
-                // Chord matched! Advance to next step
-                currentShepherdStepIndex++;
-                
-                // Highlight the detected chord
-                shepherdCurrentChord.classList.remove('chord-waiting');
-                shepherdCurrentChord.classList.add('chord-detected');
-                
-                // Update display with next step
-                if (currentShepherdStepIndex < shepherdSteps.length) {
-                    const nextStep = shepherdSteps[currentShepherdStepIndex];
-                    shepherdCurrentChord.textContent = nextStep.chord;
-                    shepherdLyricDisplay.textContent = nextStep.line;
-                    shepherdSectionDisplay.textContent = nextStep.section || '';
-                    
-                    // Show next chord if available
-                    if (currentShepherdStepIndex + 1 < shepherdSteps.length) {
-                        const nextNextStep = shepherdSteps[currentShepherdStepIndex + 1];
-                        shepherdNextChord.textContent = nextNextStep.chord;
-                    } else {
-                        shepherdNextChord.textContent = 'SON';
-                    }
-                    
-                    shepherdStatusMessage.textContent = `Doğru akor çalındı: ${detectedNote}`;
-                    
-                    // Reset the detection after a short time
-                    setTimeout(() => {
-                        if (isShepherdModeActive) {
-                            shepherdCurrentChord.classList.remove('chord-detected');
-                            shepherdCurrentChord.classList.add('chord-waiting');
-                            shepherdStatusMessage.textContent = "Dinleniyor...";
-                        }
-                    }, 2000);
-                } else {
-                    // End of song
-                    shepherdCurrentChord.textContent = 'SON';
-                    shepherdNextChord.textContent = '--';
-                    shepherdLyricDisplay.textContent = 'İlahi sona erdi';
-                    shepherdStatusMessage.textContent = 'Tebrikler! İlahiyi tamamladınız.';
-                }
-            } else {
-                // Wrong chord played
-                shepherdStatusMessage.textContent = `Beklenen: ${expectedRoot}, Çalınan: ${detectedNote}`;
-                
-                // Reset the status message after a short time
-                setTimeout(() => {
-                    if (isShepherdModeActive) {
-                        shepherdStatusMessage.textContent = "Dinleniyor...";
-                    }
-                }, 2000);
-            }
-        }
-
-        // Helper function to extract root note from chord
-        function extractRootNote(chord) {
-            // Handle basic chords: C, Cm, C7, Cm7, C#m, etc.
-            if (chord.length > 1 && (chord[1] === '#' || chord[1] === 'b')) {
-                return chord.substring(0, 2); // Return first two characters for sharp/flat chords
-            }
-            return chord[0]; // Return first character for simple chords
         }
         // --- END OF ENHANCED SHEPHERD MODE FUNCTIONS ---
 
