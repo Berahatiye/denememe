@@ -2261,7 +2261,7 @@
             // Update UI - Show shepherd mode display
             welcomeMessage.classList.add('hidden');
             hymnContent.classList.add('hidden');
-            shepherdModeDisplay.style.display = 'flex';
+            shepherdModeDisplay.style.display = "flex";
             shepherdStatusMessage.textContent = "Çoban Modu Aktif";
             shepherdModeBtn.classList.add('bg-highlight-red');
             shepherdModeBtn.classList.remove('bg-highlight-orange');
@@ -2285,10 +2285,10 @@
             // Show normal lyrics view if a hymn is selected
             if (currentHymnIndex !== -1) {
                 hymnContent.classList.remove('hidden');
-                shepherdModeDisplay.style.display = 'none';
+                shepherdModeDisplay.style.display = "none";
             } else {
                 welcomeMessage.classList.remove('hidden');
-                shepherdModeDisplay.style.display = 'none';
+                shepherdModeDisplay.style.display = "none";
             }
 
             showNotification('Çoban Modu durduruldu.', 'bg-highlight-red');
