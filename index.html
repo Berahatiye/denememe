@@ -966,6 +966,32 @@
             background-color: #DEB887;
             color: #2d1a0f;
         }
+
+        /* Shepherd Mode Exit Button */
+        #exit-shepherd-mode-btn {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background-color: #8B4513;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 50;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        body.shepherd-mode #exit-shepherd-mode-btn {
+            display: block;
+        }
+
+        #exit-shepherd-mode-btn:hover {
+            background-color: #A0522D;
+            transform: translateY(-2px);
+        }
         /* --- END: SHEPHERD MODE STYLES --- */
     </style>
 </head>
@@ -974,6 +1000,11 @@
     <div id="loader-overlay" class="loader-overlay">
         <div class="loader"></div>
     </div>
+
+    <!-- Exit Shepherd Mode Button -->
+    <button id="exit-shepherd-mode-btn" onclick="exitShepherdMode()">
+        Çoban Modundan Çık
+    </button>
 
     <div id="app-container" class="min-h-screen flex flex-col">
 
@@ -1319,6 +1350,7 @@
         const shepherdLyricsScrollContainer = document.getElementById('shepherd-lyrics-scroll-container');
         const shepherdSingleLineDisplay = document.getElementById('shepherd-single-line-display');
         const shepherdSingleLineText = document.getElementById('shepherd-single-line-text');
+        const exitShepherdModeBtn = document.getElementById('exit-shepherd-mode-btn');
 
         const loaderOverlay = document.getElementById('loader-overlay');
 
