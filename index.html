@@ -1924,16 +1924,17 @@
             script.src = 'shepherd_mode_data.js';
             script.onload = function() {
                 // The shepherdSongs variable should now be available globally
-                if (typeof shepherdSongs !== 'undefined') {
+                if (typeof window.shepherdSongs !== 'undefined') {
                     shepherdSongs = window.shepherdSongs;
+                    hideLoader();
                     openShepherdModal();
                 } else {
                     console.error('Shepherd songs data not found');
                     modalTitle.textContent = "Hata";
                     modalMessage.textContent = "Çoban modu verileri yüklenemedi.";
                     openModal('casting-modal');
+                    hideLoader();
                 }
-                hideLoader();
             };
             script.onerror = function() {
                 console.error('Failed to load shepherd mode data');
@@ -1952,14 +1953,9 @@
                 openModal('casting-modal');
                 return;
             }
-            showLoader();
             openModal('shepherd-modal');
             shepherdModalSearchBar.value = '';
-            
-            setTimeout(() => {
-                renderShepherdSongsList(shepherdSongs);
-                hideLoader();
-            }, 50);
+            renderShepherdSongsList(shepherdSongs);
         }
 
         function renderShepherdSongsList(songList) {
