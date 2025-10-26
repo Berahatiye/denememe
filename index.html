@@ -21,8 +21,7 @@
                         'highlight-blue': '#a5b4fc',
                         'highlight-red': '#f87171',
                         'highlight-green': '#4ade80',
-                        'shepherd-brown': '#8B4513',
-                        'shepherd-light': '#DEB887'
+                        'chord-color': '#fbbf24'
                     }
                 }
             }
@@ -58,11 +57,26 @@
             transition: color 0.15s ease-in-out, opacity 0.15s ease-in-out, font-weight 0.15s ease-in-out;
             will-change: color, opacity, font-weight;
             cursor: pointer;
+            line-height: 1.4;
+        }
+
+        .chord-line {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #fbbf24;
+            opacity: 0.9;
+            padding: 0.25rem 0;
+            min-height: 1.5rem;
+            line-height: 1.2;
+            font-family: 'Courier New', monospace;
         }
 
         @media (max-width: 480px) {
             .lyrics-line {
                 font-size: 1.5rem;
+            }
+            .chord-line {
+                font-size: 1.1rem;
             }
             #hymns-list > div {
                 font-size: 0.9rem;
@@ -74,6 +88,9 @@
             .lyrics-line {
                 font-size: 1.25rem;
                 padding: 0.3rem 0;
+            }
+            .chord-line {
+                font-size: 1rem;
             }
             .control-panel {
                 padding: 0.75rem;
@@ -101,11 +118,17 @@
             .lyrics-line {
                 font-size: 2.25rem;
             }
+            .chord-line {
+                font-size: 1.5rem;
+            }
         }
         
         @media (min-width: 1024px) {
             .lyrics-line {
                 font-size: 3rem;
+            }
+            .chord-line {
+                font-size: 1.75rem;
             }
         }
         
@@ -160,6 +183,15 @@
             line-height: 1.2;
         }
 
+        #hymn-key {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fbbf24;
+            background-color: rgba(251, 191, 36, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+        }
+
         @media (max-width: 480px) {
             #hymn-title-container {
                 padding: 0.75rem;
@@ -168,11 +200,17 @@
             #hymn-title {
                 font-size: 0.9rem;
             }
+            #hymn-key {
+                font-size: 0.8rem;
+            }
         }
         
         @media (max-width: 320px) {
             #hymn-title {
                 font-size: 0.8rem;
+            }
+            #hymn-key {
+                font-size: 0.7rem;
             }
         }
 
@@ -180,11 +218,17 @@
             #hymn-title {
                 font-size: 1.25rem;
             }
+            #hymn-key {
+                font-size: 1rem;
+            }
         }
         
         @media (min-width: 1024px) {
             #hymn-title {
                 font-size: 1.5rem;
+            }
+            #hymn-key {
+                font-size: 1.1rem;
             }
         }
 
@@ -367,6 +411,7 @@
                 height: auto;
             }
         }
+
 
         @media (min-width: 640px) {
             .modal-content {
@@ -793,206 +838,14 @@
         }
         /* --- END: TUNER STYLES --- */
 
-        /* --- START: SHEPHERD MODE STYLES --- */
-        .shepherd-lyrics-line {
-            font-size: 1.5rem;
-            font-weight: 500;
-            color: #DEB887;
-            padding: 0.5rem 0;
-            transition: color 0.15s ease-in-out, font-weight 0.15s ease-in-out;
-            will-change: color, font-weight;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+        /* Shepherd Mode Styles */
+        .shepherd-mode-active {
+            background-color: #1e40af !important;
         }
 
-        .shepherd-chord {
-            font-size: 1rem;
-            color: #8B4513;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            font-family: monospace;
+        .shepherd-mode-active:hover {
+            background-color: #1e3a8a !important;
         }
-
-        .shepherd-lyrics {
-            font-size: 1.5rem;
-            color: #DEB887;
-        }
-
-        .shepherd-lyrics-line.active .shepherd-chord {
-            color: #FFD700;
-            font-weight: 700;
-        }
-
-        .shepherd-lyrics-line.active .shepherd-lyrics {
-            color: #FFD700;
-            font-weight: 700;
-        }
-
-        @media (max-width: 480px) {
-            .shepherd-lyrics-line {
-                font-size: 1.25rem;
-            }
-            .shepherd-chord {
-                font-size: 0.875rem;
-            }
-            .shepherd-lyrics {
-                font-size: 1.25rem;
-            }
-        }
-
-        @media (max-width: 320px) {
-            .shepherd-lyrics-line {
-                font-size: 1.1rem;
-                padding: 0.3rem 0;
-            }
-            .shepherd-chord {
-                font-size: 0.8rem;
-            }
-            .shepherd-lyrics {
-                font-size: 1.1rem;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .shepherd-lyrics-line {
-                font-size: 1.75rem;
-            }
-            .shepherd-chord {
-                font-size: 1.125rem;
-            }
-            .shepherd-lyrics {
-                font-size: 1.75rem;
-            }
-        }
-        
-        @media (min-width: 1024px) {
-            .shepherd-lyrics-line {
-                font-size: 2rem;
-            }
-            .shepherd-chord {
-                font-size: 1.25rem;
-            }
-            .shepherd-lyrics {
-                font-size: 2rem;
-            }
-        }
-
-        .shepherd-song-info {
-            background-color: #1e293b;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            width: 100%;
-            max-width: 48rem;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            border: 1px solid #8B4513;
-        }
-
-        .shepherd-song-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #DEB887;
-            text-align: center;
-            line-height: 1.2;
-        }
-
-        .shepherd-song-details {
-            font-size: 0.9rem;
-            color: #8B4513;
-            text-align: center;
-        }
-
-        @media (max-width: 480px) {
-            .shepherd-song-info {
-                padding: 0.75rem;
-                margin-bottom: 1rem;
-            }
-            .shepherd-song-title {
-                font-size: 1.1rem;
-            }
-            .shepherd-song-details {
-                font-size: 0.8rem;
-            }
-        }
-        
-        @media (max-width: 320px) {
-            .shepherd-song-title {
-                font-size: 1rem;
-            }
-            .shepherd-song-details {
-                font-size: 0.75rem;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .shepherd-song-title {
-                font-size: 1.5rem;
-            }
-            .shepherd-song-details {
-                font-size: 1rem;
-            }
-        }
-        
-        @media (min-width: 1024px) {
-            .shepherd-song-title {
-                font-size: 1.75rem;
-            }
-            .shepherd-song-details {
-                font-size: 1.1rem;
-            }
-        }
-
-        body.shepherd-mode {
-            background-color: #1a1a1a;
-        }
-
-        body.shepherd-mode #control-panel {
-            background-color: #2d1a0f;
-            border-bottom: 1px solid #8B4513;
-        }
-
-        body.shepherd-mode #shepherd-mode-btn {
-            background-color: #8B4513;
-        }
-
-        body.shepherd-mode #shepherd-mode-btn.active {
-            background-color: #DEB887;
-            color: #2d1a0f;
-        }
-
-        /* Shepherd Mode Exit Button */
-        #exit-shepherd-mode-btn {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background-color: #8B4513;
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            z-index: 50;
-            transition: all 0.3s ease;
-            display: none;
-        }
-
-        body.shepherd-mode #exit-shepherd-mode-btn {
-            display: block;
-        }
-
-        #exit-shepherd-mode-btn:hover {
-            background-color: #A0522D;
-            transform: translateY(-2px);
-        }
-        /* --- END: SHEPHERD MODE STYLES --- */
     </style>
 </head>
 <body class="bg-primary-bg">
@@ -1000,11 +853,6 @@
     <div id="loader-overlay" class="loader-overlay">
         <div class="loader"></div>
     </div>
-
-    <!-- Exit Shepherd Mode Button -->
-    <button id="exit-shepherd-mode-btn" onclick="exitShepherdMode()">
-        Çoban Modundan Çık
-    </button>
 
     <div id="app-container" class="min-h-screen flex flex-col">
 
@@ -1037,8 +885,8 @@
                     <button id="guitar-tuner-btn" class="w-full md:w-auto bg-purple-600 active:bg-purple-500 text-text-light font-bold py-2 px-4 rounded-lg shadow-lg transition-colors">
                         <svg style="margin-inline: auto;" xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#f5f5f7"><path d="M395.33-120q-64 0-108.66-44.67Q242-209.33 242-273.33T286.67-382q44.66-44.67 108.66-44.67 26.34 0 47.84 7.17 21.5 7.17 38.83 20.17V-840h236v143.33H548.67v423.34q0 64-44.67 108.66Q459.33-120 395.33-120Z"/></svg>
                     </button>
-                    <button id="shepherd-mode-btn" class="w-full md:w-auto bg-shepherd-brown active:bg-shepherd-light text-text-light font-bold py-2 px-4 rounded-lg shadow-lg transition-colors">
-                        <svg style="margin-inline: auto;" xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#f5f5f7"><path d="M480-120q-138 0-240.5-91.5T120-440q0-18 1.5-36t4.5-36h84q-2 12-3 24t-1 24q0 104 72.5 180T480-216q22 0 43-3t41-9q-5 12-7.5 24.5T554-180q-17 0-33.5-1.5T488-186q-14 4-29 6t-31 2q-91 0-155.5-64T208-428q0-23 4-45t12-43h68q-6 16-9 32t-3 34q0 72 50 122t122 50q72 0 122-50t50-122q0-18-3-34t-9-32h68q8 20 12 42.5t4 45.5q0 45-17 85.5T640-312v128q0 33-23.5 56.5T560-104q-27 0-47-15t-27-40q-8 1-16 1.5t-16 .5Zm260-520q-17 0-28.5-11.5T700-680q0-17 11.5-28.5T740-720q17 0 28.5 11.5T780-680q0 17-11.5 28.5T740-640Zm120 120q-17 0-28.5-11.5T820-560q0-17 11.5-28.5T860-600q17 0 28.5 11.5T900-560q0 17-11.5 28.5T860-520ZM480-520q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0-240q-33 0-56.5 23.5T400-760q0 33 23.5 56.5T480-680q33 0 56.5-23.5T560-760q0-33-23.5-56.5T480-840Zm0-80q58 0 99 41t41 99q0 58-41 99t-99 41q-58 0-99-41t-41-99q0-58 41-99t99-41Z"/></svg>
+                    <button id="shepherd-mode-btn" class="w-full md:w-auto bg-amber-600 active:bg-amber-500 text-text-light font-bold py-2 px-4 rounded-lg shadow-lg transition-colors">
+                        <svg style="margin-inline: auto;" xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#f5f5f7"><path d="M480-120q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-480q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm0-320Zm-160 40h320q0-40 15-75t41-61q26-26 61-41t75-15q17 0 28.5 11.5T760-520q0 17-11.5 28.5T720-480q-66 0-113 47t-47 113H400q0-66-47-113t-113-47q-17 0-28.5-11.5T200-520q0-17 11.5-28.5T240-560q40 0 75 15t61 41q26 26 41 61t15 75Z"/></svg>
                     </button>
                 </div>
 
@@ -1068,6 +916,7 @@
                         <path d="M18 3a1 1 0 00-1.447-.894L13.5 3.5v11.777l-4-2A1 1 0 008.5 13V2.5a1 1 0 00-1.447-.894L.5 2.5V14l-.007.014a1 1 0 00.187.815l.001.001C.603 14.945 1.758 16 3.5 16s2.897-.945 3.312-1.049L7 15v1.5a1 1 0 001.447.894L18 14.5V3z" />
                     </svg>
                     <h2 id="hymn-title"></h2>
+                    <div id="hymn-key" class="hidden"></div>
                 </div>
                 
                 <div id="lyrics-scroll-container" class="space-y-4 md:space-y-6 lg:space-y-8 w-full max-w-4xl text-center">
@@ -1079,25 +928,6 @@
 
                 <div id="single-line-display" class="hidden">
                     <p id="single-line-text"></p>
-                </div>
-            </div>
-
-            <!-- Shepherd Mode Content -->
-            <div id="shepherd-content" class="hidden flex-grow w-full h-full flex flex-col justify-center items-center">
-                <div id="shepherd-song-info" class="shepherd-song-info">
-                    <h2 id="shepherd-song-title" class="shepherd-song-title"></h2>
-                    <div id="shepherd-song-details" class="shepherd-song-details"></div>
-                </div>
-                
-                <div id="shepherd-lyrics-scroll-container" class="space-y-4 md:space-y-6 lg:space-y-8 w-full max-w-4xl text-center">
-                </div>
-
-                <div id="shepherd-lyrics-provider-container" class="lyrics-provider w-full max-w-4xl">
-                    Shepherd Mode - Akor ve Şarkı Sözleri
-                </div>
-
-                <div id="shepherd-single-line-display" class="hidden">
-                    <p id="shepherd-single-line-text"></p>
                 </div>
             </div>
         </div>
@@ -1241,24 +1071,6 @@
         </div>
     </div>
 
-    <!-- Shepherd Mode Modal -->
-    <div id="shepherd-modal" class="modal-overlay">
-        <div class="modal-content w-full max-w-2xl mx-auto flex flex-col">
-            <div class="flex justify-between items-center p-2 sm:p-4 border-b border-gray-700">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-bold">Çoban Modu - Şarkılar</h2>
-                <button onclick="closeModal('shepherd-modal')" class="text-text-subtle active:text-text-light transition-colors">
-                    <svg class="h-5 w-5 sm:h-6 sm:w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-            <div class="p-2 sm:p-4">
-                <input type="text" id="shepherd-modal-search-bar" placeholder="Şarkı ara..." class="w-full p-1.5 sm:p-2 rounded-md bg-primary-bg text-sm sm:text-base text-text-light border border-gray-600 focus:outline-none focus:ring-2 focus:ring-shepherd-brown">
-            </div>
-            <div id="shepherd-songs-list" class="all-hymns-modal-list p-2 space-y-2">
-            </div>
-        </div>
-    </div>
 
     <div class="fullscreen-nav-container">
         <button onclick="previousLine()" class="fullscreen-btn left">
@@ -1283,20 +1095,16 @@
         let currentHymnIndex = -1;
         let currentLineIndex = 0;
         let isCastingMode = false;
+        let isShepherdMode = false;
         let userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] }; 
         let lyricsLineElements = [];
-
-        // Shepherd Mode variables
-        let shepherdSongs = [];
-        let currentShepherdSongIndex = -1;
-        let currentShepherdLineIndex = 0;
-        let isShepherdMode = false;
-        let shepherdLyricsLineElements = [];
+        let chordLineElements = [];
 
         const searchBar = document.getElementById('search-bar');
         const clearSearchBtn = document.getElementById('clear-search-btn');
         const suggestionsContainer = document.getElementById('suggestions-container');
         const hymnTitleElement = document.getElementById('hymn-title');
+        const hymnKeyElement = document.getElementById('hymn-key');
         const hymnTitleContainer = document.getElementById('hymn-title-container');
         const lyricsScrollContainer = document.getElementById('lyrics-scroll-container');
         const lyricsProviderContainer = document.getElementById('lyrics-provider-container');
@@ -1315,6 +1123,7 @@
         const hymnsListContainer = document.getElementById('hymns-list');
         const goToTopBtn = document.getElementById('go-to-top-btn');
         const hymnCountSpan = document.getElementById('hymn-count');
+        const shepherdModeBtn = document.getElementById('shepherd-mode-btn');
 
         const showPlaylistBtn = document.getElementById('show-playlist-btn');
         const playlistModal = document.getElementById('playlist-modal');
@@ -1338,20 +1147,6 @@
         const tunerStringSelectors = document.getElementById('tuner-string-selectors');
         const tunerClarityFill = document.getElementById('tuner-clarity-fill');
 
-        // Shepherd Mode elements
-        const shepherdModeBtn = document.getElementById('shepherd-mode-btn');
-        const shepherdModal = document.getElementById('shepherd-modal');
-        const shepherdModalSearchBar = document.getElementById('shepherd-modal-search-bar');
-        const shepherdSongsList = document.getElementById('shepherd-songs-list');
-        const shepherdContent = document.getElementById('shepherd-content');
-        const shepherdSongInfo = document.getElementById('shepherd-song-info');
-        const shepherdSongTitle = document.getElementById('shepherd-song-title');
-        const shepherdSongDetails = document.getElementById('shepherd-song-details');
-        const shepherdLyricsScrollContainer = document.getElementById('shepherd-lyrics-scroll-container');
-        const shepherdSingleLineDisplay = document.getElementById('shepherd-single-line-display');
-        const shepherdSingleLineText = document.getElementById('shepherd-single-line-text');
-        const exitShepherdModeBtn = document.getElementById('exit-shepherd-mode-btn');
-
         const loaderOverlay = document.getElementById('loader-overlay');
 
         // Guitar tuner variables
@@ -1372,6 +1167,67 @@
             { note: 'B', frequency: 246.94, name: '2. Tel (Si)' },
             { note: 'E', frequency: 329.63, name: '1. Tel (İnce Mi)' }
         ];
+
+        // Shepherd Mode Data - This would ideally be in a separate JSON file
+        const shepherdModeData = {
+            "hymns": [
+                {
+                    "title": "Yüce Tanrım",
+                    "key": "G",
+                    "chords": ["G", "C", "D", "Em"],
+                    "lyrics": [
+                        {"chord": "G", "text": "Yüce Tanrım, sana taparım"},
+                        {"chord": "C", "text": "Kalbimdeki her şeyle"},
+                        {"chord": "G", "text": "Ruhum sana hayranlıkla"},
+                        {"chord": "D", "text": "Sonsuza dek söyler adını"}
+                    ]
+                },
+                {
+                    "title": "Kutsal Kutsal Kutsal",
+                    "key": "D",
+                    "chords": ["D", "G", "A", "Bm"],
+                    "lyrics": [
+                        {"chord": "D", "text": "Kutsal, kutsal, kutsal"},
+                        {"chord": "G", "text": "Rab'bi övüyorum"},
+                        {"chord": "D", "text": "Göklerde ve yerde"},
+                        {"chord": "A", "text": "Senin işlerin harika"}
+                    ]
+                },
+                {
+                    "title": "İsa'nın Kanı",
+                    "key": "C",
+                    "chords": ["C", "F", "G", "Am"],
+                    "lyrics": [
+                        {"chord": "C", "text": "İsa'nın kanı beni yıkadı"},
+                        {"chord": "F", "text": "Günahlarımdan temizledi"},
+                        {"chord": "C", "text": "Şimdi özgürüm, kurtuldum"},
+                        {"chord": "G", "text": "O'nun lütfuyla yaşıyorum"}
+                    ]
+                },
+                {
+                    "title": "Sana Güveniyorum",
+                    "key": "E",
+                    "chords": ["E", "A", "B", "C#m"],
+                    "lyrics": [
+                        {"chord": "E", "text": "Sana güveniyorum Rab"},
+                        {"chord": "A", "text": "Her adımımda"},
+                        {"chord": "E", "text": "Ellerin rehberim"},
+                        {"chord": "B", "text": "Yaşam yolunda"}
+                    ]
+                },
+                {
+                    "title": "Sevgin Ne Büyük",
+                    "key": "A",
+                    "chords": ["A", "D", "E", "F#m"],
+                    "lyrics": [
+                        {"chord": "A", "text": "Sevgin ne büyük ey Rab"},
+                        {"chord": "D", "text": "Ölçülemez derinliği"},
+                        {"chord": "A", "text": "Beni kurtardın lütfunla"},
+                        {"chord": "E", "text": "Sonsuz sevgiyle sardın"}
+                    ]
+                }
+            ]
+        };
 
         function debounce(func, delay) {
             let timeout;
@@ -1399,7 +1255,7 @@
             normalized = normalized.replace(/ş/g, 's');
             normalized = normalized.replace(/ü/g, 'u');
             normalized = normalized.replace(/i̇/g, 'i');
-            normalized = normalized.replace(/[^a-z0-9]/g, '');
+            normalized = normalized.replace(/[^a-z0.9]/g, '');
             return normalized.trim();
         }
 
@@ -1444,25 +1300,83 @@
             hymnTitleElement.textContent = hymn.title;
             lyricsScrollContainer.innerHTML = '';
             lyricsLineElements = [];
+            chordLineElements = [];
 
             welcomeMessage.classList.add('hidden');
             hymnContent.classList.remove('hidden');
-            shepherdContent.classList.add('hidden');
 
-            hymn.lyrics.forEach((line, index) => {
-                const p = document.createElement('p');
-                p.textContent = line;
-                p.classList.add('lyrics-line');
-                p.dataset.index = index;
-                p.addEventListener('click', () => {
-                    currentLineIndex = index;
-                    updateLyrics();
+            // Check if this hymn has shepherd mode data
+            const shepherdHymn = shepherdModeData.hymns.find(h => h.title === hymn.title);
+            
+            if (shepherdHymn && isShepherdMode) {
+                // Show key if available
+                if (shepherdHymn.key) {
+                    hymnKeyElement.textContent = `Anahtar: ${shepherdHymn.key}`;
+                    hymnKeyElement.classList.remove('hidden');
+                } else {
+                    hymnKeyElement.classList.add('hidden');
+                }
+
+                // Render chords and lyrics for shepherd mode
+                shepherdHymn.lyrics.forEach((line, index) => {
+                    // Create chord line
+                    const chordP = document.createElement('p');
+                    chordP.textContent = line.chord || '';
+                    chordP.classList.add('chord-line');
+                    chordP.dataset.index = index;
+                    lyricsScrollContainer.appendChild(chordP);
+                    chordLineElements.push(chordP);
+
+                    // Create lyrics line
+                    const lyricsP = document.createElement('p');
+                    lyricsP.textContent = line.text;
+                    lyricsP.classList.add('lyrics-line');
+                    lyricsP.dataset.index = index;
+                    lyricsP.addEventListener('click', () => {
+                        currentLineIndex = index;
+                        updateLyrics();
+                    });
+                    lyricsScrollContainer.appendChild(lyricsP);
+                    lyricsLineElements.push(lyricsP);
                 });
-                lyricsScrollContainer.appendChild(p);
-                lyricsLineElements.push(p);
-            });
+            } else {
+                // Regular mode - just lyrics
+                hymnKeyElement.classList.add('hidden');
+                hymn.lyrics.forEach((line, index) => {
+                    const p = document.createElement('p');
+                    p.textContent = line;
+                    p.classList.add('lyrics-line');
+                    p.dataset.index = index;
+                    p.addEventListener('click', () => {
+                        currentLineIndex = index;
+                        updateLyrics();
+                    });
+                    lyricsScrollContainer.appendChild(p);
+                    lyricsLineElements.push(p);
+                });
+            }
 
             lyricsProviderContainer.style.display = 'block';
+        }
+
+        function toggleShepherdMode() {
+            isShepherdMode = !isShepherdMode;
+            
+            if (isShepherdMode) {
+                shepherdModeBtn.classList.add('shepherd-mode-active');
+                shepherdModeBtn.classList.remove('bg-amber-600');
+                showNotification('Çoban Modu aktif! Akorlar görüntüleniyor.', 'bg-amber-600');
+            } else {
+                shepherdModeBtn.classList.remove('shepherd-mode-active');
+                shepherdModeBtn.classList.add('bg-amber-600');
+                showNotification('Çoban Modu kapatıldı.', 'bg-gray-600');
+            }
+            
+            // Re-render current hymn if one is selected
+            if (currentHymnIndex !== -1) {
+                renderHymn();
+                updateLyrics();
+            }
         }
 
         function handleSearch() {
@@ -1502,6 +1416,16 @@
                     hymnTitleSpan.classList.add('flex-grow', 'mr-4');
                     listItem.appendChild(hymnTitleSpan);
                     
+                    // Add shepherd mode indicator if available
+                    const hasShepherdData = shepherdModeData.hymns.some(h => h.title === hymn.title);
+                    if (hasShepherdData) {
+                        const shepherdIndicator = document.createElement('span');
+                        shepherdIndicator.innerHTML = '🎵';
+                        shepherdIndicator.classList.add('text-xs', 'ml-2');
+                        shepherdIndicator.title = 'Çoban Modu mevcut';
+                        hymnTitleSpan.appendChild(shepherdIndicator);
+                    }
+                    
                     listItem.addEventListener('click', () => {
                         const originalIndex = hymns.findIndex(h => h.title === hymn.title);
                         selectHymn(originalIndex);
@@ -1514,7 +1438,7 @@
                         playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>';
                         playlistButton.classList.add('bg-green-600', 'text-primary-bg', 'active:bg-green-500');
                     } else {
-                        playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/ssvg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>';
+                        playlistButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>';
                         playlistButton.classList.add('bg-highlight-blue', 'text-primary-bg', 'active:bg-blue-600');
                     }
                     
@@ -1582,7 +1506,13 @@
             if (isCastingMode) {
                 singleLineText.classList.remove('visible');
                 requestAnimationFrame(() => {
-                    singleLineText.textContent = hymn.lyrics[currentLineIndex];
+                    // Check if we're in shepherd mode
+                    const shepherdHymn = shepherdModeData.hymns.find(h => h.title === hymn.title);
+                    if (shepherdHymn && isShepherdMode) {
+                        singleLineText.textContent = `${shepherdHymn.lyrics[currentLineIndex].chord} - ${shepherdHymn.lyrics[currentLineIndex].text}`;
+                    } else {
+                        singleLineText.textContent = hymn.lyrics[currentLineIndex];
+                    }
                     singleLineText.classList.add('visible');
                 });
             } else {
@@ -1611,18 +1541,10 @@
         }
 
         function nextLine() {
-            if (isShepherdMode) {
-                if (currentShepherdSongIndex !== -1 && currentShepherdLineIndex < shepherdSongs[currentShepherdSongIndex].lyrics.length - 1) {
-                    currentShepherdLineIndex++;
-                    updateShepherdLyrics();
-                }
-            } else {
-                if (currentHymnIndex !== -1 && currentLineIndex < hymns[currentHymnIndex].lyrics.length - 1) {
-                    currentLineIndex++;
-                    updateLyrics();
-                }
+            if (currentHymnIndex !== -1 && currentLineIndex < hymns[currentHymnIndex].lyrics.length - 1) {
+                currentLineIndex++;
+                updateLyrics();
             }
-            
             if (playlistModal.classList.contains('visible')) {
                 renderPlaylist();
             }
@@ -1632,18 +1554,10 @@
         }
 
         function previousLine() {
-            if (isShepherdMode) {
-                if (currentShepherdSongIndex !== -1 && currentShepherdLineIndex > 0) {
-                    currentShepherdLineIndex--;
-                    updateShepherdLyrics();
-                }
-            } else {
-                if (currentHymnIndex !== -1 && currentLineIndex > 0) {
-                    currentLineIndex--;
-                    updateLyrics();
-                }
+            if (currentHymnIndex !== -1 && currentLineIndex > 0) {
+                currentLineIndex--;
+                updateLyrics();
             }
-            
             if (playlistModal.classList.contains('visible')) {
                 renderPlaylist();
             }
@@ -1653,20 +1567,11 @@
         }
         
         function toggleFullscreenDisplay() {
-            if (isShepherdMode) {
-                if (currentShepherdSongIndex === -1) {
-                    modalTitle.textContent = "Uyarı";
-                    modalMessage.textContent = "Şarkıyı yansıtmak için lütfen önce bir şarkı seçin.";
-                    openModal('casting-modal');
-                    return;
-                }
-            } else {
-                if (currentHymnIndex === -1) {
-                    modalTitle.textContent = "Uyarı";
-                    modalMessage.textContent = "İlahiyi yansıtmak için lütfen önce bir ilahi seçin.";
-                    openModal('casting-modal');
-                    return;
-                }
+            if (currentHymnIndex === -1) {
+                modalTitle.textContent = "Uyarı";
+                modalMessage.textContent = "İlahiyi yansıtmak için lütfen önce bir ilahi seçin.";
+                openModal('casting-modal');
+                return;
             }
             isCastingMode ? exitCastingMode() : enterCastingMode();
         }
@@ -1678,13 +1583,8 @@
             displayOnTvBtn.classList.remove('bg-highlight-blue');
             displayOnTvBtn.classList.add('bg-highlight-red');
             
-            if (isShepherdMode) {
-                shepherdSingleLineDisplay.classList.remove('hidden');
-                updateShepherdLyrics();
-            } else {
-                singleLineDisplay.classList.remove('hidden');
-                updateLyrics();
-            }
+            singleLineDisplay.classList.remove('hidden');
+            updateLyrics();
             
             if(!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
@@ -1695,16 +1595,11 @@
 
         function exitCastingMode() {
             isCastingMode = false;
-            
-            if (isShepherdMode) {
-                shepherdSingleLineText.classList.remove('visible');
-            } else {
-                singleLineText.classList.remove('visible');
-            }
+            singleLineText.classList.remove('visible');
             
             setTimeout(() => {
                 document.body.classList.remove('full-screen', 'casting-mode');
-                displayOnTvBtn.textContent = isShepherdMode ? 'Şarkıyı Yansıt' : 'İlahiyi Yansıt';
+                displayOnTvBtn.textContent = 'İlahiyi Yansıt';
                 displayOnTvBtn.classList.remove('bg-highlight-red');
                 displayOnTvBtn.classList.add('bg-highlight-blue');
                 
@@ -1713,18 +1608,8 @@
                 }
                 
                 closeModal('casting-modal');
-                
-                if (isShepherdMode) {
-                    shepherdSingleLineDisplay.classList.add('hidden');
-                } else {
-                    singleLineDisplay.classList.add('hidden');
-                }
-                
-                if (isShepherdMode) {
-                    updateShepherdLyrics();
-                } else {
-                    updateLyrics();
-                }
+                singleLineDisplay.classList.add('hidden');
+                updateLyrics();
             }, 150);
         }
 
@@ -1732,19 +1617,11 @@
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().then(() => {
                     initialFullscreenBtn.textContent = 'Tam Ekrandan Çık';
-                    if (currentHymnIndex !== -1 || currentShepherdSongIndex !== -1) {
+                    if (currentHymnIndex !== -1) {
                         welcomeMessage.classList.add('hidden');
-                        if (isShepherdMode) {
-                            shepherdContent.classList.remove('hidden');
-                        } else {
-                            hymnContent.classList.remove('hidden');
-                        }
+                        hymnContent.classList.remove('hidden');
                         lyricsProviderContainer.style.display = 'block';
-                        if (isShepherdMode) {
-                            updateShepherdLyrics();
-                        } else {
-                            updateLyrics();
-                        }
+                        updateLyrics();
                     }
                 }).catch(err => {
                     console.error(`Tam ekrana geçiş hatası: ${err.message} (${err.name})`);
@@ -1752,19 +1629,13 @@
             } else {
                 document.exitFullscreen().then(() => {
                     initialFullscreenBtn.textContent = 'Ana Ekranı Tam Yap';
-                    if (currentHymnIndex === -1 && currentShepherdSongIndex === -1) {
+                    if (currentHymnIndex === -1) {
                         welcomeMessage.classList.remove('hidden');
                         hymnContent.classList.add('hidden');
-                        shepherdContent.classList.add('hidden');
                     }
-                    if ((currentHymnIndex !== -1 || currentShepherdSongIndex !== -1) && !isCastingMode) {
+                    if (currentHymnIndex !== -1 && !isCastingMode) {
                          singleLineDisplay.classList.add('hidden');
-                         shepherdSingleLineDisplay.classList.add('hidden');
-                         if (isShepherdMode) {
-                            updateShepherdLyrics();
-                         } else {
-                            updateLyrics();
-                         }
+                         updateLyrics();
                     }
                 });
             }
@@ -1805,10 +1676,9 @@
                 if (isCastingMode) {
                     exitCastingMode();
                 }
-                if (currentHymnIndex === -1 && currentShepherdSongIndex === -1 && !isCastingMode) {
+                if (currentHymnIndex === -1 && !isCastingMode) {
                     welcomeMessage.classList.remove('hidden');
                     hymnContent.classList.add('hidden');
-                    shepherdContent.classList.add('hidden');
                 }
             } else {
                 if (document.fullscreenElement === document.documentElement) {
@@ -1820,7 +1690,7 @@
         window.addEventListener('scroll', debouncedScrollHandler);
 
         document.addEventListener('keydown', (e) => {
-            if (currentHymnIndex !== -1 || currentShepherdSongIndex !== -1) {
+            if (currentHymnIndex !== -1) {
                 if (e.key === "ArrowRight") {
                     e.preventDefault();
                     nextLine();
@@ -1836,7 +1706,6 @@
             const isClickInsideAllHymnsModal = allHymnsModal.contains(e.target);
             const isClickInsidePlaylistModal = playlistModal.contains(e.target);
             const isClickInsideGuitarTunerModal = guitarTunerModal.contains(e.target);
-            const isClickInsideShepherdModal = shepherdModal.contains(e.target);
 
             if (!isClickInsideSearchBar) {
                 suggestionsContainer.classList.add('hidden');
@@ -1850,266 +1719,11 @@
             if (!isClickInsideGuitarTunerModal && !guitarTunerBtn.contains(e.target)) {
                 closeModal('guitar-tuner-modal');
             }
-            if (!isClickInsideShepherdModal && !shepherdModeBtn.contains(e.target)) {
-                closeModal('shepherd-modal');
-            }
         });
 
         document.addEventListener('contextmenu', (e) => {
             e.preventDefault();
         });
-
-        // --- START: SHEPHERD MODE FUNCTIONS ---
-
-        function toggleShepherdMode() {
-            if (isShepherdMode) {
-                exitShepherdMode();
-            } else {
-                enterShepherdMode();
-            }
-        }
-
-        function enterShepherdMode() {
-            isShepherdMode = true;
-            shepherdModeBtn.classList.add('active');
-            document.body.classList.add('shepherd-mode');
-            
-            // Hide regular hymn content
-            hymnContent.classList.add('hidden');
-            welcomeMessage.classList.add('hidden');
-            
-            // Show shepherd content
-            shepherdContent.classList.remove('hidden');
-            
-            // Update display button text
-            displayOnTvBtn.textContent = 'Şarkıyı Yansıt';
-            
-            // Load shepherd songs if not already loaded
-            if (shepherdSongs.length === 0) {
-                loadShepherdSongs();
-            } else {
-                openShepherdModal();
-            }
-        }
-
-        function exitShepherdMode() {
-            isShepherdMode = false;
-            shepherdModeBtn.classList.remove('active');
-            document.body.classList.remove('shepherd-mode');
-            
-            // Hide shepherd content
-            shepherdContent.classList.add('hidden');
-            
-            // Show welcome message or hymn content
-            if (currentHymnIndex === -1) {
-                welcomeMessage.classList.remove('hidden');
-            } else {
-                hymnContent.classList.remove('hidden');
-            }
-            
-            // Update display button text
-            displayOnTvBtn.textContent = 'İlahiyi Yansıt';
-            
-            // Reset casting mode if active
-            if (isCastingMode) {
-                exitCastingMode();
-            }
-        }
-
-        function loadShepherdSongs() {
-            showLoader();
-            
-            // Load the shepherd_mode_data.js file
-            const script = document.createElement('script');
-            script.src = 'shepherd_mode_data.js';
-            script.onload = function() {
-                // The shepherdSongs variable should now be available globally
-                if (typeof window.shepherdSongs !== 'undefined') {
-                    shepherdSongs = window.shepherdSongs;
-                    hideLoader();
-                    openShepherdModal();
-                } else {
-                    console.error('Shepherd songs data not found');
-                    modalTitle.textContent = "Hata";
-                    modalMessage.textContent = "Çoban modu verileri yüklenemedi.";
-                    openModal('casting-modal');
-                    hideLoader();
-                }
-            };
-            script.onerror = function() {
-                console.error('Failed to load shepherd mode data');
-                modalTitle.textContent = "Hata";
-                modalMessage.textContent = "Çoban modu verileri yüklenemedi.";
-                openModal('casting-modal');
-                hideLoader();
-            };
-            document.head.appendChild(script);
-        }
-
-        function openShepherdModal() {
-            if (shepherdSongs.length === 0) {
-                modalTitle.textContent = "Veriler Yükleniyor";
-                modalMessage.textContent = "Şarkılar yüklenirken lütfen bekleyin...";
-                openModal('casting-modal');
-                return;
-            }
-            openModal('shepherd-modal');
-            shepherdModalSearchBar.value = '';
-            renderShepherdSongsList(shepherdSongs);
-        }
-
-        function renderShepherdSongsList(songList) {
-            shepherdSongsList.innerHTML = '';
-            if (songList.length === 0) {
-                const noResultsDiv = document.createElement('div');
-                noResultsDiv.textContent = "Eşleşen şarkı bulunamadı.";
-                noResultsDiv.classList.add('text-text-subtle', 'text-center', 'p-4');
-                shepherdSongsList.appendChild(noResultsDiv);
-            } else {
-                songList.forEach((song, index) => {
-                    const listItem = document.createElement('div');
-                    listItem.classList.add('p-4', 'rounded-md', 'cursor-pointer', 'text-xl', 'border-b', 'border-gray-700', 'last:border-b-0', 'flex', 'justify-between', 'items-center', 'active:bg-primary-bg', 'transition-colors');
-                    
-                    const songTitleSpan = document.createElement('span');
-                    songTitleSpan.textContent = song.title;
-                    if (song.author) {
-                        songTitleSpan.textContent += ` - ${song.author}`;
-                    }
-                    songTitleSpan.classList.add('flex-grow', 'mr-4');
-                    listItem.appendChild(songTitleSpan);
-                    
-                    listItem.addEventListener('click', () => {
-                        selectShepherdSong(index);
-                    });
-
-                    shepherdSongsList.appendChild(listItem);
-                });
-            }
-        }
-
-        function filterShepherdSongsList() {
-            const query = normalizeText(shepherdModalSearchBar.value);
-            if (shepherdSongs.length === 0) return;
-            const filteredSongs = shepherdSongs.filter(song => 
-                normalizeText(song.title).includes(query) || 
-                (song.author && normalizeText(song.author).includes(query))
-            );
-            renderShepherdSongsList(filteredSongs);
-        }
-
-        function selectShepherdSong(index) {
-            showLoader();
-            
-            setTimeout(() => {
-                currentShepherdSongIndex = index;
-                renderShepherdSong();
-                resetShepherdLyrics();
-                closeModal('shepherd-modal');
-                hideLoader();
-            }, 50);
-        }
-
-        function renderShepherdSong() {
-            if (currentShepherdSongIndex === -1) return;
-            const song = shepherdSongs[currentShepherdSongIndex];
-            
-            shepherdSongTitle.textContent = song.title;
-            
-            let details = '';
-            if (song.author) {
-                details += `Yazar: ${song.author}`;
-            }
-            if (song.key) {
-                if (details) details += ' | ';
-                details += `Akor: ${song.key}`;
-            }
-            shepherdSongDetails.textContent = details;
-            
-            shepherdLyricsScrollContainer.innerHTML = '';
-            shepherdLyricsLineElements = [];
-
-            welcomeMessage.classList.add('hidden');
-            hymnContent.classList.add('hidden');
-            shepherdContent.classList.remove('hidden');
-
-            if (song.lyrics && song.lyrics.length > 0) {
-                song.lyrics.forEach((lineObj, index) => {
-                    const lineDiv = document.createElement('div');
-                    lineDiv.classList.add('shepherd-lyrics-line');
-                    lineDiv.dataset.index = index;
-                    lineDiv.addEventListener('click', () => {
-                        currentShepherdLineIndex = index;
-                        updateShepherdLyrics();
-                    });
-                    
-                    if (lineObj.chord && lineObj.chord.trim() !== '') {
-                        const chordDiv = document.createElement('div');
-                        chordDiv.classList.add('shepherd-chord');
-                        chordDiv.textContent = lineObj.chord;
-                        lineDiv.appendChild(chordDiv);
-                    }
-                    
-                    const lyricsDiv = document.createElement('div');
-                    lyricsDiv.classList.add('shepherd-lyrics');
-                    lyricsDiv.textContent = lineObj.line;
-                    lineDiv.appendChild(lyricsDiv);
-                    
-                    shepherdLyricsScrollContainer.appendChild(lineDiv);
-                    shepherdLyricsLineElements.push(lineDiv);
-                });
-            } else {
-                const noLyricsDiv = document.createElement('div');
-                noLyricsDiv.textContent = "Bu şarkının sözleri henüz eklenmemiş.";
-                noLyricsDiv.classList.add('text-text-subtle', 'text-center', 'p-4');
-                shepherdLyricsScrollContainer.appendChild(noLyricsDiv);
-            }
-        }
-
-        let previouslyActiveShepherdLine = null;
-
-        function updateShepherdLyrics() {
-            if (currentShepherdSongIndex === -1 || shepherdLyricsLineElements.length === 0) return;
-            const song = shepherdSongs[currentShepherdSongIndex];
-            
-            if (isCastingMode) {
-                shepherdSingleLineText.classList.remove('visible');
-                requestAnimationFrame(() => {
-                    const currentLine = song.lyrics[currentShepherdLineIndex];
-                    let displayText = '';
-                    if (currentLine.chord && currentLine.chord.trim() !== '') {
-                        displayText = `[${currentLine.chord}] ${currentLine.line}`;
-                    } else {
-                        displayText = currentLine.line;
-                    }
-                    shepherdSingleLineText.textContent = displayText;
-                    shepherdSingleLineText.classList.add('visible');
-                });
-            } else {
-                if (previouslyActiveShepherdLine && previouslyActiveShepherdLine !== shepherdLyricsLineElements[currentShepherdLineIndex]) {
-                    previouslyActiveShepherdLine.classList.remove('active');
-                }
-
-                const currentLineElement = shepherdLyricsLineElements[currentShepherdLineIndex];
-                if (currentLineElement) {
-                    if (!currentLineElement.classList.contains('active')) {
-                        currentLineElement.classList.add('active');
-                        currentLineElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                    previouslyActiveShepherdLine = currentLineElement;
-                }
-            }
-        }
-
-        function resetShepherdLyrics() {
-            currentShepherdLineIndex = 0;
-            if (previouslyActiveShepherdLine) {
-                previouslyActiveShepherdLine.classList.remove('active');
-                previouslyActiveShepherdLine = null;
-            }
-            updateShepherdLyrics();
-        }
-
-        // --- END: SHEPHERD MODE FUNCTIONS ---
 
         // --- START: ADVANCED TUNER FUNCTIONS ---
 
@@ -2379,6 +1993,7 @@
                 clearSearchBtn.addEventListener('click', clearSearch);
                 showAllHymnsBtn.addEventListener('click', openAllHymnsModal);
                 modalSearchBar.addEventListener('input', filterHymnsList);
+                shepherdModeBtn.addEventListener('click', toggleShepherdMode);
 
                 showPlaylistBtn.addEventListener('click', openPlaylistModal);
                 generateShareLinkBtn.addEventListener('click', openShortenerService);
@@ -2387,10 +2002,6 @@
 
                 guitarTunerBtn.addEventListener('click', openGuitarTunerModal);
                 startTunerBtn.addEventListener('click', startTuner);
-
-                // Shepherd Mode event listeners
-                shepherdModeBtn.addEventListener('click', toggleShepherdMode);
-                shepherdModalSearchBar.addEventListener('input', filterShepherdSongsList);
 
                 playlistNameInput.addEventListener('input', (e) => {
                     userPlaylist.name = e.target.value;
