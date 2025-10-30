@@ -1373,7 +1373,8 @@
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
-                <h2>Çoban Modu</h2>
+                <!-- **** MODIFICATION: Added ID "shepherd-modal-title" **** -->
+                <h2 id="shepherd-modal-title">Çoban Modu</h2>
                 <button id="close-shepherd-modal" class="close-btn">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -2411,6 +2412,15 @@
             e.stopPropagation();
             openModal('shepherd-modal');
             
+            // **** MODIFICATION: Find title element and set text based on playlist ****
+            const shepherdTitleEl = document.getElementById('shepherd-modal-title');
+            if (userPlaylist.hymns && userPlaylist.hymns.length > 0) {
+                shepherdTitleEl.textContent = 'Çoban Modu (Çalma Listesi)';
+            } else {
+                shepherdTitleEl.textContent = 'Çoban Modu';
+            }
+            // ********************************************************************
+
             shepherdSearchInput.value = ''; // Clear search
             
             // Check if shepherd data is loaded
