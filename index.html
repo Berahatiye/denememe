@@ -29,6 +29,7 @@
     </script>
     
     <!-- ADDED SCRIPT TAG TO LOAD YOUR SHEPHERD MODE DATA -->
+    <!-- This file must exist and define a global variable: let shepherdSongs = [...]; -->
     <script src="shepherd_mode_data.js"></script>
     
     <style>
@@ -273,6 +274,7 @@
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
         }
         .modal-overlay.visible {
             opacity: 1;
@@ -1357,6 +1359,9 @@
         let userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] }; 
         let lyricsLineElements = [];
 
+        // Global shepherdSongs should be populated by shepherd_mode_data.js
+        // let shepherdSongs = []; 
+
         const searchBar = document.getElementById('search-bar');
         const clearSearchBtn = document.getElementById('clear-search-btn');
         const suggestionsContainer = document.getElementById('suggestions-container');
@@ -1432,7 +1437,7 @@
         const shepherdSongMeta = document.getElementById('shepherd-song-meta');
         const shepherdLyricsContent = document.getElementById('shepherd-lyrics-content');
         let currentShepherdSong = null;
-        let shepherdSongs = []; // Will be populated from shepherd_mode_data.js
+        // The 'shepherdSongs' variable is expected to be defined globally by 'shepherd_mode_data.js'
 
         function debounce(func, delay) {
             let timeout;
@@ -2113,20 +2118,6 @@
         // --- END OF ADVANCED TUNER FUNCTIONS ---
 
         // --- IMPROVED SHEPHERD MODE FUNCTIONS ---
-        function openShepherdModal(e) {
-            e.stopPropagation();
-            openModal('shepherd-modal');
-            
-            // Load songs only if the list is empty or if we haven't loaded yet
-            if (shepherdSongList.children.length === 0 || shepherdSongs.length === 0) {
-                loadShepherdSongs();
-            }
-            
-            // Focus on search input for better UX
-            setTimeout(() => {
-                shepherdSearchInput.focus();
-            }, 300);
-        }
 
         // Enhanced normalization function for shepherd search
         const shepherd_normalize = (text) => {
@@ -2144,45 +2135,31 @@
                 .trim();
         };
 
-        // Load and filter shepherd songs with debouncing for performance
-        const loadShepherdSongs = debounce((filter = '') => {
+        // NEW: Function to just render a list of songs
+        function renderShepherdList(songsToRender) {
             shepherdSongList.innerHTML = '';
-            const normalizedFilter = shepherd_normalize(filter);
-
-            // Use the global 'shepherdSongs' variable from shepherd_mode_data.js
+            
+            // Check if data is available at all
             if (typeof shepherdSongs === 'undefined' || shepherdSongs.length === 0) {
-                console.error("shepherd_mode_data.js failed to load or 'shepherdSongs' variable is missing/empty.");
-                shepherdSongList.innerHTML = '<li class="p-3 text-red-400 text-center">Hata: Çoban Modu verisi yüklenemedi.</li>';
+                shepherdSongList.innerHTML = '<li class="p-3 text-red-400 text-center">Hata: Çoban Modu verisi yüklenemedi. (shepherd_mode_data.js)</li>';
                 return;
             }
 
-            const filteredSongs = shepherdSongs.filter(song => {
-                if (!filter) return true;
-                
-                const normalizedTitle = shepherd_normalize(song.title);
-                const normalizedLyrics = song.lyrics.map(l => shepherd_normalize(l.line)).join(' ');
-                const normalizedAuthor = shepherd_normalize(song.author || '');
-                
-                return normalizedTitle.includes(normalizedFilter) || 
-                       normalizedLyrics.includes(normalizedFilter) ||
-                       normalizedAuthor.includes(normalizedFilter);
-            });
-
-            if (filteredSongs.length === 0) {
+            // Check if the provided list is empty
+            if (songsToRender.length === 0) {
                 shepherdSongList.innerHTML = '<li class="p-3 text-text-subtle text-center">Sonuç bulunamadı.</li>';
                 return;
             }
 
             // Sort songs alphabetically
-            filteredSongs.sort((a, b) => a.title.localeCompare(b.title, 'tr'));
+            songsToRender.sort((a, b) => a.title.localeCompare(b.title, 'tr'));
 
-            filteredSongs.forEach((song, index) => {
+            songsToRender.forEach((song) => {
                 const li = document.createElement('li');
                 li.className = 'p-3 hover:bg-primary-bg cursor-pointer rounded-md text-text-light transition-colors';
                 li.textContent = song.title;
                 li.onclick = () => displayShepherdSong(song);
                 
-                // Add keyboard navigation
                 li.tabIndex = 0;
                 li.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -2197,15 +2174,77 @@
 
                 shepherdSongList.appendChild(li);
             });
+        }
 
-            // Auto-select first song if no song is selected and there are results
-            if (!currentShepherdSong && filteredSongs.length > 0) {
+        // NEW: Debounced handler for the search input
+        const debouncedSearchHandler = debounce((filter = '') => {
+            const normalizedFilter = shepherd_normalize(filter);
+
+            // If data is missing, renderList will show the error
+            if (typeof shepherdSongs === 'undefined' || shepherdSongs.length === 0) {
+                renderShepherdList([]); 
+                return;
+            }
+
+            // If search is empty, re-load the default view (playlist or all)
+            if (!normalizedFilter) {
+                let defaultSongs = [];
+                if (userPlaylist.hymns && userPlaylist.hymns.length > 0) {
+                    defaultSongs = shepherdSongs.filter(song => userPlaylist.hymns.includes(song.title));
+                } else {
+                    defaultSongs = shepherdSongs;
+                }
+                renderShepherdList(defaultSongs);
+                // Keep current song selection, don't auto-select
+                if (defaultSongs.length > 0 && !currentShepherdSong) {
+                     displayShepherdSong(defaultSongs[0]);
+                } else if (defaultSongs.length === 0) {
+                    displayShepherdSong(null);
+                }
+                return;
+            }
+
+            // If search has text, filter ALL songs
+            const filteredSongs = shepherdSongs.filter(song => {
+                const normalizedTitle = shepherd_normalize(song.title);
+                const normalizedLyrics = song.lyrics.map(l => shepherd_normalize(l.line)).join(' ');
+                const normalizedAuthor = shepherd_normalize(song.author || '');
+                
+                return normalizedTitle.includes(normalizedFilter) || 
+                       normalizedLyrics.includes(normalizedFilter) ||
+                       normalizedAuthor.includes(normalizedFilter);
+            });
+
+            renderShepherdList(filteredSongs);
+
+            // Auto-select first search result
+            if (filteredSongs.length > 0) {
                 displayShepherdSong(filteredSongs[0]);
+            } else {
+                displayShepherdSong(null);
             }
         }, 300);
 
-        // Enhanced display function for shepherd songs
+        // Enhanced display function for shepherd songs (handles null)
         function displayShepherdSong(song) {
+            // Handle empty/null state
+            if (!song) {
+                currentShepherdSong = null;
+                shepherdSongTitle.textContent = 'İlahi Seçilmedi';
+                shepherdSongMeta.textContent = '...';
+                shepherdLyricsContent.innerHTML = `
+                    <div class="shepherd-empty-state">
+                        <p>Başlamak için soldaki listeden bir ilahi seçin.</p>
+                        <p class="text-sm mt-2">Listeniz boş olabilir veya aradığınız ilahi bulunamadı.</p>
+                    </div>
+                `;
+                // Remove 'active' class from all list items
+                Array.from(shepherdSongList.children).forEach(child => {
+                    child.classList.remove('active');
+                });
+                return;
+            }
+            
             currentShepherdSong = song;
             shepherdSongTitle.textContent = song.title;
             
@@ -2288,14 +2327,54 @@
                 }
             });
         }
+        
+        // UPDATED: This function now decides what list to show
+        function openShepherdModal(e) {
+            e.stopPropagation();
+            openModal('shepherd-modal');
+            
+            shepherdSearchInput.value = ''; // Clear search
+            
+            // Check if shepherd data is loaded
+            if (typeof shepherdSongs === 'undefined' || shepherdSongs.length === 0) {
+                renderShepherdList([]); // This will show the error message
+                displayShepherdSong(null);
+                return;
+            }
+
+            let songsToShow = [];
+            // Check if playlist is active
+            if (userPlaylist.hymns && userPlaylist.hymns.length > 0) {
+                // Filter shepherdSongs to only include those in the playlist
+                songsToShow = shepherdSongs.filter(song => 
+                    userPlaylist.hymns.includes(song.title)
+                );
+            } else {
+                // No playlist, show all songs
+                songsToShow = shepherdSongs;
+            }
+            
+            renderShepherdList(songsToShow);
+            
+            // Auto-select the first song in the list
+            if (songsToShow.length > 0) {
+                displayShepherdSong(songsToShow[0]);
+            } else {
+                displayShepherdSong(null);
+            }
+            
+            setTimeout(() => {
+                shepherdSearchInput.focus();
+            }, 300);
+        }
 
         // Initialize shepherd mode events
         function initShepherdMode() {
             document.getElementById('shepherd-mode-btn').addEventListener('click', openShepherdModal);
             document.getElementById('close-shepherd-modal').addEventListener('click', () => closeModal('shepherd-modal'));
             
-            // Enhanced search with debouncing
-            shepherdSearchInput.addEventListener('input', (e) => loadShepherdSongs(e.target.value));
+            // Tie search input to the new debounced handler
+            shepherdSearchInput.addEventListener('input', (e) => debouncedSearchHandler(e.target.value));
             
             // Keyboard shortcuts for shepherd modal
             document.addEventListener('keydown', (e) => {
@@ -2350,12 +2429,13 @@
                     savePlaylist();
                 });
 
+                // Load playlist *after* hymns are loaded
                 loadPlaylist();
 
             } catch (error) {
                 console.error("Hymns verileri yüklenirken bir hata oluştu:", error);
                 modalTitle.textContent = "Hata!";
-                modalMessage.textContent = "İlahi verileri yüklenemedi. Lütfen internet bağlantınızı kontrol edin veya daha sonra tekrar deneyin.";
+                modalMessage.textContent = "İlahi verileri yüklenemedi. Lütfen 'hymns.json' dosyasının doğru yerde ve geçerli olduğundan emin olun.";
                 openModal('casting-modal');
             } finally {
                 hideLoader();
@@ -2377,49 +2457,73 @@
                 let playlistTitles = [];
 
                 if (playlistData.length > 1) {
-                    playlistNameFromUrl = decodeURIComponent(playlistData[0]);
-                    playlistTitles = playlistData[1].split(',').map(decodeURIComponent);
+                    try {
+                        playlistNameFromUrl = decodeURIComponent(playlistData[0]);
+                        playlistTitles = playlistData[1].split(',').map(decodeURIComponent);
+                    } catch (e) {
+                        console.error("URL'den çalma listesi okunurken hata oluştu:", e);
+                        playlistTitles = [];
+                        playlistNameFromUrl = 'Hatalı Liste';
+                    }
                 } else {
-                    playlistTitles = playlistData[0].split(',').map(decodeURIComponent);
+                     try {
+                        playlistTitles = playlistData[0].split(',').map(decodeURIComponent);
+                     } catch (e) {
+                        console.error("URL'den çalma listesi okunurken hata oluştu:", e);
+                        playlistTitles = [];
+                     }
                 }
 
                 userPlaylist.name = playlistNameFromUrl;
                 userPlaylist.hymns = [];
                 playlistTitles.forEach(title => {
+                    // Check that hymn exists in the main 'hymns' list
                     const hymn = hymns.find(h => h.title === title);
                     if (hymn && !userPlaylist.hymns.includes(hymn.title)) {
                         userPlaylist.hymns.push(hymn.title);
                     }
                 });
                 savePlaylist();
+                // Clear the hash to prevent re-loading on refresh
+                window.location.hash = '';
                 return;
             }
 
             const storedPlaylist = localStorage.getItem('hymnPlaylist');
             if (storedPlaylist) {
-                const parsedPlaylist = JSON.parse(storedPlaylist);
-                if (parsedPlaylist && parsedPlaylist.hymns) {
-                    userPlaylist = parsedPlaylist;
-                } else if (Array.isArray(parsedPlaylist)) {
-                    userPlaylist = { name: 'Eski Çalma Listem', hymns: parsedPlaylist };
+                try {
+                    const parsedPlaylist = JSON.parse(storedPlaylist);
+                    if (parsedPlaylist && parsedPlaylist.hymns) {
+                        userPlaylist = parsedPlaylist;
+                    } else if (Array.isArray(parsedPlaylist)) { // Legacy support
+                        userPlaylist = { name: 'Eski Çalma Listem', hymns: parsedPlaylist };
+                    }
+                } catch(e) {
+                     console.error("Yerel depolamadan çalma listesi yüklenemedi:", e);
+                     userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] };
+                     localStorage.removeItem('hymnPlaylist');
                 }
             } else {
                 userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] };
             }
-            updateUrlWithPlaylist();
+            // Do not call updateUrlWithPlaylist() here, causes hash to be set on load
         }
 
         function updateUrlWithPlaylist() {
             const encodedTitles = userPlaylist.hymns.map(encodeURIComponent);
             const encodedName = encodeURIComponent(userPlaylist.name);
             const currentPathname = window.location.pathname;
-            const basePath = currentPathname.endsWith('/') ? currentPathname : currentPathname + '/';
-            const fullUrl = `${window.location.origin}${basePath}#playlist=${encodedName}|${encodedTitles.join(',')}`; 
+            
+            // Ensure base path is correct
+            let basePath = window.location.origin + currentPathname;
+            if (!basePath.endsWith('/')) {
+                 basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+            }
+            
+            const fullUrl = `${basePath}#playlist=${encodedName}|${encodedTitles.join(',')}`; 
             
             if (userPlaylist.hymns.length > 0) {
-                if (window.location.hash !== `#playlist=${encodedName}|${encodedTitles.join(',')}`) {
-                    window.location.hash = `playlist=${encodedName}|${encodedTitles.join(',')}`;
-                }
+                // Don't set window.location.hash here, only update the input
                 playlistShareLinkInput.value = fullUrl;
                 generateShareLinkBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
                 generateShareLinkBtn.classList.add('bg-highlight-blue', 'active:bg-blue-600');
@@ -2428,9 +2532,7 @@
                 clearPlaylistBtn.classList.add('bg-highlight-red', 'active:bg-red-600');
                 clearPlaylistBtn.disabled = false;
             } else {
-                if (window.location.hash.startsWith('#playlist=')) {
-                    window.location.hash = '';
-                }
+                // Don't set window.location.hash here
                 playlistShareLinkInput.value = '';
                 generateShareLinkBtn.classList.remove('bg-highlight-blue', 'active:bg-blue-600');
                 generateShareLinkBtn.classList.add('bg-gray-500', 'cursor-not-allowed');
@@ -2447,7 +2549,14 @@
                 return;
             }
 
+            // Make sure the link in the input is up-to-date
+            updateUrlWithPlaylist();
             const longUrl = playlistShareLinkInput.value;
+            if (!longUrl) {
+                 showNotification('Paylaşım linki oluşturulamadı.', 'bg-highlight-red');
+                 return;
+            }
+            
             const shortenerCreator = `https://is.gd/create.php?url=${encodeURIComponent(longUrl)}`;
             
             window.open(shortenerCreator, '_blank');
@@ -2485,15 +2594,10 @@
                 emptyMessage.textContent = "Çalma listeniz boş. 'Veri Tabanı' kısmından ilahi ekleyebilirsiniz.";
                 emptyMessage.classList.add('text-text-subtle', 'text-center', 'p-4');
                 playlistItemsContainer.appendChild(emptyMessage);
-                playlistShareLinkInput.value = '';
-                generateShareLinkBtn.classList.add('bg-gray-500', 'cursor-not-allowed');
-                generateShareLinkBtn.disabled = true; 
-                clearPlaylistBtn.classList.add('bg-gray-500', 'cursor-not-allowed');
-                clearPlaylistBtn.disabled = true;
             } else {
                 userPlaylist.hymns.forEach(hymnTitle => {
                     const hymn = hymns.find(h => h.title === hymnTitle);
-                    if (!hymn) return;
+                    if (!hymn) return; // Hymn might be in playlist but not in hymns.json
 
                     const listItem = document.createElement('div');
                     listItem.classList.add('p-2', 'sm:p-3', 'rounded-md', 'cursor-pointer', 'text-base', 'sm:text-lg', 'border-b', 'border-gray-700', 'last:border-b-0', 'flex', 'justify-between', 'items-center', 'active:bg-primary-bg', 'transition-colors');
@@ -2529,12 +2633,9 @@
                     listItem.appendChild(removeBtn);
                     playlistItemsContainer.appendChild(listItem);
                 });
-                generateShareLinkBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
-                generateShareLinkBtn.disabled = false; 
-                clearPlaylistBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
-                clearPlaylistBtn.disabled = false;
-                updateUrlWithPlaylist();
             }
+            // Always update the URL/buttons when rendering
+            updateUrlWithPlaylist();
         }
 
         function openPlaylistModal(e) {
@@ -2546,8 +2647,21 @@
         function copyPlaylistLink() {
             if(!playlistShareLinkInput.value) return;
             playlistShareLinkInput.select();
-            document.execCommand('copy');
-            showNotification('Paylaşım linki kopyalandı!', 'bg-highlight-blue');
+            
+            try {
+                // Use modern clipboard API if available
+                navigator.clipboard.writeText(playlistShareLinkInput.value).then(() => {
+                    showNotification('Paylaşım linki kopyalandı!', 'bg-highlight-blue');
+                }).catch(() => {
+                    // Fallback for older browsers
+                    document.execCommand('copy');
+                    showNotification('Paylaşım linki kopyalandı!', 'bg-highlight-blue');
+                });
+            } catch (err) {
+                // Fallback for very old browsers
+                document.execCommand('copy');
+                showNotification('Paylaşım linki kopyalandı!', 'bg-highlight-blue');
+            }
         }
 
         function showNotification(message, bgColor) {
