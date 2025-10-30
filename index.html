@@ -1064,6 +1064,71 @@
         .shepherd-lyrics-content > * {
             animation: fadeIn 0.3s ease forwards;
         }
+
+        /* START: ADDED STYLES FOR VERY SMALL SCREENS (260px) */
+        @media (max-width: 320px) {
+            /* --- SHEPHERD MODE (VERY SMALL SCREENS) --- */
+            #shepherd-modal .modal-header {
+                padding: 0.5rem 0.75rem; /* Reduced padding */
+            }
+
+            #shepherd-modal .modal-header h2 {
+                font-size: 1.1rem; /* Reduced font size */
+                white-space: normal; /* Allow title to wrap */
+            }
+            
+            #shepherd-modal .close-btn {
+                width: 32px; /* Smaller close button */
+                height: 32px;
+                flex-shrink: 0; /* Prevent button from shrinking */
+            }
+
+            #shepherd-song-list {
+                padding: 0.25rem; /* Tighter list padding */
+            }
+
+            #shepherd-song-list li {
+                padding: 0.5rem 0.75rem; /* Reduced item padding */
+                font-size: 0.85rem; /* Smaller font */
+            }
+
+            #shepherd-lyrics-display-container {
+                padding: 0.75rem; /* Reduced padding */
+            }
+
+            #shepherd-song-title {
+                font-size: 1.25rem; /* Reduced font size */
+            }
+
+            #shepherd-song-meta {
+                font-size: 0.8rem; /* Reduced font size */
+                margin-bottom: 1rem;
+                padding-bottom: 0.75rem;
+            }
+
+            .shepherd-section-title {
+                font-size: 1rem; /* Reduced font size */
+            }
+
+            .shepherd-chord-line {
+                font-size: 0.9rem; /* Reduced font size */
+            }
+
+            .shepherd-lyric-line {
+                font-size: 0.9rem; /* Reduced font size */
+            }
+
+            #shepherd-search-container {
+                padding: 0.5rem 0.75rem; /* Reduced padding */
+            }
+
+            #shepherd-search-input {
+                padding: 0.5rem 0.75rem; /* Reduced padding */
+                font-size: 0.9rem; /* Smaller font */
+            }
+        }
+        /* END: ADDED STYLES FOR VERY SMALL SCREENS (260px) */
+        
         /* --- END: IMPROVED SHEPHERD MODE STYLES --- */
     </style>
 </head>
@@ -1457,6 +1522,7 @@
         }
 
         function normalizeText(text) {
+            if (typeof text !== 'string') return '';
             let normalized = text.toLowerCase();
             normalized = normalized.replace(/ç/g, 'c');
             normalized = normalized.replace(/ğ/g, 'g');
@@ -1465,7 +1531,7 @@
             normalized = normalized.replace(/ş/g, 's');
             normalized = normalized.replace(/ü/g, 'u');
             normalized = normalized.replace(/i̇/g, 'i');
-            normalized = normalized.replace(/[^a-z0.9]/g, '');
+            normalized = normalized.replace(/[^a-z0-9]/g, '');
             return normalized.trim();
         }
 
@@ -1856,7 +1922,7 @@
             if (!isClickInsideGuitarTunerModal && !guitarTunerBtn.contains(e.target)) {
                 closeModal('guitar-tuner-modal');
             }
-            if (!isClickInsideShepherdModal && !shepherdModeBtnEl.contains(e.target)) {
+            if (!isClickInsideShepherdModal && shepherdModeBtnEl && !shepherdModeBtnEl.contains(e.target)) {
                 closeModal('shepherd-modal');
             }
         });
