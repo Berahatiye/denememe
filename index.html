@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>İlahi Prompter</title>
-    <link rel="icon" href="https://raw.githubusercontent.com/Berahatiye/ilahi/refs/heads/main/logopng.webp">
+    <link rel="icon" href="https://raw.githubusercontent/Berahatiye/ilahi/refs/heads/main/logopng.webp">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -921,6 +921,19 @@
             background-color: #1e293b;
             transition: all 0.3s ease;
         }
+        
+        /* --- MODIFICATION: Added styles for new sticky header --- */
+        #shepherd-list-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        #shepherd-list-subtitle {
+            font-weight: 500;
+        }
+        /* --- END MODIFICATION --- */
+
 
         #shepherd-song-list {
             padding: 0.5rem;
@@ -1090,6 +1103,13 @@
                 height: 32px;
                 flex-shrink: 0; /* Prevent button from shrinking */
             }
+            
+            /* --- MODIFICATION: Tweak subtitle padding on mobile --- */
+            #shepherd-list-subtitle {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+            }
+
 
             #shepherd-song-list {
                 padding: 0.25rem; /* Tighter list padding */
@@ -1373,7 +1393,6 @@
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
-                <!-- **** MODIFICATION: Added ID "shepherd-modal-title" **** -->
                 <h2 id="shepherd-modal-title">Çoban Modu</h2>
                 <button id="close-shepherd-modal" class="close-btn">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -1386,6 +1405,11 @@
             <div class="modal-body">
                 <!-- Song List (Scrollable) -->
                 <div id="shepherd-song-list-container">
+                    <!-- **** MODIFICATION: Added subtitle **** -->
+                    <div id="shepherd-list-header" class="sticky top-0 z-10 bg-secondary-bg border-b border-gray-700">
+                        <p id="shepherd-list-subtitle" class="p-2 text-xs text-center text-text-subtle font-medium">Yükleniyor...</p>
+                    </div>
+                    <!-- ************************************ -->
                     <ul id="shepherd-song-list">
                         <!-- Shepherd song list will be populated by JS -->
                     </ul>
@@ -2214,6 +2238,30 @@
                 .trim();
         };
 
+        // *** NEW HELPER FUNCTION to update Shepherd Mode titles ***
+        function updateShepherdModeTitles(filterText = '') {
+            const shepherdTitleEl = document.getElementById('shepherd-modal-title');
+            const shepherdSubtitleEl = document.getElementById('shepherd-list-subtitle');
+            
+            if (!shepherdTitleEl || !shepherdSubtitleEl) return; // Safety check
+
+            const hasPlaylist = userPlaylist.hymns && userPlaylist.hymns.length > 0;
+
+            // Set main title
+            shepherdTitleEl.textContent = 'Çoban Modu';
+
+            // Set subtitle
+            if (filterText) {
+                shepherdSubtitleEl.textContent = `"${filterText}" için arama sonuçları`;
+            } else if (hasPlaylist) {
+                shepherdSubtitleEl.textContent = `"${userPlaylist.name || 'Çalma Listeniz'}" gösteriliyor`;
+            } else {
+                shepherdSubtitleEl.textContent = 'Tüm ilahiler gösteriliyor';
+            }
+            
+            shepherdSubtitleEl.classList.remove('hidden');
+        }
+
         // NEW: Function to just render a list of songs
         function renderShepherdList(songsToRender) {
             shepherdSongList.innerHTML = '';
@@ -2257,6 +2305,10 @@
 
         // NEW: Debounced handler for the search input
         const debouncedSearchHandler = debounce((filter = '') => {
+            // **** NEW: Update subtitle based on search ****
+            updateShepherdModeTitles(filter); // Pass the raw filter text
+            // ********************************************
+
             const normalizedFilter = shepherd_normalize(filter);
 
             // If data is missing, renderList will show the error
@@ -2412,14 +2464,9 @@
             e.stopPropagation();
             openModal('shepherd-modal');
             
-            // **** MODIFICATION: Find title element and set text based on playlist ****
-            const shepherdTitleEl = document.getElementById('shepherd-modal-title');
-            if (userPlaylist.hymns && userPlaylist.hymns.length > 0) {
-                shepherdTitleEl.textContent = 'Çoban Modu (Çalma Listesi)';
-            } else {
-                shepherdTitleEl.textContent = 'Çoban Modu';
-            }
-            // ********************************************************************
+            // **** MODIFICATION: Update title and subtitle ****
+            updateShepherdModeTitles();
+            // *************************************************
 
             shepherdSearchInput.value = ''; // Clear search
             
