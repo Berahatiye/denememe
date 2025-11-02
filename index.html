@@ -925,7 +925,7 @@
             overflow-y: auto;
             border-right: 1px solid #334155;
             background-color: #1e293b;
-            transition: all 0.3s ease;
+            /* transition: all 0.3s ease; */ /* REMOVED */
             display: flex; 
             flex-direction: column; 
         }
@@ -1180,10 +1180,32 @@
         
         
         
-        #shepherd-song-list-container, 
-        #shepherd-lyrics-display-container {
-            transition: all 0.3s ease-in-out;
+        /* === PERFORMANCE OPTIMIZATION START === */
+        /* Replaced 'transition: all' with specific, optimized properties */
+
+        #shepherd-song-list-container {
+            /* Only animate the properties that change */
+            transition: width 0.3s ease-in-out, 
+                        min-width 0.3s ease-in-out, 
+                        max-height 0.3s ease-in-out, 
+                        /* Make opacity fade faster than the resize */
+                        opacity 0.15s ease-in-out, 
+                        padding 0.3s ease-in-out,
+                        border 0.3s ease-in-out;
+            /* Hint the browser to optimize these animations */
+            will-change: width, min-width, max-height, opacity;
         }
+        
+        #shepherd-lyrics-display-container {
+            /* Only animate the properties that change */
+            transition: width 0.3s ease-in-out, 
+                        max-height 0.3s ease-in-out;
+            /* Hint the browser to optimize these animations */
+            will-change: width, max-height;
+        }
+        
+        /* === PERFORMANCE OPTIMIZATION END === */
+
 
         #shepherd-modal .modal-body.shepherd-list-hidden #shepherd-song-list-container {
             width: 0;
