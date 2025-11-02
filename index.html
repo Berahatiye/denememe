@@ -1279,7 +1279,7 @@
             
             <div id="welcome-message" class="text-xl md:text-2xl text-text-subtle font-light max-w-2xl text-center">
                 <p class="mb-4">Toplamda: <span id="hymn-count">0</span> adet Türkçe ilahi <br>bulunmaktadır.</p>
-                <p><i>"İlahiyi Yansıt"</i> tuşu, butonlarla sunumu; <br><i>"Ana Ekranı Tam Yap"</i> tuşu ise "Full Screen" moda geçerek daha estetik bir sunumu sağlamaktadır. <br>'Çoban Modu' ve 'Gitar Akort Aleti' ayin yetkilileri için hazırlanmıştır.</p>
+                <p><i>"İlahiyi Yansıt"</i> tuşu, butonlarla sunumu; <br><i>"Ana Ekranı Tam Yap"</i> tuşu ise "Full Screen" moda geçerek daha estetik bir sunumu sağlamaktadır. <br><i>"Çoban Modu"</i> ve <i>"Gitar Akort Aleti"</i> ayin yetkilileri için hazırlanmıştır.</p>
                 <p style="margin-top: 3.1rem; color: #f56fa1; font-size: 12px;">Site by Berahatiye © 2025</p>
             </div>
             
@@ -2381,7 +2381,9 @@
             if (!normalizedFilter) {
                 let defaultSongs = [];
                 if (userPlaylist.hymns && userPlaylist.hymns.length > 0) {
-                    defaultSongs = shepherdSongs.filter(song => userPlaylist.hymns.includes(song.title));
+                    // OPTIMIZATION: Use a Set for faster filtering
+                    const playlistSet = new Set(userPlaylist.hymns);
+                    defaultSongs = shepherdSongs.filter(song => playlistSet.has(song.title));
                 } else {
                     defaultSongs = shepherdSongs;
                 }
@@ -2522,48 +2524,69 @@
         }
         
         
+        /**
+         * [OPTIMIZED] Opens the Shepherd Mode modal.
+         * 1. Immediately shows the modal with a loading state.
+         * 2. Waits 300ms for the modal animation to finish.
+         * 3. Performs all heavy JS processing (filtering, DOM rendering) *after* the animation.
+         */
         function openShepherdModal(e) {
             e.stopPropagation();
-            openModal('shepherd-modal');
+            openModal('shepherd-modal'); // 1. Show modal shell *immediately*
             
+            // 2. Set immediate loading states
+            shepherdSongList.innerHTML = '<li class="p-3 text-text-subtle text-center">Liste yükleniyor...</li>';
+            shepherdLyricsContent.innerHTML = `
+                <div class="shepherd-empty-state">
+                    <p>İlahi yükleniyor...</p>
+                </div>
+            `;
+            shepherdSongTitle.textContent = 'Yükleniyor...';
+            shepherdSongMeta.textContent = '...';
             
-            updateShepherdModeTitles();
-            
-
+            // Run fast stuff
+            updateShepherdModeTitles(); 
             shepherdSearchInput.value = ''; 
-            
-            
-            
-            if (typeof shepherdSongs === 'undefined' || shepherdSongs.length === 0) {
-                renderShepherdList([]); 
-                displayShepherdSong(null);
-                return;
-            }
 
-            let songsToShow = [];
-            
-            if (userPlaylist.hymns && userPlaylist.hymns.length > 0) {
-                
-                songsToShow = shepherdSongs.filter(song => 
-                    userPlaylist.hymns.includes(song.title)
-                );
-            } else {
-                
-                songsToShow = shepherdSongs;
-            }
-            
-            renderShepherdList(songsToShow);
-            
-            
-            if (songsToShow.length > 0) {
-                displayShepherdSong(songsToShow[0]);
-            } else {
-                displayShepherdSong(null);
-            }
-            
+            // 3. Defer all heavy processing until *after* the modal animation (300ms)
+            // This prevents the animation from freezing
             setTimeout(() => {
+                if (typeof shepherdSongs === 'undefined' || shepherdSongs.length === 0) {
+                    renderShepherdList([]); // Renders error
+                    displayShepherdSong(null); // Renders empty state
+                    return; 
+                }
+
+                let songsToShow = [];
+                
+                if (userPlaylist.hymns && userPlaylist.hymns.length > 0) {
+                    // OPTIMIZATION: Use a Set for much faster filtering
+                    // This changes from O(N*M) to O(N+M), a huge win.
+                    const playlistSet = new Set(userPlaylist.hymns);
+                    songsToShow = shepherdSongs.filter(song => 
+                        playlistSet.has(song.title)
+                    );
+                } else {
+                    songsToShow = shepherdSongs;
+                }
+                
+                // Now update titles *after* figuring out the list
+                updateShepherdModeTitles(); 
+
+                // Render the (potentially large) list
+                renderShepherdList(songsToShow); 
+                
+                // Render the first song
+                if (songsToShow.length > 0) {
+                    displayShepherdSong(songsToShow[0]);
+                } else {
+                    displayShepherdSong(null);
+                }
+                
+                // Focus the input now that everything is loaded
                 shepherdSearchInput.focus();
-            }, 300);
+                
+            }, 300); // Wait for the modal CSS transition to finish
         }
 
         
