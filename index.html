@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -2582,7 +2581,11 @@
             const toggleIcon = togglePaneBtn.querySelector('svg');
 
             if (togglePaneBtn && modalBody && toggleIcon) {
-                togglePaneBtn.addEventListener('click', () => {
+                // ******** START: THIS IS THE FIX ********
+                togglePaneBtn.addEventListener('click', (e) => { // Added 'e'
+                    e.stopPropagation(); // Stop the click from bubbling to the document
+                    // ******** END: THIS IS THE FIX ********
+                    
                     modalBody.classList.toggle('shepherd-list-hidden');
                     const isHidden = modalBody.classList.contains('shepherd-list-hidden');
                     togglePaneBtn.title = isHidden ? "Listeyi Göster" : "Listeyi Gizle";
