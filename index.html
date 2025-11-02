@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -28,9 +29,8 @@
         }
     </script>
     
-    <!-- ADDED SCRIPT TAG TO LOAD YOUR SHEPHERD MODE DATA -->
-    <!-- This file must exist and define a global variable: let shepherdSongs = [...]; -->
-    <script src="shepherd_mode_data.js"></script>
+    <!-- *** UPDATED SCRIPT TAG TO LOAD YOUR NEW SHEPHERD MODE DATA *** -->
+    <script src="shepherd_mode_datanew.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
@@ -1177,7 +1177,42 @@
             }
         }
         /* END: ADDED STYLES FOR VERY SMALL SCREENS (260px) */
+
         
+        
+        /* Add transitions for smoothness */
+        #shepherd-song-list-container, 
+        #shepherd-lyrics-display-container {
+            transition: all 0.3s ease-in-out;
+        }
+
+        #shepherd-modal .modal-body.shepherd-list-hidden #shepherd-song-list-container {
+            width: 0;
+            min-width: 0;
+            border-right: none;
+            overflow: hidden;
+            opacity: 0;
+            padding: 0; /* Remove padding when hidden */
+        }
+        
+        #shepherd-modal .modal-body.shepherd-list-hidden #shepherd-lyrics-display-container {
+            width: 100%;
+        }
+        
+        /* On mobile, we hide it completely */
+        @media (max-width: 768px) {
+            #shepherd-modal .modal-body.shepherd-list-hidden #shepherd-song-list-container {
+                max-height: 0 !important;
+                border-bottom: none;
+                padding: 0;
+            }
+            
+            #shepherd-modal .modal-body.shepherd-list-hidden #shepherd-lyrics-display-container {
+                max-height: 100% !important; /* Take full height */
+            }
+        }
+        /* --- END: Collapsible Shepherd List Styles --- */
+
         /* --- END: IMPROVED SHEPHERD MODE STYLES --- */
     </style>
 </head>
@@ -1414,7 +1449,13 @@
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
-                <h2 id="shepherd-modal-title">Çoban Modu</h2>
+                <!-- *** NEW: Added wrapper and toggle button *** -->
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <h2 id="shepherd-modal-title">Çoban Modu</h2>
+                    <button id="toggle-shepherd-list-pane" title="Listeyi Gizle" class="p-2 rounded-full hover:bg-white/10 active:bg-white/20 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 sm:w-6 sm:h-6 text-white"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" x2="9" y1="3" y2="21"/></svg>
+                    </button>
+                </div>
                 <button id="close-shepherd-modal" class="close-btn">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -1482,7 +1523,7 @@
         let userPlaylist = { name: 'Yeni Çalma Listem', hymns: [] }; 
         let lyricsLineElements = [];
 
-        // Global shepherdSongs should be populated by shepherd_mode_data.js
+        // Global shepherdSongs should be populated by shepherd_mode_datanew.js
         // let shepherdSongs = []; 
 
         const searchBar = document.getElementById('search-bar');
@@ -1560,14 +1601,14 @@
         const shepherdSongMeta = document.getElementById('shepherd-song-meta');
         const shepherdLyricsContent = document.getElementById('shepherd-lyrics-content');
         let currentShepherdSong = null;
-        // The 'shepherdSongs' variable is expected to be defined globally by 'shepherd_mode_data.js'
+        // The 'shepherdSongs' variable is expected to be defined globally by 'shepherd_mode_datanew.js'
 
         function debounce(func, delay) {
             let timeout;
             return function(...args) {
                 const context = this;
                 clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(context, args), delay);
+                                timeout = setTimeout(() => func.apply(context, args), delay);
             };
         }
 
@@ -2153,16 +2194,16 @@
                     const x0 = (tau - 1);
                     const x2 = (tau + 1 < yinBuffer.length) ? (tau + 1) : tau;
                     if (x0 >= 0 && x2 < yinBuffer.length) {
-                       const y0 = yinBuffer[x0];
-                       const y1 = yinBuffer[tau];
-                       const y2 = yinBuffer[x2];
-                       const a = (y0 + y2 - 2 * y1) / 2;
-                       const b = (y2 - y0) / 2;
-                       if (a) {
-                           period = tau - b / (2 * a);
-                       } else {
-                           period = tau;
-                       }
+                        const y0 = yinBuffer[x0];
+                        const y1 = yinBuffer[tau];
+                        const y2 = yinBuffer[x2];
+                        const a = (y0 + y2 - 2 * y1) / 2;
+                        const b = (y2 - y0) / 2;
+                        if (a) {
+                            period = tau - b / (2 * a);
+                        } else {
+                            period = tau;
+                        }
                     } else {
                         period = tau;
                     }
@@ -2173,9 +2214,9 @@
             if (period) {
                 pitch = sampleRate / period;
                  // Filter out unreasonable frequencies
-                if (pitch > 50 && pitch < 1000) {
+                 if (pitch > 50 && pitch < 1000) {
                      return { frequency: pitch, clarity: clarity };
-                }
+                 }
             }
             
             return { frequency: null, clarity: 0 };
@@ -2289,7 +2330,7 @@
             
             // Check if data is available at all
             if (typeof shepherdSongs === 'undefined' || shepherdSongs.length === 0) {
-                shepherdSongList.innerHTML = '<li class="p-3 text-red-400 text-center">Hata: Çoban Modu verisi yüklenemedi. (shepherd_mode_data.js)</li>';
+                shepherdSongList.innerHTML = '<li class="p-3 text-red-400 text-center">Hata: Çoban Modu verisi yüklenemedi. (shepherd_mode_datanew.js)</li>';
                 return;
             }
 
@@ -2420,7 +2461,8 @@
                     currentSection = line.section;
                     const sectionTitle = document.createElement('div');
                     sectionTitle.className = 'shepherd-section-title';
-                    sectionTitle.textContent = currentSection;
+                    // *** FIX: Use correct property 'section' not 'line.section' ***
+                    sectionTitle.textContent = currentSection; 
                     shepherdLyricsContent.appendChild(sectionTitle);
                     hasContent = true;
                 }
@@ -2429,10 +2471,11 @@
                 lineContainer.className = 'mb-3';
                 
                 // Add chord if present
-                if (line.chord && line.chord.trim()) {
+                // *** FIX: Check array and join, not trim string ***
+                if (line.chord && Array.isArray(line.chord) && line.chord.length > 0) {
                     const chordEl = document.createElement('div');
                     chordEl.className = 'shepherd-chord-line';
-                    chordEl.textContent = line.chord.trim();
+                    chordEl.textContent = line.chord.join(' '); // Join chords with a space
                     lineContainer.appendChild(chordEl);
                     hasContent = true;
                 }
@@ -2444,7 +2487,7 @@
                     lineEl.textContent = line.line.trim();
                     lineContainer.appendChild(lineEl);
                     hasContent = true;
-                } else if (!line.chord) {
+                } else if (!line.chord || line.chord.length === 0) {
                     // Add empty line for spacing if no chord or lyric
                     const emptyLine = document.createElement('div');
                     emptyLine.className = 'shepherd-lyric-line';
@@ -2492,6 +2535,7 @@
             shepherdSearchInput.value = ''; // Clear search
             
             // Check if shepherd data is loaded
+            // *** FIX: Use correct variable name 'shepherdSongs' ***
             if (typeof shepherdSongs === 'undefined' || shepherdSongs.length === 0) {
                 renderShepherdList([]); // This will show the error message
                 displayShepherdSong(null);
@@ -2531,6 +2575,28 @@
             
             // Tie search input to the new debounced handler
             shepherdSearchInput.addEventListener('input', (e) => debouncedSearchHandler(e.target.value));
+
+            // *** START: NEW Collapsible Logic ***
+            const togglePaneBtn = document.getElementById('toggle-shepherd-list-pane');
+            const modalBody = shepherdModal.querySelector('.modal-body');
+            const toggleIcon = togglePaneBtn.querySelector('svg');
+
+            if (togglePaneBtn && modalBody && toggleIcon) {
+                togglePaneBtn.addEventListener('click', () => {
+                    modalBody.classList.toggle('shepherd-list-hidden');
+                    const isHidden = modalBody.classList.contains('shepherd-list-hidden');
+                    togglePaneBtn.title = isHidden ? "Listeyi Göster" : "Listeyi Gizle";
+                    
+                    if (isHidden) {
+                        // Icon for SHOWING list (panel-left-open)
+                        toggleIcon.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" x2="9" y1="3" y2="21"/><line x1="14" x2="19" y1="9" y2="9"/><line x1="14" x2="19" y1="15" y2="15"/>';
+                    } else {
+                        // Icon for HIDING list (original icon)
+                        toggleIcon.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" x2="9" y1="3" y2="21"/>';
+                    }
+                });
+            }
+            // *** END: NEW Collapsible Logic ***
             
             // Keyboard shortcuts for shepherd modal
             document.addEventListener('keydown', (e) => {
@@ -2541,7 +2607,7 @@
                     }
                     
                     // Focus search when Ctrl+F is pressed
-                    if (e.ctrlKey && e.key === 'f') {
+                    if (e.ctrlKey && (e.key === 'f' || e.key === 'F')) {
                         e.preventDefault();
                         shepherdSearchInput.focus();
                         shepherdSearchInput.select();
