@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>İlahi Prompter</title>
-    <link rel="icon" href="https://raw.githubusercontent/Berahatiye/ilahi/refs/heads/main/logopng.webp">
+    <link rel="icon" href="https://raw.githubusercontent.com/Berahatiye/ilahi/refs/heads/main/logopng.webp">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -865,25 +865,27 @@
         }
 
         /* Mobile-first responsive layout */
-        /* --- START: EDITED FOR RESPONSIVE SCROLLING --- */
         @media (max-width: 768px) {
             #shepherd-modal .modal-body {
                 flex-direction: column;
-                overflow-y: auto; /* Allow the body to scroll */
-                -webkit-overflow-scrolling: touch; /* Momentum scrolling */
+                /* --- UPDATED: Explicitly set height and overflow --- */
+                height: 100%;
+                overflow: hidden;
             }
             
             #shepherd-song-list-container {
                 width: 100% !important;
-                max-height: 40% !important; /* Keep max-height for list */
+                max-height: 40% !important;
                 border-right: none !important;
                 border-bottom: 1px solid #334155;
+                flex-shrink: 0; /* --- ADDED: Prevent shrinking --- */
             }
             
             #shepherd-lyrics-display-container {
                 width: 100% !important;
-                /* REMOVED max-height: 60% !important; */ 
-                /* Lyrics will now expand, making the modal-body scroll */
+                max-height: 60% !important;
+                /* --- ADDED: Allow container to grow/shrink --- */
+                flex: 1;
             }
             
             #shepherd-modal .modal-content {
@@ -907,17 +909,15 @@
                 border-radius: 0;
             }
             
+            /* --- UPDATED: Gave less space to list, more to lyrics --- */
             #shepherd-song-list-container {
-                max-height: 35% !important; /* Keep max-height for list */
+                max-height: 30% !important; /* Was 35% */
             }
             
             #shepherd-lyrics-display-container {
-                /* REMOVED max-height: 65% !important; */
-                /* Lyrics will expand, making the modal-body scroll */
+                max-height: 70% !important; /* Was 65% */
             }
         }
-        /* --- END: EDITED FOR RESPONSIVE SCROLLING --- */
-
 
         /* Improved song list */
         #shepherd-song-list-container {
@@ -927,6 +927,8 @@
             border-right: 1px solid #334155;
             background-color: #1e293b;
             transition: all 0.3s ease;
+            display: flex; /* --- ADDED: Flex column layout --- */
+            flex-direction: column; /* --- ADDED: Flex column layout --- */
         }
         
         /* --- MODIFICATION: Added styles for new sticky header --- */
@@ -934,6 +936,7 @@
             position: sticky;
             top: 0;
             z-index: 10;
+            flex-shrink: 0; /* --- ADDED: Prevent header from shrinking --- */
         }
         
         #shepherd-list-subtitle {
@@ -944,6 +947,9 @@
 
         #shepherd-song-list {
             padding: 0.5rem;
+            /* --- ADDED: Allow list to scroll --- */
+            flex: 1;
+            overflow-y: auto;
         }
 
         #shepherd-song-list li {
@@ -1063,23 +1069,31 @@
 
         /* Scrollbar styling */
         #shepherd-song-list-container::-webkit-scrollbar,
-        #shepherd-lyrics-display-container::-webkit-scrollbar {
+        #shepherd-lyrics-display-container::-webkit-scrollbar,
+        #shepherd-song-list::-webkit-scrollbar /* --- ADDED: Scrollbar for list --- */
+        {
             width: 8px;
         }
 
         #shepherd-song-list-container::-webkit-scrollbar-track,
-        #shepherd-lyrics-display-container::-webkit-scrollbar-track {
+        #shepherd-lyrics-display-container::-webkit-scrollbar-track,
+        #shepherd-song-list::-webkit-scrollbar-track /* --- ADDED: Scrollbar for list --- */
+        {
             background: #1e293b;
         }
 
         #shepherd-song-list-container::-webkit-scrollbar-thumb,
-        #shepherd-lyrics-display-container::-webkit-scrollbar-thumb {
+        #shepherd-lyrics-display-container::-webkit-scrollbar-thumb,
+        #shepherd-song-list::-webkit-scrollbar-thumb /* --- ADDED: Scrollbar for list --- */
+        {
             background: #475569;
             border-radius: 4px;
         }
 
         #shepherd-song-list-container::-webkit-scrollbar-thumb:hover,
-        #shepherd-lyrics-display-container::-webkit-scrollbar-thumb:hover {
+        #shepherd-lyrics-display-container::-webkit-scrollbar-thumb:hover,
+        #shepherd-song-list::-webkit-scrollbar-thumb:hover /* --- ADDED: Scrollbar for list --- */
+        {
             background: #64748b;
         }
 
