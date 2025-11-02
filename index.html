@@ -865,21 +865,25 @@
         }
 
         /* Mobile-first responsive layout */
+        /* --- START: EDITED FOR RESPONSIVE SCROLLING --- */
         @media (max-width: 768px) {
             #shepherd-modal .modal-body {
                 flex-direction: column;
+                overflow-y: auto; /* Allow the body to scroll */
+                -webkit-overflow-scrolling: touch; /* Momentum scrolling */
             }
             
             #shepherd-song-list-container {
                 width: 100% !important;
-                max-height: 40% !important;
+                max-height: 40% !important; /* Keep max-height for list */
                 border-right: none !important;
                 border-bottom: 1px solid #334155;
             }
             
             #shepherd-lyrics-display-container {
                 width: 100% !important;
-                max-height: 60% !important;
+                /* REMOVED max-height: 60% !important; */ 
+                /* Lyrics will now expand, making the modal-body scroll */
             }
             
             #shepherd-modal .modal-content {
@@ -904,13 +908,16 @@
             }
             
             #shepherd-song-list-container {
-                max-height: 35% !important;
+                max-height: 35% !important; /* Keep max-height for list */
             }
             
             #shepherd-lyrics-display-container {
-                max-height: 65% !important;
+                /* REMOVED max-height: 65% !important; */
+                /* Lyrics will expand, making the modal-body scroll */
             }
         }
+        /* --- END: EDITED FOR RESPONSIVE SCROLLING --- */
+
 
         /* Improved song list */
         #shepherd-song-list-container {
