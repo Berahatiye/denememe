@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -29,7 +28,7 @@
         }
     </script>
     
-    
+    <!-- External data source -->
     <script src="shepherd_mode_datanew.js"></script>
     
     <style>
@@ -86,7 +85,7 @@
                 padding: 0.6rem;
             }
             
-            
+            /* Compact buttons for very small screens */
             #show-all-hymns-btn, #show-playlist-btn, #guitar-tuner-btn, #shepherd-mode-btn {
                 padding: 0.6rem 0.4rem; 
                 font-size: 0.875rem;
@@ -320,6 +319,7 @@
             }
         }
 
+        /* Specific adjustments for playlist modal on small screens */
         @media (max-height: 320px) {
             .playlist-modal .modal-content {
                 max-height: 100%;
@@ -569,7 +569,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        
+        /* Tuner Styles */
         #guitar-tuner-modal .modal-content {
             max-height: 95vh;
             padding: 0; 
@@ -807,7 +807,7 @@
         }
         
 
-        
+        /* SHEPHERD MODE STYLES */
         #shepherd-modal .modal-content {
             width: 95%;
             max-width: 1400px;
@@ -822,7 +822,7 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
-        
+        /* Modal Header */
         #shepherd-modal .modal-header {
             background-color: #0ea5e9;
             padding: 1rem 1.5rem;
@@ -856,7 +856,7 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        
+        /* Modal Body (Flex container for list and lyrics) */
         #shepherd-modal .modal-body {
             display: flex;
             flex-direction: row;
@@ -864,11 +864,11 @@
             overflow: hidden;
         }
 
-        
+        /* Mobile Layout */
         @media (max-width: 768px) {
             #shepherd-modal .modal-body {
                 flex-direction: column;
-                
+                /* On mobile, stack vertically */
                 height: 100%;
                 overflow: hidden;
             }
@@ -884,7 +884,7 @@
             #shepherd-lyrics-display-container {
                 width: 100% !important;
                 max-height: 60% !important;
-                
+                /* Takes remaining space */
                 flex: 1;
             }
             
@@ -909,7 +909,7 @@
                 border-radius: 0;
             }
             
-            
+            /* Adjust ratio for small mobile */
             #shepherd-song-list-container {
                 max-height: 30% !important; 
             }
@@ -919,19 +919,19 @@
             }
         }
 
-        
+        /* Left Pane: Song List */
         #shepherd-song-list-container {
             width: 35%;
             max-height: 100%;
             overflow-y: auto;
             border-right: 1px solid #334155;
             background-color: #1e293b;
-            transition: all 0.15s ease-in-out;
+            transition: all 0.3s ease;
             display: flex; 
             flex-direction: column; 
         }
         
-        
+        /* Sticky List Header */
         #shepherd-list-header {
             position: sticky;
             top: 0;
@@ -947,7 +947,7 @@
 
         #shepherd-song-list {
             padding: 0.5rem;
-            
+            /* Allow list to grow and scroll */
             flex: 1;
             overflow-y: auto;
         }
@@ -976,7 +976,7 @@
             box-shadow: 0 4px 6px rgba(14, 165, 233, 0.2);
         }
 
-        
+        /* Right Pane: Lyrics Display */
         #shepherd-lyrics-display-container {
             width: 65%;
             max-height: 100%;
@@ -1027,7 +1027,7 @@
             color: #e2e8f0;
         }
 
-        
+        /* Search Bar Area */
         #shepherd-search-container {
             padding: 1rem 1.5rem;
             border-top: 1px solid #334155;
@@ -1056,7 +1056,7 @@
             color: #64748b;
         }
 
-        
+        /* Empty State */
         .shepherd-empty-state {
             text-align: center;
             padding: 2rem;
@@ -1067,7 +1067,7 @@
             margin-bottom: 1rem;
         }
 
-        
+        /* Scrollbar Styling */
         #shepherd-song-list-container::-webkit-scrollbar,
         #shepherd-lyrics-display-container::-webkit-scrollbar,
         #shepherd-song-list::-webkit-scrollbar 
@@ -1097,7 +1097,7 @@
             background: #64748b;
         }
 
-        
+        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -1107,9 +1107,9 @@
             animation: fadeIn 0.3s ease forwards;
         }
 
-        
+        /* Responsive Text Sizes for Shepherd Mode */
         @media (max-width: 320px) {
-            
+            /* Extremely small screens */
             #shepherd-modal .modal-header {
                 padding: 0.5rem 0.75rem; 
             }
@@ -1125,7 +1125,7 @@
                 flex-shrink: 0; 
             }
             
-            
+            /* List Header */
             #shepherd-list-subtitle {
                 padding: 0.5rem 0.75rem;
                 font-size: 0.75rem;
@@ -1178,8 +1178,8 @@
         }
         
 
-        
-        
+        /* COLLAPSIBLE LIST PANE LOGIC
+        */
         
         #shepherd-song-list-container, 
         #shepherd-lyrics-display-container {
@@ -1199,7 +1199,7 @@
             width: 100%;
         }
         
-        
+        /* On mobile, collapsible logic changes height instead of width */
         @media (max-width: 768px) {
             #shepherd-modal .modal-body.shepherd-list-hidden #shepherd-song-list-container {
                 max-height: 0 !important;
@@ -2281,7 +2281,9 @@
         
         
 
-        
+        /*
+            SHEPHERD MODE LOGIC
+        */
 
         
         const shepherd_normalize = (text) => {
@@ -2579,6 +2581,7 @@
             const togglePaneBtn = document.getElementById('toggle-shepherd-list-pane');
             const modalBody = shepherdModal.querySelector('.modal-body');
             const toggleIcon = togglePaneBtn.querySelector('svg');
+            const searchContainer = document.getElementById('shepherd-search-container');
 
             if (togglePaneBtn && modalBody && toggleIcon) {
                 
@@ -2588,6 +2591,12 @@
                     
                     modalBody.classList.toggle('shepherd-list-hidden');
                     const isHidden = modalBody.classList.contains('shepherd-list-hidden');
+                    
+                    // Toggle search container visibility based on list state
+                    if (searchContainer) {
+                        searchContainer.style.display = isHidden ? 'none' : 'block';
+                    }
+
                     togglePaneBtn.title = isHidden ? "Listeyi Göster" : "Listeyi Gizle";
                     
                     if (isHidden) {
