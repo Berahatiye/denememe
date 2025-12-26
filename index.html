@@ -961,6 +961,10 @@
             font-size: 0.95rem;
             color: #cbd5e1;
             border: 1px solid transparent;
+            /* Prevent reflow during resize to fix FPS */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         #shepherd-song-list li:hover {
@@ -1183,7 +1187,12 @@
         
         #shepherd-song-list-container, 
         #shepherd-lyrics-display-container {
-            transition: all 0.3s ease-in-out;
+            /* Optimized transition: remove 'all' to prevent FPS drop */
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                        max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: width, max-height, opacity;
         }
 
         #shepherd-modal .modal-body.shepherd-list-hidden #shepherd-song-list-container {
