@@ -857,35 +857,12 @@
             color: #4ade80;
             margin-bottom: 0.25rem;
             font-size: 1.1rem;
-            font-family: 'JetBrains Mono', monospace;
-            letter-spacing: 0.05em;
-            white-space: pre;
-            overflow-x: auto;
         }
 
         .shepherd-lyric-line {
             margin-bottom: 0.75rem;
             font-size: 1.1rem;
             color: #e2e8f0;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        /* Chord positioning for better alignment */
-        .chord-line-container {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 0.75rem;
-        }
-
-        .chord-container {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 600;
-            color: #4ade80;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.25rem;
-            white-space: pre;
-            overflow-x: auto;
         }
 
         /* Search Bar Area */
@@ -2334,7 +2311,7 @@
         
 
         /*
-            SHEPHERD MODE LOGIC - UPDATED FOR CORRECT CHORD DISPLAY
+            SHEPHERD MODE LOGIC
         */
 
         
@@ -2523,26 +2500,12 @@
                 const lineContainer = document.createElement('div');
                 lineContainer.className = 'mb-3';
                 
-                // IMPROVED CHORD DISPLAY - Shows chords with proper spacing
+                
+                
                 if (line.chord && Array.isArray(line.chord) && line.chord.length > 0) {
                     const chordEl = document.createElement('div');
                     chordEl.className = 'shepherd-chord-line';
-                    
-                    // Create chord container with monospace font for better alignment
-                    const chordContainer = document.createElement('span');
-                    chordContainer.className = 'chord-container';
-                    
-                    // Format chords with proper spacing (like Worship Leader App)
-                    let chordText = '';
-                    line.chord.forEach((chord, index) => {
-                        chordText += chord;
-                        if (index < line.chord.length - 1) {
-                            chordText += '   '; // Three spaces between chords for better spacing
-                        }
-                    });
-                    
-                    chordContainer.textContent = chordText;
-                    chordEl.appendChild(chordContainer);
+                    chordEl.textContent = line.chord.join(' '); 
                     lineContainer.appendChild(chordEl);
                     hasContent = true;
                 }
